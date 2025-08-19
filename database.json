@@ -1,0 +1,48 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "nome": "IMPERIAL MARCH",
+      "matricula": "ADMIN",
+      "turma": "ADM",
+      "email": "geohonorato234@gmail.com",
+      "genero": "Masculino",
+      "diasSemana": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "cabine": "15",
+      "acao": "N/A"
+    },
+    {
+      "id": 2,
+      "nome": "URNA ELETRÔNICA",
+      "matricula": "ADMIN",
+      "turma": "ADM",
+      "email": "geohonorato234@gmail.com",
+      "genero": "Masculino",
+      "diasSemana": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "cabine": "N/A",
+      "acao": "N/A"
+    }
+  ],
+  "activities": [
+    {
+      "userId": 1,
+      "userName": "IMPERIAL MARCH",
+      "userTurma": "ADM",
+      "userCabine": "15",
+      "type": "Entrada",
+      "timestamp": "2025-08-11T10:43:24Z"
+    }
+  ]
+}
