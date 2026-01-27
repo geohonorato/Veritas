@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Veritas</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
+        href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-zinc-950 text-zinc-100 antialiased flex items-start justify-center min-h-screen pt-8 relative overflow-hidden">
+
+    <!-- Ambient Background Glow -->
+    <div
+        class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/20 blur-[120px] pointer-events-none rounded-full">
+    </div>
+
+    <div class="w-full max-w-md p-6 relative z-10 flex flex-col items-center">
+        <!-- Logo & Header Group -->
+        <div class="flex flex-col items-center mb-6 text-center">
+            <img src="/images/logo.png" alt="Veritas Logo"
+                class="w-96 h-auto opacity-100 mb-12 drop-shadow-[0_0_25px_rgba(255,255,255,0.15)] transform hover:scale-105 transition-transform duration-500" />
+
+            <div class="space-y-1">
+                <h1 class="text-3xl font-bold tracking-tight text-white">Bem-vindo ao Veritas</h1>
+                <p class="text-zinc-400 text-base">Faça login para acessar o painel de controle</p>
+            </div>
+        </div>
+
+        <!-- Login Card -->
+        <div
+            class="w-full bg-zinc-900/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl shadow-black/80 ring-1 ring-white/5 relative overflow-hidden">
+
+            <!-- Subtle Card Gradient -->
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none -mr-32 -mt-32">
+            </div>
+
+            <h2 class="text-xl font-semibold text-zinc-100 mb-8 flex items-center gap-3 relative z-10">
+                <div class="p-2 bg-indigo-500/10 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                Acesso Restrito
+            </h2>
+
+            <form id="loginForm" class="space-y-6 relative z-10">
+                <div class="space-y-2">
+                    <label for="username" class="block text-sm font-medium text-zinc-400 ml-1">Usuário</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-zinc-500 group-focus-within:text-indigo-400 transition-colors"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <input type="text" id="username" required
+                            class="block w-full rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 placeholder-zinc-600 focus:bg-zinc-950 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 py-3.5 pl-11 pr-4 transition-all duration-300 outline-none sm:text-sm"
+                            placeholder="Digite seu usuário">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-zinc-400 ml-1">Senha</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-zinc-500 group-focus-within:text-indigo-400 transition-colors"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <input type="password" id="password" required
+                            class="block w-full rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 placeholder-zinc-600 focus:bg-zinc-950 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 py-3.5 pl-11 pr-4 transition-all duration-300 outline-none sm:text-sm"
+                            placeholder="Digite sua senha">
+                    </div>
+                </div>
+
+                <div id="errorMsg" class="hidden rounded-xl bg-red-500/10 border border-red-500/20 p-4 animate-pulse">
+                    <div class="flex items-center gap-3 text-red-400 text-sm font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span id="errorText">Credenciais inválidas</span>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-indigo-600/20 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 hover:shadow-indigo-600/50 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-zinc-900 transition-all duration-300">
+                    ACESSAR SISTEMA
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center text-zinc-500 text-xs mt-10 opacity-60 hover:opacity-100 transition-opacity">
+            &copy; 2025 Veritas System. Todos os direitos reservados.
+        </p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const errorText = document.getElementById('errorText');
+            const btn = e.target.querySelector('button');
+
+            // Reset state
+            errorMsg.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    sessionStorage.setItem('veritas_user', data.username);
+                    window.location.href = '/';
+                } else {
+                    errorText.textContent = data.message || 'Credenciais inválidas';
+                    errorMsg.classList.remove('hidden');
+                    btn.disabled = false;
+                    btn.textContent = 'Entrar';
+                }
+            } catch (err) {
+                errorText.textContent = 'Erro de conexão com o servidor';
+                errorMsg.classList.remove('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Entrar';
+            }
+        });
+    </script>
+</body>
+
+</html>

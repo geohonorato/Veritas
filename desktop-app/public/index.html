@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+  <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
+    href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900" />
+  <title>Veritas Desktop - Sistema de Ponto Eletrônico com Biometria</title>
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="chart.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-indigo-500/30 overflow-hidden">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="flex flex-col w-72 bg-zinc-950/50 backdrop-blur-xl border-r border-white/5 p-6 z-20">
+      <div class="flex flex-col items-center gap-3 mb-8">
+        <img
+          src="https://www2.cesupa.br/ConhecaCesupa/GuiadeMarcaCESUPA/imgMarca/Logo%20Cesupa%20Branco%20(com%20descritivo).png"
+          alt="CESUPA" class="w-52 h-auto" />
+      </div>
+      <nav id="sidebar-nav" class="flex flex-col gap-2">
+        <a href="#"
+          class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl active bg-indigo-500/10 text-indigo-400 ring-1 ring-inset ring-indigo-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-colors" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7m-9 2v6m0 0h4m-4 0a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2z" />
+          </svg>
+          <span class="text-sm font-medium leading-normal transition-colors">Início</span>
+        </a>
+        <a href="#"
+          class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-white/5 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-colors" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3v18h18M9 17v-6m4 6V7m4 10v-2" />
+          </svg>
+          <span class="text-sm font-medium leading-normal transition-colors">Atividade</span>
+        </a>
+        <a href="#"
+          class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-white/5 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-colors" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span class="text-sm font-medium leading-normal transition-colors">Usuários</span>
+        </a>
+        <a href="#"
+          class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-white/5 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-colors" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11.25 3.75a.75.75 0 011.5 0v1.1a7.5 7.5 0 015.65 5.65h1.1a.75.75 0 010 1.5h-1.1a7.5 7.5 0 01-5.65 5.65v1.1a.75.75 0 01-1.5 0v-1.1a7.5 7.5 0 01-5.65-5.65h-1.1a.75.75 0 010-1.5h1.1a7.5 7.5 0 015.65-5.65v-1.1z" />
+          </svg>
+          <span class="text-sm font-medium leading-normal transition-colors">Configurações</span>
+        </a>
+        <a href="#"
+          class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-white/5 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-colors" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 18h.01M12 14a4 4 0 100-8 4 4 0 000 8zm0 0v2a2 2 0 002 2h-4a2 2 0 002-2z" />
+          </svg>
+          <span class="text-sm font-medium leading-normal transition-colors">Ajuda</span>
+        </a>
+
+      </nav>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col bg-zinc-950 overflow-y-auto no-scrollbar relative">
+      <!-- Ambient Background Glow -->
+      <div
+        class="fixed top-0 left-[300px] w-full h-[500px] bg-indigo-600/10 blur-[120px] pointer-events-none rounded-full -translate-y-1/2">
+      </div>
+
+      <!-- Dashboard Content -->
+      <!-- Dashboard Content -->
+      <section id="dashboard-section" class="p-8">
+
+        <!-- AI Search Component (Unified Premium Design) -->
+        <div id="ai-search-container" class="w-full mb-8 relative z-50">
+          <!-- Main Search Box (Expands when results show) -->
+          <div id="ai-search-box" class="ai-search-box">
+            <!-- Input Area -->
+            <div class="ai-search-input-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" class="ai-search-icon" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" id="dashboard-ai-input" class="ai-search-input" placeholder="Pergunte ao Veritas..."
+                autocomplete="off">
+              <span id="ai-loading-indicator" class="hidden">
+                <svg class="animate-spin size-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                  </path>
+                </svg>
+              </span>
+            </div>
+
+            <!-- Result Area (Hidden by default, shown inside the same box) -->
+            <div id="ai-result-area" class="ai-result-area hidden">
+              <div class="ai-result-divider"></div>
+              <div class="ai-result-content-wrapper">
+                <div class="ai-result-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <div class="ai-result-text">
+                  <p class="ai-result-label">Veritas AI</p>
+                  <div id="ai-result-content" class="ai-result-body"></div>
+                </div>
+                <button id="close-ai-result" class="ai-result-close">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Cards -->
+        <div class="flex flex-wrap gap-6 mb-8">
+          <button
+            class="dashboard-card flex-1 min-w-[200px] bg-zinc-900 border border-white/5 rounded-2xl p-6 text-left hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/10 transition-all group"
+            data-target="presentes">
+            <p class="text-zinc-400 text-sm font-medium mb-1">Presença hoje</p>
+            <p class="text-zinc-100 text-3xl font-bold group-hover:text-indigo-400 transition-colors"
+              id="presenca-hoje">125</p>
+          </button>
+          <button
+            class="dashboard-card flex-1 min-w-[200px] bg-zinc-900 border border-white/5 rounded-2xl p-6 text-left hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10 transition-all group"
+            data-target="ausentes">
+            <p class="text-zinc-400 text-sm font-medium mb-1">Ausentes hoje</p>
+            <p class="text-zinc-100 text-3xl font-bold group-hover:text-purple-400 transition-colors"
+              id="ausentes-hoje">15</p>
+          </button>
+          <button
+            class="dashboard-card flex-1 min-w-[200px] bg-zinc-900 border border-white/5 rounded-2xl p-6 text-left hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group"
+            data-target="todos">
+            <p class="text-zinc-400 text-sm font-medium mb-1">Total de alunos</p>
+            <p class="text-zinc-100 text-3xl font-bold group-hover:text-emerald-400 transition-colors"
+              id="total-alunos">140</p>
+          </button>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Weekly Trend (Line Chart) -->
+          <div class="lg:col-span-2 bg-zinc-900 border border-white/5 rounded-2xl p-6 shadow-lg shadow-black/20">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-zinc-400 text-sm font-medium">Tendência Semanal</h3>
+              <div class="flex items-center gap-2">
+                <span class="size-2 rounded-full bg-indigo-500"></span>
+                <span class="text-xs text-zinc-500">Presenças</span>
+              </div>
+            </div>
+            <div class="relative h-64 w-full">
+              <canvas id="chart-weekly"></canvas>
+            </div>
+          </div>
+
+          <!-- Daily Overview (Doughnut) -->
+          <div class="bg-zinc-900 border border-white/5 rounded-2xl p-6 shadow-lg shadow-black/20 flex flex-col">
+            <h3 class="text-zinc-400 text-sm font-medium mb-4">Visão Geral Hoje</h3>
+            <div class="relative flex-1 min-h-[200px] flex items-center justify-center">
+              <canvas id="chart-daily"></canvas>
+              <!-- Center Text Overlay -->
+              <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                <span id="chart-total-text" class="text-3xl font-bold text-white">0%</span>
+                <span class="text-[10px] text-zinc-500 uppercase tracking-wider">Presença</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar Section -->
+
+
+
+
+
+
+        <!-- Tabela dinâmica de alunos -->
+        <!-- REMOVER a tabela daqui -->
+      </section>
+      <!-- Nova Seção: Resumo Diário (Presentes/Ausentes) -->
+      <section id="daily-summary-section" class="p-8 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-3 p-4">
+          <p id="daily-summary-title" class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">
+            Resumo Diário</p>
+        </div>
+        <div class="px-4 py-3">
+          <table
+            class="min-w-full bg-zinc-900 rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-black/20">
+            <thead>
+              <tr class="bg-zinc-950/50 border-b border-white/5">
+                <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Nome</th>
+                <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Matrícula</th>
+                <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Turma</th>
+                <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Email</th>
+                <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold w-32">Dias da Semana</th>
+              </tr>
+            </thead>
+            <tbody id="daily-summary-tbody">
+              <!-- Alunos presentes/ausentes serão inseridos aqui dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- Seção de Atividades -->
+      <section id="atividades-section" class="p-8 hidden">
+        <!-- Header Row: Title e Ações Principais -->
+        <!-- Header Row: Title e Ações Principais -->
+        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8">
+          <div class="flex flex-col gap-2">
+            <h1 class="text-zinc-100 text-3xl font-bold tracking-tight">Atividades</h1>
+            <p class="text-zinc-400 text-sm">Gerencie e visualize os registros de entrada e saída em tempo real.</p>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+
+            <button id="export-activities-btn"
+              class="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900 text-zinc-400 hover:text-indigo-400 hover:bg-zinc-800 transition-all border border-white/5 hover:border-indigo-500/30 shadow-sm hover:shadow-indigo-500/10">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5 transition-transform group-hover:scale-110"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span class="font-medium">Exportar Relatório</span>
+            </button>
+            <button id="manual-frequency-btn"
+              class="group flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all hover:shadow-indigo-600/40 ring-1 ring-white/10">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5 transition-transform group-hover:scale-110"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span class="font-semibold">Nova Frequência</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div
+          class="bg-zinc-900/80 backdrop-blur-sm border border-white/5 rounded-2xl p-2 mb-8 flex flex-col md:flex-row gap-2 shadow-lg shadow-black/20">
+          <!-- Search Input -->
+          <div class="relative flex-1 group">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                class="size-5 text-zinc-500 group-focus-within:text-indigo-400 transition-colors" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <input type="text" id="filter-nome"
+              class="block w-full h-11 pl-10 pr-4 rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 placeholder-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none"
+              placeholder="Buscar aluno por nome..." />
+          </div>
+
+          <!-- Separator (Desktop) -->
+          <div class="hidden md:block w-px bg-white/10 my-2 mx-1"></div>
+
+          <!-- Filters Group -->
+          <div class="flex flex-wrap md:flex-nowrap gap-2 items-center">
+            <select id="filter-turma"
+              class="h-11 pl-4 pr-10 rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-300 text-sm focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none cursor-pointer min-w-[140px]">
+              <option value="">Todas as Turmas</option>
+            </select>
+
+            <select id="filter-turno"
+              class="h-11 pl-4 pr-10 rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-300 text-sm focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none cursor-pointer min-w-[140px]">
+              <option value="">Todos os Turnos</option>
+              <option value="Matutino">Matutino</option>
+              <option value="Vespertino">Vespertino</option>
+              <option value="Noturno">Noturno</option>
+            </select>
+
+            <!-- Month/Year Group -->
+            <!-- Month Filter -->
+            <select id="filter-mes-select"
+              class="h-11 pl-4 pr-10 rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-300 text-sm focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none cursor-pointer min-w-[140px]">
+              <option value="">Mês</option>
+              <option value="01">Janeiro</option>
+              <option value="02">Fevereiro</option>
+              <option value="03">Março</option>
+              <option value="04">Abril</option>
+              <option value="05">Maio</option>
+              <option value="06">Junho</option>
+              <option value="07">Julho</option>
+              <option value="08">Agosto</option>
+              <option value="09">Setembro</option>
+              <option value="10">Outubro</option>
+              <option value="11">Novembro</option>
+              <option value="12">Dezembro</option>
+            </select>
+
+            <!-- Year Input -->
+            <div class="relative">
+              <input type="number" id="filter-ano-input"
+                class="block w-24 h-11 px-4 rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 placeholder-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none text-center appearance-none"
+                placeholder="Ano" />
+              <style>
+                #filter-ano-input::-webkit-outer-spin-button,
+                #filter-ano-input::-webkit-inner-spin-button {
+                  -webkit-appearance: none;
+                  margin: 0;
+                }
+
+                #filter-ano-input {
+                  -moz-appearance: textfield;
+                  appearance: textfield;
+                  -webkit-appearance: textfield;
+                }
+              </style>
+            </div>
+
+            <button id="clear-filters-btn"
+              class="h-11 px-4 rounded-xl bg-zinc-950/50 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 border border-white/5 hover:border-red-500/30 transition-all flex items-center justify-center"
+              title="Limpar Filtros">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-black/20">
+          <table class="min-w-full bg-zinc-900">
+            <thead>
+              <tr class="bg-zinc-950/50 border-b border-white/5">
+                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Aluno</th>
+                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Turma</th>
+                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Entrada</th>
+                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Saída</th>
+              </tr>
+            </thead>
+            <tbody id="atividades-tbody">
+              <!-- Linhas de atividades serão inseridas aqui dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- Seção de Ajuda -->
+      <!-- Seção de Ajuda -->
+      <section id="ajuda-section" class="p-8 hidden">
+        <h2 class="text-3xl font-bold tracking-tight text-zinc-100 mb-6">Guia de Ajuda e Suporte do Veritas</h2>
+
+        <div class="space-y-8">
+          <!-- Visão Geral -->
+          <div>
+            <h3 class="text-2xl font-bold tracking-tight text-zinc-200 mb-3">Visão Geral do Sistema</h3>
+            <p class="text-zinc-400 leading-relaxed">
+              O Veritas é um sistema completo de controle de acesso e gestão de presença, utilizando tecnologia
+              biométrica para garantir segurança e precisão. Ele é composto por um dispositivo de hardware inteligente
+              (ESP + Sensor Biométrico) e uma aplicação desktop intuitiva para gerenciamento. Com o Veritas, você pode
+              facilmente cadastrar novos usuários, monitorar atividades em tempo real e gerenciar as configurações do
+              sistema.
+            </p>
+          </div>
+
+          <!-- Como Usar -->
+          <div>
+            <h3 class="text-2xl font-bold tracking-tight text-zinc-200 mb-3">Como Usar o Veritas</h3>
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-indigo-400 mb-2">1. Início (Dashboard)</h4>
+                <ul class="list-disc list-inside text-zinc-400 mt-2 space-y-1 ml-2">
+                  <li>Visualize rapidamente as estatísticas de presença (presentes, ausentes, Total de alunos) para o
+                    dia atual.</li>
+                  <li>Acompanhe as últimas atividades de entrada e saída em tempo real no feed de atividades recentes.
+                  </li>
+                  <li>Utilize o calendário interativo para selecionar e visualizar atividades em datas específicas.</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold text-indigo-400 mb-2">2. Atividade</h4>
+                <ul class="list-disc list-inside text-zinc-400 mt-2 space-y-1 ml-2">
+                  <li>Acesse a lista completa e detalhada de todas as atividades de entrada e saída registradas pelo
+                    sistema.</li>
+                  <li>As atividades são organizadas cronologicamente e incluem informações como nome do usuário, turma,
+                    tipo de registro (Entrada/Saída) e o horário exato.</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold text-indigo-400 mb-2">3. Usuários</h4>
+                <ul class="list-disc list-inside text-zinc-400 mt-2 space-y-1 ml-2">
+                  <li><b>Cadastrar Novo Usuário:</b> Clique no ícone <svg xmlns="http://www.w3.org/2000/svg"
+                      class="inline-block w-4 h-4 align-text-bottom text-indigo-400" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg> para abrir o formulário. Preencha os dados solicitados (Nome, Matrícula, Turma, Email) e siga
+                    as instruções no sensor biométrico para registrar a digital do novo usuário.</li>
+                  <li><b>Sincronizar Usuários:</b> Utilize o ícone <svg xmlns="http://www.w3.org/2000/svg"
+                      class="inline-block w-4 h-4 align-text-bottom text-indigo-400" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l16 16" />
+                    </svg> para importar para o sistema usuários que podem ter sido cadastrados diretamente no
+                    dispositivo ou em outro ambiente.</li>
+                  <li><b>Editar/Excluir:</b> Use o menu de opções na tabela para gerenciar registros existentes.</li>
+                  <li><b>Buscar:</b> A barra de busca permite localizar rapidamente usuários por nome, matrícula ou ID.
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-indigo-400 mb-2">4. Assistente Inteligente (IA)</h4>
+                <p class="text-zinc-400 mb-3">O Veritas possui uma IA integrada capaz de responder perguntas sobre o
+                  sistema em linguagem natural. Você pode perguntar sobre:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-4">
+                    <h5 class="text-white font-medium mb-2 flex items-center gap-2">
+                      <span class="text-indigo-400">🔍</span> Alunos e Faltas
+                    </h5>
+                    <ul class="text-sm text-zinc-400 space-y-2">
+                      <li>"Quem é o <b>[Nome do Aluno]</b>?"</li>
+                      <li>"Quantas faltas o <b>[Nome]</b> tem?"</li>
+                      <li>"Quem faltou hoje?"</li>
+                      <li>"Quem está presente agora?"</li>
+                    </ul>
+                  </div>
+
+                  <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-4">
+                    <h5 class="text-white font-medium mb-2 flex items-center gap-2">
+                      <span class="text-emerald-400">🏥</span> Atendimentos
+                    </h5>
+                    <ul class="text-sm text-zinc-400 space-y-2">
+                      <li>"Quem atende a <b>[Paciente]</b>?"</li>
+                      <li>"Quem é o aluno responsável por <b>[Paciente]</b>?"</li>
+                      <li>"Quantos assistidos a <b>[Aluno]</b> tem?"</li>
+                      <li>"Mostre a lista de pacientes do <b>[Aluno]</b>"</li>
+                    </ul>
+                  </div>
+                </div>
+                <p class="text-zinc-500 text-xs mt-3 italic">* Dica: Você pode continuar a conversa usando pronomes como
+                  "ele", "ela" ou "dele". Ex: "Quem é JAIR?", depois "Quantos assistidos ele tem?".</p>
+              </div>
+
+              <div>
+                <h4 class="xl font-bold mb-2">5. Configurações</h4>
+                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
+                  <li>Nesta seção, você pode selecionar e configurar a porta serial correta para estabelecer a
+                    comunicação entre a aplicação desktop e o dispositivo ESP.</li>
+                  <li>Um indicador de status de conexão informa se a comunicação está ativa e funcionando corretamente.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Solução de Problemas -->
+          <div>
+            <h3 class="text-2xl font-bold mb-3">Solução de Problemas Comuns</h3>
+            <div class="space-y-4">
+              <div>
+                <h4 class="xl font-bold mb-2">"Sensor não responde" ou "Erro de comunicação serial"</h4>
+                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
+                  <li>Verifique se o dispositivo ESP está ligado, conectado fisicamente ao computador e recebendo
+                    energia.</li>
+                  <li>Na aba "Configurações", certifique-se de que a porta serial correta está selecionada e que não há
+                    outros programas utilizando-a.</li>
+                  <li>Tente reiniciar o dispositivo ESP e o aplicativo Veritas.</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="xl font-bold mb-2">"Digital não reconhecida" ou "Erro ao processar imagem"</h4>
+                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
+                  <li>Assegure-se de que o dedo (e o sensor) estejam limpos e secos.</li>
+                  <li>Pressione o dedo firmemente sobre o sensor, cobrindo completamente a área de leitura, e mantenha-o
+                    imóvel por alguns segundos.</li>
+                  <li>Tente cadastrar a digital novamente, prestando atenção às instruções e à posição do dedo.</li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- FAQ -->
+          <div>
+            <h3 class="text-2xl font-bold mb-3">Perguntas Frequentes (FAQ)</h3>
+            <div class="space-y-4">
+              <div>
+                <h4 class="xl font-bold mb-2">Posso usar o Veritas em vários computadores?</h4>
+                <p class="text-[#9badc0]">
+                  Atualmente, a aplicação desktop do Veritas é projetada para ser executada localmente em um único
+                  computador. O banco de dados de usuários e atividades é armazenado localmente. Para uso em múltiplos
+                  locais ou por múltiplos usuários simultaneamente, seria necessária uma solução de banco de dados
+                  centralizada e uma arquitetura diferente.
+                </p>
+              </div>
+              <div>
+                <h4 class="xl font-bold mb-2">O que acontece se a conexão com o sensor for perdida?</h4>
+                <p class="text-[#9badc0]">
+                  Se a conexão for perdida, o sistema não conseguirá registrar novas atividades biométricas ou gerenciar
+                  digitais no sensor. No entanto, os dados de usuários e atividades já armazenados no aplicativo (no
+                  arquivo database.json) permanecerão intactos. Reconecte o dispositivo e a porta serial para restaurar
+                  a funcionalidade completa.
+                </p>
+              </div>
+              <div>
+                <h4 class="xl font-bold mb-2">Como faço para fazer backup dos dados?</h4>
+                <p class="text-[#9badc0]">
+                  O banco de dados do aplicativo é um arquivo simples chamado <code>database.json</code>, localizado na
+                  pasta <code>data/</code> do projeto. Você pode copiá-lo para um local seguro para fazer backup. Para
+                  restaurar, basta substituir o arquivo <code>database.json</code> existente pelo seu backup.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arquitetura do Software -->
+          <div>
+            <h3 class="text-2xl font-bold mb-3">Arquitetura do Software (Informações Técnicas)</h3>
+            <div class="space-y-4">
+              <div>
+                <h4 class="xl font-bold mb-2">Firmware (Dispositivo Embarcado)</h4>
+                <p class="text-[#9badc0]">
+                  O cérebro do dispositivo de hardware é um microcontrolador (ESP8266/ESP32) programado em C++
+                  utilizando o framework Arduino através do PlatformIO.
+                </p>
+                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
+                  <li><b>Linguagem:</b> C++ (Arduino)</li>
+                  <li><b>Bibliotecas Principais:</b> Adafruit_Fingerprint (para o sensor biométrico), RTClib (para o
+                    relógio de tempo real), LittleFS (para armazenamento de dados), e ArduinoJson (para comunicação
+                    serial).</li>
+                  <li><b>Funcionalidades:</b> Gerencia o cadastro e a verificação de impressões digitais, armazena dados
+                    de usuários e logs de atividade em um sistema de arquivos interno e comunica-se com a aplicação
+                    desktop via porta serial usando o formato JSON.</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="xl font-bold mb-2">Aplicação Desktop (Painel de Controle)</h4>
+                <p class="text-[#9badc0]">
+                  A interface de gerenciamento é uma aplicação desktop multiplataforma construída com Electron.
+                </p>
+                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
+                  <li><b>Tecnologias:</b> Electron, Node.js, HTML5, Tailwind CSS, JavaScript.</li>
+                  <li><b>Funcionalidades:</b> Permite listar e cadastrar novos usuários, visualizar a tabela de
+                    atividades, e configurar a porta de comunicação com o hardware. A comunicação é feita através da
+                    biblioteca `serialport`.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Montagem do Hardware -->
+          <div>
+            <h3 class="text-2xl font-bold mb-3">Montagem do Hardware</h3>
+            <p class="text-[#9badc0] mb-4">
+              Os componentes de hardware devem ser conectados ao microcontrolador (assumindo um NodeMCU/ESP8266) da
+              seguinte forma:
+            </p>
+            <ul class="list-disc list-inside text-[#9badc0] space-y-2">
+              <li>
+                <b>Sensor Biométrico (R307):</b>
+                <ul class="list-circle list-inside ml-6">
+                  <li><b>VCC:</b> 5V</li>
+                  <li><b>GND:</b> GND</li>
+                  <li><b>TX (Sensor):</b> Pino D7 (GPIO 13) do ESP</li>
+                  <li><b>RX (Sensor):</b> Pino D6 (GPIO 12) do ESP</li>
+                </ul>
+              </li>
+              <li>
+                <b>Módulo de Relógio (RTC DS3231):</b>
+                <ul class="list-circle list-inside ml-6">
+                  <li><b>VCC:</b> 3.3V</li>
+                  <li><b>GND:</b> GND</li>
+                  <li><b>SDA:</b> Pino D2 (GPIO 4) do ESP</li>
+                  <li><b>SCL:</b> Pino D1 (GPIO 5) do ESP</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contato e Suporte -->
+          <div>
+            <h3 class="text-2xl font-bold mb-3">Contato e Suporte</h3>
+            <p class="text-[#9badc0]">
+              Para dúvidas, problemas ou sugestões, entre em contato com o desenvolvedor:
+            </p>
+            <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
+              <li><b>Email:</b> <a href="mailto:suporte@veritas.com"
+                  class="text-blue-400 hover:underline">suporte@veritas.com</a></li>
+              <li><b>Telefone:</b> (91) 98765-4321</li>
+              <li><b>Horário de Atendimento:</b> Segunda a Sexta, 9h às 18h (horário de Belém)</li>
+            </ul>
+          </div>
+
+          <div class="pt-8 border-t border-t-[#293542]">
+            <p class="text-center text-sm text-[#9badc0]">
+              Copyright © 2025 Geovanni Honorato. Todos os direitos reservados.
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Seção de Usuários -->
+      <section id="usuarios-section" class="p-8 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-3 p-4">
+          <p class="text-zinc-100 tracking-light text-3xl font-bold leading-tight min-w-72">Usuários</p>
+          <div class="flex items-center gap-4 ml-auto">
+            <button id="add-user-btn"
+              class="flex items-center justify-center gap-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 transition-all px-4 h-10 shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span class="font-semibold">Adicionar</span>
+            </button>
+            <div class="relative">
+              <button id="user-menu-btn" title="Mais Opções"
+                class="flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01" />
+                </svg>
+              </button>
+              <div id="user-menu-dropdown"
+                class="absolute right-0 mt-2 w-56 bg-zinc-900 border border-white/5 rounded-2xl shadow-xl shadow-black/50 hidden z-10 overflow-hidden">
+                <a href="#" id="sync-users-menu-item"
+                  class="flex items-center gap-2 px-4 py-3 text-zinc-300 hover:bg-white/5 hover:text-white transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l16 16" />
+                  </svg>
+                  <span>Sincronizar com Sensor</span>
+                </a>
+                <div class="border-t border-white/5 my-0"></div>
+                <a href="#" id="remove-duplicates-menu-item"
+                  class="flex items-center gap-2 px-4 py-3 text-yellow-400 hover:bg-white/5 hover:text-yellow-300 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>Remover Duplicados</span>
+                </a>
+                <a href="#" id="delete-users-menu-item"
+                  class="flex items-center gap-2 px-4 py-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <span>Excluir Usuários...</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="px-4 py-3">
+          <label class="flex flex-col min-w-40 h-11 w-full relative group">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px"
+                class="text-zinc-500 group-focus-within:text-indigo-400 transition-colors" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <input id="search-aluno" placeholder="Buscar por nome, matrícula ou ID"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 placeholder-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 h-full pl-10 text-base font-normal leading-normal outline-none transition-all" />
+          </label>
+        </div>
+        <div class="px-4 py-3">
+          <table
+            class="min-w-full bg-zinc-900 rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-black/20">
+            <thead>
+              <tr class="bg-zinc-950/50 border-b border-white/5">
+                <th class="px-4 py-3 text-left w-10 delete-mode-col hidden"></th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold border-r border-white/5">Nome</th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">
+                  Matrícula</th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">Turma
+                </th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">Turno
+                </th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-48 border-r border-white/5">Email
+                </th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">
+                  Cabine
+                </th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">
+                  Gênero
+                </th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-16 border-r border-white/5">ID
+                </th>
+                <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-32 border-r border-white/5">Dias
+                  da
+                  Semana</th>
+                <th class="px-4 py-3 text-center text-white text-sm font-medium w-12"></th>
+              </tr>
+            </thead>
+            <tbody id="usuarios-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- Seção de Configurações -->
+      <section id="settings-section" class="p-8 hidden w-full h-full flex flex-col">
+
+        <header class="mb-6 flex-shrink-0">
+          <h1 class="text-3xl font-bold text-white tracking-tight">Configurações</h1>
+          <p class="text-zinc-400 mt-1">Gerencie hardware, notificações e dados do sistema.</p>
+        </header>
+
+        <div class="flex flex-col gap-6 flex-1">
+          <!-- Row 1: 3 Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
+
+            <!-- Card: Hardware & Sensores -->
+            <div class="bg-zinc-900/80 border border-white/5 rounded-2xl p-6 flex flex-col shadow-xl shadow-black/10">
+              <div class="flex items-center gap-3 pb-4 mb-4 border-b border-white/5">
+                <div class="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                  </svg>
+                </div>
+                <h3 class="font-semibold text-white text-base">Hardware & Sensores</h3>
+              </div>
+
+              <div class="space-y-5 flex-1">
+                <!-- Porta Serial -->
+                <div>
+                  <label class="text-sm font-medium text-zinc-400 mb-2 block">Porta Serial (ESP)</label>
+                  <div class="flex gap-2">
+                    <select id="select-serial-port"
+                      class="flex-1 bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-colors cursor-pointer">
+                      <option value="">Selecione a porta...</option>
+                    </select>
+                    <button id="save-serial-settings"
+                      class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30">Conectar</button>
+                  </div>
+                  <div class="flex items-center gap-2 mt-2">
+                    <div id="status-serial" class="size-2.5 rounded-full bg-red-500 animate-pulse"></div>
+                    <span class="text-xs text-zinc-500">Desconectado</span>
+                  </div>
+                </div>
+
+                <!-- Feedback Sonoro -->
+                <div class="flex items-center justify-between py-3 border-t border-white/5">
+                  <div>
+                    <p class="text-sm font-medium text-zinc-300">Feedback Sonoro</p>
+                    <p class="text-xs text-zinc-500">Bip ao registrar ponto</p>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggle-buzzer" class="sr-only peer">
+                    <div
+                      class="w-11 h-6 bg-zinc-700 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5">
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Sincronizar Relógio -->
+                <div class="flex items-center justify-between py-3 border-t border-white/5">
+                  <div>
+                    <p class="text-sm font-medium text-zinc-300">Sincronizar Relógio</p>
+                    <p class="text-xs text-zinc-500">Ajustar hora do sensor</p>
+                  </div>
+                  <button id="sync-time-btn"
+                    class="text-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 py-2 rounded-xl transition-colors border border-white/5">Sincronizar</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Inteligência Artificial (Oráculo) -->
+            <div
+              class="bg-zinc-900/80 border border-white/5 rounded-2xl p-6 flex flex-col shadow-xl shadow-black/10">
+              <div class="flex items-center gap-3 pb-4 mb-4 border-b border-white/5">
+                <div class="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-white text-base">Oráculo Veritas</h3>
+                  <p class="text-xs text-indigo-300">Inteligência Artificial</p>
+                </div>
+              </div>
+              <div class="flex-1 flex flex-col gap-4">
+                <p class="text-zinc-400 text-sm leading-relaxed">
+                  Ensine a IA a responder perguntas sobre o NPJ.<br>
+                  Suporta: <span class="text-zinc-300">PDF, Excel, Word, Imagens</span>.
+                </p>
+                <div class="mt-2">
+                  <label class="block text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2">Pasta de
+                    Origem</label>
+                  <input type="text" id="knowledge-path-input" placeholder="Padrão (desktop-app/kp_source)"
+                    class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-colors placeholder-zinc-600">
+                  <p class="text-[10px] text-zinc-600 mt-1 pl-1">Cole aqui o caminho do seu Google Drive ou Pasta
+                    Local.</p>
+                </div>
+                <div class="mt-auto pt-4">
+                  <button id="knowledge-ingest-btn"
+                    class="group w-full h-12 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20 hover:shadow-indigo-600/30">
+                    <span class="group-hover:scale-110 transition-transform">🧠</span>
+                    Reaprender Documentos
+                  </button>
+                  <p id="knowledge-status" class="text-xs text-zinc-500 mt-3 text-center min-h-[1rem]"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Notificações por Email -->
+            <div class="bg-zinc-900/80 border border-white/5 rounded-2xl p-6 flex flex-col shadow-xl shadow-black/10">
+              <div class="flex items-center gap-3 pb-4 mb-4 border-b border-white/5">
+                <div class="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </div>
+                <h3 class="font-semibold text-white text-base">Notificações & Login</h3>
+              </div>
+              <div class="space-y-4 flex-1">
+                <div>
+                  <label class="text-sm font-medium text-zinc-400 mb-2 block">Método de Envio</label>
+                  <select id="email-mode-select"
+                    class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500/50 transition-colors cursor-pointer">
+                    <option value="oauth2">Google OAuth (Recomendado)</option>
+                    <option value="smtp">SMTP (Legacy)</option>
+                  </select>
+                </div>
+                <!-- OAuth Section -->
+                <div id="oauth-fields"
+                  class="p-2.5 bg-purple-500/10 rounded-xl text-purple-400">
+                  <div class="size-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <svg viewBox="0 0 24 24" class="size-5">
+                      <path
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        fill="#4285F4"></path>
+                      <path
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        fill="#34A853"></path>
+                      <path
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                        fill="#FBBC05"></path>
+                      <path
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        fill="#EA4335"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p id="oauth-status" class="text-sm font-bold text-white">Não Conectado</p>
+                    <p class="text-xs text-zinc-500">Conecte sua conta institucional</p>
+                  </div>
+                  <button id="connect-google-btn"
+                    class="w-full py-2 bg-white hover:bg-zinc-200 text-zinc-900 font-semibold rounded-lg text-xs transition-colors">
+                    Conectar
+                  </button>
+                </div>
+                <!-- SMTP Section (Hidden) -->
+                <div id="smtp-fields" class="space-y-3 hidden">
+                  <div class="grid grid-cols-2 gap-3">
+                    <input id="smtp-host" placeholder="Host"
+                      class="bg-zinc-950 border border-white/10 rounded-xl px-4 py-2 text-sm text-white">
+                    <input id="smtp-port" placeholder="Porta"
+                      class="bg-zinc-950 border border-white/10 rounded-xl px-4 py-2 text-sm text-white">
+                  </div>
+                  <input id="smtp-user" placeholder="Email"
+                    class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2 text-sm text-white">
+                  <input id="smtp-pass" type="password" placeholder="Senha"
+                    class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2 text-sm text-white">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input id="smtp-secure" type="checkbox" class="rounded bg-zinc-900 border-zinc-700 text-indigo-600">
+                    <span class="text-sm text-zinc-400">SSL</span>
+                  </label>
+                  <button id="save-settings-btn"
+                    class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-semibold transition-colors">Salvar
+                    SMTP</button>
+                </div>
+                
+                <!-- Test Email Button (Global) -->
+                <div class="pt-4 border-t border-white/5">
+                  <button id="test-email-btn"
+                    class="w-full border border-white/20 hover:bg-white/5 text-zinc-300 py-2.5 rounded-xl text-xs font-medium transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    Enviar Email de Teste (Exemplo)
+                  </button>
+                  <p id="email-test-status" class="text-xs text-center mt-2 min-h-[1.25em]"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Gestão de Dados -->
+            <div class="bg-zinc-900/80 border border-white/5 rounded-2xl p-6 flex flex-col shadow-xl shadow-black/10">
+              <div class="flex items-center gap-3 pb-4 mb-4 border-b border-white/5">
+                <div class="p-2.5 bg-blue-500/10 rounded-xl text-blue-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                  </svg>
+                </div>
+                <h3 class="font-semibold text-white text-base">Gestão de Dados</h3>
+              </div>
+
+              <div class="space-y-5 flex-1">
+                <!-- Base de Alunos -->
+                <div>
+                  <label class="text-sm font-medium text-zinc-400 mb-2 block">Base de Alunos (Excel)</label>
+                  <div class="flex gap-2">
+                    <input id="student-data-path-display" readonly placeholder="Selecionar arquivo..."
+                      class="flex-1 bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-400 cursor-not-allowed">
+                    <button id="select-student-data-path-btn"
+                      class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border border-white/5">Buscar</button>
+                  </div>
+                </div>
+
+                <!-- Pasta de Relatórios -->
+                <div>
+                  <label class="text-sm font-medium text-zinc-400 mb-2 block">Pasta de Relatórios</label>
+                  <div class="flex gap-2">
+                    <input id="excel-path-display" readonly placeholder="Selecionar pasta..."
+                      class="flex-1 bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-400 cursor-not-allowed">
+                    <button id="select-excel-path-btn"
+                      class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border border-white/5">Buscar</button>
+                  </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/5">
+                  <button id="settings-sync-users-btn"
+                    class="flex flex-col items-center justify-center p-4 bg-zinc-950/50 hover:bg-zinc-800 border border-white/5 rounded-xl transition-all group">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 text-zinc-500 group-hover:text-indigo-400 transition-colors mb-2"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 2v6h-6"></path>
+                      <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+                      <path d="M3 22v-6h6"></path>
+                      <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+                    </svg>
+                    <span class="text-xs font-medium text-zinc-400 group-hover:text-zinc-300">Importar Sensor</span>
+                  </button>
+                  <button id="settings-remove-duplicates-btn"
+                    class="flex flex-col items-center justify-center p-4 bg-zinc-950/50 hover:bg-zinc-800 border border-white/5 rounded-xl transition-all group">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 text-zinc-500 group-hover:text-yellow-400 transition-colors mb-2"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span class="text-xs font-medium text-zinc-400 group-hover:text-zinc-300">Otimizar DB</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Row 2: Zona de Perigo (Full Width) -->
+          <div
+            class="bg-gradient-to-r from-red-500/5 to-red-600/5 border border-red-500/10 rounded-2xl p-5 flex-shrink-0 shadow-xl shadow-red-500/5">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <div class="flex items-center gap-4">
+                <div class="p-3 bg-red-500/10 rounded-xl text-red-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-bold text-red-100 text-lg">Zona de Perigo</h3>
+                  <p class="text-sm text-red-500/60">Ações irreversíveis</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-6">
+                <div class="flex items-center gap-4 px-5 py-3 bg-red-500/5 rounded-xl border border-red-500/10">
+                  <div>
+                    <p class="text-sm font-semibold text-red-100">Limpar Histórico</p>
+                    <p class="text-xs text-red-500/50">Apaga todos os registros de ponto</p>
+                  </div>
+                  <button id="clear-activities-btn"
+                    class="px-5 py-2.5 bg-red-500/10 hover:bg-red-600 hover:text-white text-red-400 text-sm font-bold rounded-xl border border-red-500/20 transition-all hover:shadow-lg hover:shadow-red-600/20">
+                    Executar
+                  </button>
+                </div>
+
+                <div class="w-px h-14 bg-red-500/10 hidden md:block"></div>
+
+                <div class="flex items-center gap-4 px-5 py-3 bg-red-500/5 rounded-xl border border-red-500/10">
+                  <div>
+                    <p class="text-sm font-semibold text-red-100">Formatar Sensor</p>
+                    <p class="text-xs text-red-500/50">Remove todas as digitais do hardware</p>
+                  </div>
+                  <button id="empty-sensor-btn"
+                    class="px-5 py-2.5 bg-red-500/10 hover:bg-red-600 hover:text-white text-red-400 text-sm font-bold rounded-xl border border-red-500/20 transition-all hover:shadow-lg hover:shadow-red-600/20">
+                    Executar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+      <!-- Modal/Cadastro de Aluno -->
+      <div id="cadastro-aluno"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
+        <div
+          class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-xl p-6 md:p-8 relative max-h-full overflow-y-auto">
+          <button id="fechar-cadastro"
+            class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl transition-colors">&times;</button>
+          <h2 id="modal-title" class="text-zinc-100 text-2xl font-bold mb-6 tracking-tight">Adicionar Aluno</h2>
+          <form id="form-aluno" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+            <input type="hidden" name="id" id="aluno-id" />
+            <label class="flex flex-col md:col-span-2 relative group">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Nome completo</span>
+              <input name="nome" required placeholder="Digite o nome completo"
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+              <button type="button" id="search-by-name"
+                class="absolute right-3 top-9 text-zinc-500 hover:text-indigo-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
+                  viewBox="0 0 256 256">
+                  <path
+                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
+                  </path>
+                </svg>
+              </button>
+            </label>
+            <label class="flex flex-col relative">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Matrícula</span>
+              <input name="matricula" required placeholder="Digite a matrícula"
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+              <button type="button" id="search-by-matricula"
+                class="absolute right-3 top-9 text-zinc-500 hover:text-indigo-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
+                  viewBox="0 0 256 256">
+                  <path
+                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
+                  </path>
+                </svg>
+              </button>
+            </label>
+            <label class="flex flex-col">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Turma</span>
+              <select name="turma" required
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+                <option value="">Selecione a turma</option>
+                <option value="ADM">ADM</option>
+                <option value="DI7NA">DI7NA</option>
+                <option value="DI8MA">DI8MA</option>
+                <option value="DI8TA">DI8TA</option>
+                <option value="DI8TB">DI8TB</option>
+                <option value="DI8NA">DI8NA</option>
+                <option value="DI9NA">DI9NA</option>
+                <option value="DI0MA">DI0MA</option>
+                <option value="DI0TA">DI0TA</option>
+                <option value="DI0TB">DI0TB</option>
+                <option value="DI0NA">DI0NA</option>
+              </select>
+            </label>
+            <label class="flex flex-col">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Turno</span>
+              <select name="turno" required
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+                <option value="">Selecione o turno</option>
+                <option value="Matutino">Matutino</option>
+                <option value="Vespertino">Vespertino</option>
+                <option value="Noturno">Noturno</option>
+              </select>
+            </label>
+            <label class="flex flex-col md:col-span-2">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Email</span>
+              <input name="email" type="email" required placeholder="Digite o email"
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+            </label>
+
+            <label class="flex flex-col">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Cabine</span>
+              <input name="cabine" placeholder="Digite a cabine do aluno"
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+            </label>
+
+            <label class="flex flex-col">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Gênero</span>
+              <select name="genero" required
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+                <option value="">Selecione o gênero</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+
+            <label class="flex flex-col md:col-span-2">
+              <span class="text-zinc-400 text-sm font-medium pb-2">Dias da semana</span>
+              <div class="grid grid-cols-4 sm:grid-cols-7 gap-2 mt-2">
+                <label
+                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  <input type="checkbox" name="dias-semana" value="1"
+                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
+                  <span class="text-zinc-300 text-sm">Seg</span>
+                </label>
+                <label
+                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  <input type="checkbox" name="dias-semana" value="2"
+                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
+                  <span class="text-zinc-300 text-sm">Ter</span>
+                </label>
+                <label
+                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  <input type="checkbox" name="dias-semana" value="3"
+                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
+                  <span class="text-zinc-300 text-sm">Qua</span>
+                </label>
+                <label
+                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  <input type="checkbox" name="dias-semana" value="4"
+                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
+                  <span class="text-zinc-300 text-sm">Qui</span>
+                </label>
+                <label
+                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  <input type="checkbox" name="dias-semana" value="5"
+                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
+                  <span class="text-zinc-300 text-sm">Sex</span>
+                </label>
+                <label
+                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  <input type="checkbox" name="dias-semana" value="6"
+                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
+                  <span class="text-zinc-300 text-sm">Sáb</span>
+                </label>
+                <label
+                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  <input type="checkbox" name="dias-semana" value="0"
+                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
+                  <span class="text-zinc-300 text-sm">Dom</span>
+                </label>
+              </div>
+            </label>
+            <div class="flex justify-between items-center mt-6 md:col-span-2 border-t border-white/5 pt-6">
+              <button type="button" id="delete-user-modal-btn"
+                class="rounded-full bg-red-600/10 text-red-500 font-bold px-6 h-10 hidden border border-red-500/20 hover:bg-red-600 hover:text-white transition-all text-sm">Excluir</button>
+              <div class="flex gap-3 ml-auto">
+                <button type="submit"
+                  class="rounded-full bg-indigo-600 text-white font-bold px-8 h-10 shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 hover:shadow-indigo-600/40 transition-all text-sm">Salvar</button>
+              </div>
+            </div>
+          </form>
+          <div id="status-biometria" class="text-zinc-300 text-sm font-medium mb-2 mt-4 text-center"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="script.js"></script>
+
+
+
+  <!-- Modal de Alerta/Confirmação Customizado -->
+  <div id="custom-alert-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
+    <div class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-sm p-6 relative">
+      <h3 id="custom-alert-title" class="text-zinc-100 text-xl font-bold mb-4 tracking-tight"></h3>
+      <p id="custom-alert-message" class="text-zinc-400 text-base mb-6 leading-relaxed"></p>
+      <div class="flex justify-end gap-3">
+        <button id="custom-alert-cancel-btn"
+          class="rounded-full bg-zinc-800 text-zinc-300 font-bold px-6 h-10 hidden hover:text-white hover:bg-zinc-700 transition-all text-sm">Cancelar</button>
+        <button id="custom-alert-ok-btn"
+          class="rounded-full bg-indigo-600 text-white font-bold px-8 h-10 shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 hover:shadow-indigo-600/40 transition-all text-sm">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Edição de Atividade -->
+  <div id="edit-activity-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
+    <div
+      class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-md p-6 md:p-8 relative">
+      <button id="close-edit-activity-modal"
+        class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl transition-colors">&times;</button>
+      <h2 class="text-zinc-100 text-2xl font-bold mb-6 tracking-tight">Editar Atividade</h2>
+      <form id="form-edit-activity">
+        <input type="hidden" id="edit-activity-original-timestamp">
+        <input type="hidden" id="edit-activity-user-id">
+
+        <label class="flex flex-col mb-4">
+          <span class="text-zinc-400 text-sm font-medium pb-2">Usuário</span>
+          <input id="edit-activity-user-name" type="text" readonly
+            class="form-input rounded-xl bg-zinc-950/30 border border-white/5 text-zinc-500 h-11 px-4 cursor-not-allowed">
+        </label>
+
+        <label class="flex flex-col mb-4">
+          <span class="text-zinc-400 text-sm font-medium pb-2">Tipo</span>
+          <select id="edit-activity-type"
+            class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+            <option value="Entrada">Entrada</option>
+            <option value="SAIDA">SAIDA</option>
+          </select>
+        </label>
+
+        <label class="flex flex-col mb-4">
+          <span class="text-zinc-400 text-sm font-medium pb-2">Data e Hora</span>
+          <input id="edit-activity-timestamp" type="datetime-local"
+            class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
+            style="color-scheme: dark;">
+        </label>
+
+        <div class="flex justify-end items-center mt-6">
+          <button type="submit"
+            class="rounded-full bg-indigo-600 text-white font-bold px-8 h-10 shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 hover:shadow-indigo-600/40 transition-all text-sm">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Frequência Manual -->
+  <div id="manual-frequency-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
+    <div
+      class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-md p-6 md:p-8 relative">
+      <button id="close-manual-frequency-modal"
+        class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl transition-colors">&times;</button>
+      <h2 class="text-zinc-100 text-2xl font-bold mb-6 tracking-tight">Adicionar Frequência Manual</h2>
+      <form id="form-manual-frequency">
+        <label class="flex flex-col mb-4 relative">
+          <span class="text-zinc-400 text-sm font-medium pb-2">Aluno</span>
+          <input type="text" id="manual-frequency-user-search" placeholder="Digite para buscar o aluno..."
+            autocomplete="off"
+            class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all">
+          <input type="hidden" id="manual-frequency-user-id">
+          <div id="manual-frequency-user-results"
+            class="absolute top-full left-0 right-0 bg-zinc-900 border border-white/5 rounded-b-xl max-h-48 overflow-y-auto z-10 hidden shadow-xl shadow-black/50">
+            <!-- Resultados da busca serão inseridos aqui -->
+          </div>
+        </label>
+
+        <label class="flex flex-col mb-4">
+          <span class="text-zinc-400 text-sm font-medium pb-2">Data e Hora</span>
+          <input id="manual-frequency-timestamp" type="datetime-local" required
+            class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
+            style="color-scheme: dark;">
+        </label>
+
+        <label class="flex flex-col mb-4">
+          <span class="text-zinc-400 text-sm font-medium pb-2">Tipo</span>
+          <select id="manual-frequency-type"
+            class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+            <option value="Entrada">Entrada</option>
+            <option value="SAIDA">Saída</option>
+          </select>
+        </label>
+
+        <div class="flex justify-end items-center mt-8 gap-4 pt-4 border-t border-white/5">
+          <button type="button" id="cancel-manual-frequency"
+            class="rounded-full bg-zinc-800 text-zinc-300 font-bold px-6 h-10 hover:bg-zinc-700 hover:text-white transition-all text-sm">Cancelar</button>
+          <button type="submit"
+            class="rounded-full bg-indigo-600 text-white font-bold px-8 h-10 shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 hover:shadow-indigo-600/40 transition-all text-sm">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- AI Assistant Chat Widget -->
+  <div id="ai-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+    <!-- Chat Window -->
+    <div id="ai-chat-window"
+      class="hidden w-80 sm:w-96 h-[500px] bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all origin-bottom-right animate-in fade-in slide-in-from-bottom-4 duration-300">
+      <!-- Header -->
+      <div class="bg-indigo-600 p-4 flex justify-between items-center shadow-md z-10">
+        <h3 class="font-bold text-white flex items-center gap-2 select-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Veritas AI
+          <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full text-indigo-100 font-medium">Offline</span>
+        </h3>
+        <button id="close-ai-chat"
+          class="text-white/70 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Messages Area -->
+      <div id="ai-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-950/50 scroll-smooth custom-scrollbar">
+        <!-- Welcome Message -->
+        <div class="flex flex-col gap-1 items-start max-w-[85%]">
+          <div
+            class="bg-zinc-800 border border-white/5 text-zinc-200 px-4 py-3 rounded-2xl rounded-tl-sm text-sm shadow-sm">
+            <p>Olá! Sou a assistente inteligente do Veritas. 🤖</p>
+            <p class="mt-2 text-zinc-400 text-xs">Posso responder sobre alunos, faltas, turmas e responsáveis. Tudo
+              offline!</p>
+          </div>
+          <span class="text-[10px] text-zinc-600 ml-1">Agora</span>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="p-3 bg-zinc-900 border-t border-white/5 flex gap-2">
+        <input id="ai-input" type="text" placeholder="Pergunte algo..."
+          class="flex-1 bg-zinc-950/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all">
+        <button id="ai-send-btn"
+          class="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl p-2.5 transition-colors shadow-lg shadow-indigo-600/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rotate-90" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5M5 12l7-7 7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <button id="toggle-ai-chat"
+      class="h-14 w-14 rounded-full bg-indigo-600 hover:bg-indigo-500 shadow-xl shadow-indigo-600/30 text-white flex items-center justify-center transition-all hover:scale-110 active:scale-90 group z-50 ring-2 ring-white/10 hover:ring-indigo-400/50">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 transition-transform group-hover:rotate-12" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+      </svg>
+    </button>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="dropdown.js"></script>
+  <script src="api-web.js"></script>
+  <script src="script.js"></script>
+  <script src="settings.js"></script>
+</body>
+
+</html>

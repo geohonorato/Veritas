@@ -1,0 +1,16 @@
+
+# 📂 Repositório de Conhecimento do Oráculo NPJ
+
+Coloque seus arquivos **PDF**, **DOCX** ou **TXT** nesta pasta.
+O sistema irá ler esses arquivos para aprender sobre o NPJ.
+
+### Como funciona:
+1. Cole os arquivos aqui.
+2. No painel do sistema, clique em "Reaprender Documentos" (ou via API /api/knowledge/ingest).
+3. A IA processará tudo e ficará pronta para responder perguntas baseadas neles.
+
+---
+**Exemplo de Conteúdo (Teste):**
+O Núcleo de Prática Jurídica (NPJ) funciona de segunda a sexta, das 08h às 18h.
+O coordenador atual é o Professor João da Silva.
+Para agendar atendimento, o assistido deve trazer RG, CPF e Comp-Residência.
