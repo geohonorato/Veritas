@@ -14,7 +14,7 @@ let mainWindow = null;
 // let port = null; // Removido
 // let parser = null; // Removido
 let csvExportPath = null;
-let studentDataPath = null;
+// let studentDataPath = null; // Removido
 const webPort = 8080;
 
 // Variável para gerenciar a Promise de cadastro
@@ -165,7 +165,9 @@ function processSerialData(line) {
         // Enviar notificação por Email
         const user = db.getUserById(data.id);
         if (user) {
-             EmailService.sendPointNotification(user, newActivity);
+             console.log(`[IPC Main] Disparando email para ${user.nome}...`);
+             EmailService.sendPointNotification(user, newActivity)
+                .catch(err => console.error('[IPC Main] Erro ao enviar email:', err));
         }
       }
     }
@@ -180,6 +182,7 @@ ipcMain.on('set-csv-path', (event, path) => {
   csvExportPath = path;
 });
 
+/*
 ipcMain.handle('select-student-data-path', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
@@ -198,45 +201,73 @@ ipcMain.handle('search-student-data', (event, { query, type }) => {
     const data = xlsx.utils.sheet_to_json(sheet);
     if (data.length === 0) return null;
 
-    const searchKey = type === 'matricula' ? 'matricula' : 'aluno';
-    const result = data.find(row => {
-      const rowKey = Object.keys(row).find(k => k.toLowerCase().trim() === searchKey);
-      if (rowKey && row[rowKey]) {
-        return String(row[rowKey]).trim().toLowerCase() === String(query).trim().toLowerCase();
-      }
-      return false;
-    });
-
-    if (result) {
-      const normalizedResult = {};
-      for (const key in result) normalizedResult[key.toLowerCase().trim()] = result[key];
-      return normalizedResult;
-    }
-    return null;
+    // ... lógica de busca ...
+    return null; 
   } catch (error) {
-    console.error("Erro ao ler a planilha:", error);
-    return { error: error.message };
+     console.error("Erro leitura excel", error);
+     return null;
   }
+});
+*/
+
+ipcMain.handle('get-local-ip', () => {
+  return getLocalIpAddress();
 });
 
 ipcMain.handle('get-users', () => db.getUsers());
 ipcMain.handle('get-activities', () => db.getActivities());
 
-ipcMain.handle('add-manual-activity', (event, activityData) => {
-  const newActivity = db.addActivity(activityData);
-  if (newActivity) {
-    mainWindow.webContents.send('nova-atividade', newActivity);
-    exportAllActivitiesToExcel().catch(err => console.error(err));
-    
-    // Enviar notificação por Email
-    const user = db.getUserById(activityData.userId);
-    if (user) {
-          EmailService.sendPointNotification(user, newActivity);
-    }
-
-    return { success: true, activity: newActivity };
+ipcMain.handle('add-falta', (event, faltaData) => {
+  const newFalta = db.addFalta(faltaData);
+  if (newFalta) {
+    mainWindow.webContents.send('falta-added', newFalta);
+    return { success: true, falta: newFalta };
   }
-  return { success: false, error: 'Não foi possível adicionar a atividade.' };
+  return { success: false, error: 'Não foi possível adicionar a falta.' };
+});
+
+ipcMain.handle('get-faltas', (event, filters) => {
+  return db.getFaltas(filters);
+});
+
+ipcMain.handle('delete-falta', (event, faltaId) => {
+  const result = db.deleteFalta(faltaId);
+  if (result) mainWindow.webContents.send('falta-deleted', faltaId);
+  return result;
+});
+
+ipcMain.handle('initialize-todays-faltas', () => {
+  const count = db.initializeTodaysFaltas();
+  return { success: true, count };
+});
+
+ipcMain.handle('add-manual-activity', (event, activityData) => {
+  console.log("IPC Main: add-manual-activity requested", activityData); // DEBUG
+  try {
+      const newActivity = db.addActivity(activityData);
+      console.log("IPC Main: db.addActivity result:", newActivity); // DEBUG
+      
+      if (newActivity) {
+        mainWindow.webContents.send('nova-atividade', newActivity);
+        
+        // Async operations info
+        exportAllActivitiesToExcel().catch(err => console.error("Export Excel Error:", err));
+        
+        // Enviar notificação por Email
+        const user = db.getUserById(activityData.userId);
+        if (user) {
+              EmailService.sendPointNotification(user, newActivity).catch(err => console.error("Email Error:", err));
+        }
+    
+        return { success: true, activity: newActivity };
+      } else {
+        console.error("IPC Main: db.addActivity returned null/undefined");
+        return { success: false, error: 'Database retornou nulo.' };
+      }
+  } catch (err) {
+      console.error("IPC Main Error inside add-manual-activity:", err);
+      return { success: false, error: err.message };
+  }
 });
 
 ipcMain.handle('listar-portas', () => serialService.listPorts());
@@ -336,8 +367,14 @@ async function exportAllActivitiesToExcel() {
   xlsx.writeFile(workbook, excelPath);
 }
 
-ipcMain.handle('export-activities-excel', async (event, filters = {}) => {
+// --- Exportação Completa (handler unificado) ---
+ipcMain.handle('export-complete-report', async (event, filters = {}) => {
+  const wb = xlsx.utils.book_new();
+  let hasContent = false;
+
+  // --- PARTE 1: FREQUÊNCIA (ATVIDADES) ---
   let activities = db.getActivities();
+  // Aplicar filtros nas atividades
   if (filters.turma) activities = activities.filter(a => a.userTurma === filters.turma);
   if (filters.turno) activities = activities.filter(a => a.userTurno === filters.turno);
   if (filters.nome) {
@@ -347,31 +384,30 @@ ipcMain.handle('export-activities-excel', async (event, filters = {}) => {
   if (filters.mes) {
     activities = activities.filter(a => {
       const d = new Date(a.timestamp);
+      // filters.mes vem como "YYYY-MM" (ex: "2026-01")
       const [filterYear, filterMonth] = filters.mes.split('-').map(Number);
       return d.getMonth() === (filterMonth - 1) && d.getFullYear() === filterYear;
     });
   }
-  if (activities.length === 0) return { success: false, error: 'Nenhuma atividade.' };
 
-  const { canceled, filePath } = await dialog.showSaveDialog({
-    title: 'Salvar Relatório',
-    defaultPath: `atividades-${new Date().toISOString().slice(0, 10)}.xlsx`,
-    filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
-  });
-  if (canceled) return { success: false, canceled: true };
-
-  try {
+  // Se houver atividades, criar a página "Frequência"
+  if (activities.length > 0) {
     const users = db.getUsers();
     const userMap = new Map(users.map(u => [u.id, u]));
     const dailyRecords = {};
+
     activities.forEach(a => {
       const date = new Date(a.timestamp).toLocaleDateString('pt-BR');
       const key = `${a.userId}_${date}`;
       if (!dailyRecords[key]) {
         const user = userMap.get(a.userId);
         dailyRecords[key] = {
-          cabine: user ? user.cabine : 'N/A', userName: a.userName, userTurma: a.userTurma,
-          date: date, entrada: null, saida: null
+          cabine: user ? user.cabine : 'N/A', 
+          userName: a.userName, 
+          userTurma: a.userTurma,
+          date: date, 
+          entrada: null, 
+          saida: null
         };
       }
       const r = dailyRecords[key];
@@ -380,22 +416,121 @@ ipcMain.handle('export-activities-excel', async (event, filters = {}) => {
       else if (a.type === 'SAIDA') (!r.saida || t > r.saida) ? r.saida = t : null;
     });
 
-    const header = ['Cabine', 'Nome', 'Turma', 'Data', 'Entrada', 'Saída'];
-    const rows = Object.values(dailyRecords).map(r => ({
-      Cabine: r.cabine, Nome: r.userName, Turma: r.userTurma, Data: r.date,
-      Entrada: r.entrada ? r.entrada.toLocaleTimeString('pt-BR') : '---',
-      Saída: r.saida ? r.saida.toLocaleTimeString('pt-BR') : '---'
+    const headerFreq = ['Cabine', 'Nome', 'Turma', 'Data', 'Entrada', 'Saída'];
+    const rowsFreq = Object.values(dailyRecords).map(r => ({
+      'Cabine': r.cabine, 
+      'Nome': r.userName, 
+      'Turma': r.userTurma, 
+      'Data': r.date,
+      'Entrada': r.entrada ? r.entrada.toLocaleTimeString('pt-BR') : '---',
+      'Saída': r.saida ? r.saida.toLocaleTimeString('pt-BR') : '---'
     }));
-    const ws = xlsx.utils.json_to_sheet(rows, { header });
-    const wb = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(wb, ws, 'Atividades');
+    const wsFreq = xlsx.utils.json_to_sheet(rowsFreq, { header: headerFreq });
+    xlsx.utils.book_append_sheet(wb, wsFreq, 'Frequência');
+    hasContent = true;
+  }
+
+  // --- PARTE 2: FALTAS (Baseado na tabela 'faltas') ---
+  const users = db.getUsers();
+  let filteredUsers = users;
+
+  if (filters.turma) filteredUsers = filteredUsers.filter(u => u.turma === filters.turma);
+  if (filters.turno) filteredUsers = filteredUsers.filter(u => u.turno === filters.turno);
+  if (filters.nome) {
+    const lower = filters.nome.toLowerCase();
+    filteredUsers = filteredUsers.filter(u => u.nome && u.nome.toLowerCase().includes(lower));
+  }
+
+  if (filteredUsers.length > 0) {
+    // Buscar TODAS as faltas registradas no banco
+    let allFaltasRecorded = db.getFaltas({});
+    
+    // Filtro de Mês nas faltas
+    if (filters.mes) {
+        const [filterYear, filterMonth] = filters.mes.split('-').map(Number);
+        allFaltasRecorded = allFaltasRecorded.filter(f => {
+            if (!f.date) return false;
+            const parts = f.date.split('/');
+            if (parts.length !== 3) return false;
+            const fDay = parseInt(parts[0]);
+            const fMonth = parseInt(parts[1]); 
+            const fYear = parseInt(parts[2]);
+            return fYear === filterYear && fMonth === filterMonth;
+        });
+    }
+
+    // Mapear faltas por usuário: userId -> [datas...]
+    const faltasMap = {};
+    allFaltasRecorded.forEach(f => {
+        const uid = f.userId;
+        if (!faltasMap[uid]) faltasMap[uid] = [];
+        faltasMap[uid].push(f.date);
+    });
+
+    const usersByTurma = {};
+    filteredUsers.forEach(u => {
+      const t = u.turma || 'Sem Turma';
+      if (!usersByTurma[t]) usersByTurma[t] = [];
+      usersByTurma[t].push(u);
+    });
+
+    for (const [turmaName, turmaUsers] of Object.entries(usersByTurma)) {
+      turmaUsers.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+
+      const rowsAB = [];
+
+      turmaUsers.forEach(user => {
+        const dates = faltasMap[user.id] || [];
+        // Ordenar datas
+        dates.sort((a, b) => {
+             const da = a.split('/').reverse().join('');
+             const db = b.split('/').reverse().join('');
+             return da.localeCompare(db);
+        });
+
+        const totalFaltas = dates.length * 3;
+
+        rowsAB.push({
+          'Nome': user.nome,
+          'Qtd Faltas': totalFaltas,
+          'Dias das Faltas': dates.length > 0 ? dates.join(', ') : '---'
+        });
+      });
+
+      if (rowsAB.length > 0) {
+        const headerAB = ['Nome', 'Qtd Faltas', 'Dias das Faltas'];
+        const wsAB = xlsx.utils.json_to_sheet(rowsAB, { header: headerAB });
+        
+        wsAB['!cols'] = [{ wch: 40 }, { wch: 10 }, { wch: 60 }];
+
+        let sheetName = `Faltas - ${turmaName}`;
+        sheetName = sheetName.slice(0, 31).replace(/[\[\]\*\/\\\?]/g, ''); 
+
+        xlsx.utils.book_append_sheet(wb, wsAB, sheetName);
+        hasContent = true;
+      }
+    }
+  }
+
+  if (!hasContent) return { success: false, error: 'Não há dados para exportar no período.' };
+
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: 'Salvar Relatório Completo',
+    defaultPath: `relatorio-completo-${filters.mes || new Date().toISOString().slice(0,7)}.xlsx`,
+    filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
+  });
+
+  if (canceled) return { success: false, canceled: true };
+
+  try {
     xlsx.writeFile(wb, filePath);
     return { success: true, filePath };
-  } catch (error) {
-    return { success: false, error: error.message };
+  } catch (err) {
+    return { success: false, error: err.message };
   }
 });
 
+// Mantendo os handlers antigos caso precise, mas o front agora chama export-complete-report
 ipcMain.handle('delete-user', async (event, userId) => {
   if (!serialService.isOpen()) throw new Error('A porta serial não está aberta.');
 

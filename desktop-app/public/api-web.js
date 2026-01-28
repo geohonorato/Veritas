@@ -41,6 +41,36 @@ if (!window.api) {
                             headers
                         }).then(r => r.json());
 
+                    case 'export-complete-report':
+                        const resp = await fetch('/api/export/report', {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(data)
+                        });
+                        if (resp.ok) {
+                            const blob = await resp.blob();
+                            // Criar link invisível para download
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            // Tentar obter nome do arquivo do header
+                            const contentDisposition = resp.headers.get('Content-Disposition');
+                            let fileName = `relatorio-completo-${new Date().toISOString().slice(0,10)}.xlsx`;
+                            if (contentDisposition) {
+                                const match = contentDisposition.match(/filename="(.+)"/);
+                                if (match && match[1]) fileName = match[1];
+                            }
+                            a.download = fileName;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            window.URL.revokeObjectURL(url);
+                            return { success: true };
+                        } else {
+                            const errJson = await resp.json();
+                            return { success: false, error: errJson.error || 'Erro no servidor' };
+                        }
+
                     case 'add-user-and-enroll':
                         // Web flow: Add user first, then enrollment handles via socket events?
                         // Or simple add without enrollment for now since web can't scan finger?
@@ -58,6 +88,13 @@ if (!window.api) {
                             body: JSON.stringify({ query: data })
                         }).then(r => r.json()).then(res => res.text || res.error);
 
+                    case 'add-manual-activity':
+                        return await fetch('/api/activities', {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(data)
+                        }).then(r => r.json());
+
                     case 'listar-portas':
                         return await fetch('/api/serial/list', { headers }).then(r => r.json());
 
@@ -67,6 +104,25 @@ if (!window.api) {
                             headers,
                             body: JSON.stringify({ path: data })
                         }).then(r => r.json()).then(r => r.success);
+
+                    case 'get-faltas':
+                        const params = new URLSearchParams();
+                        if (data?.date) params.append('date', data.date);
+                        if (data?.turma) params.append('turma', data.turma);
+                        if (data?.userId) params.append('userId', data.userId);
+                        return await fetch(`/api/faltas?${params}`, { headers }).then(r => r.json());
+
+                    case 'initialize-todays-faltas':
+                        return await fetch('/api/faltas/initialize', {
+                            method: 'POST',
+                            headers
+                        }).then(r => r.json());
+
+                    case 'delete-falta':
+                        return await fetch(`/api/faltas/${data}`, {
+                            method: 'DELETE',
+                            headers
+                        }).then(r => r.json());
 
                     default:
                         console.warn(`[Web API] Unknown invoke channel: ${channel}`);
@@ -114,6 +170,13 @@ if (!window.api) {
                 case 'activities-cleared':
                     socket.on('data-update', (d) => {
                         if (d.type === 'activities') func();
+                    });
+                    break;
+
+                case 'falta-added':
+                case 'falta-deleted':
+                    socket.on('data-update', (d) => {
+                        if (d.type === 'faltas') func();
                     });
                     break;
             }

@@ -12,6 +12,11 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="chart.js"></script>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    section.hidden {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-indigo-500/30 overflow-hidden">
@@ -136,28 +141,94 @@
 
 
         <!-- Cards -->
-        <div class="flex flex-wrap gap-6 mb-8">
-          <button
-            class="dashboard-card flex-1 min-w-[200px] bg-zinc-900 border border-white/5 rounded-2xl p-6 text-left hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/10 transition-all group"
-            data-target="presentes">
-            <p class="text-zinc-400 text-sm font-medium mb-1">Presença hoje</p>
-            <p class="text-zinc-100 text-3xl font-bold group-hover:text-indigo-400 transition-colors"
-              id="presenca-hoje">125</p>
-          </button>
-          <button
-            class="dashboard-card flex-1 min-w-[200px] bg-zinc-900 border border-white/5 rounded-2xl p-6 text-left hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10 transition-all group"
-            data-target="ausentes">
-            <p class="text-zinc-400 text-sm font-medium mb-1">Ausentes hoje</p>
-            <p class="text-zinc-100 text-3xl font-bold group-hover:text-purple-400 transition-colors"
-              id="ausentes-hoje">15</p>
-          </button>
-          <button
-            class="dashboard-card flex-1 min-w-[200px] bg-zinc-900 border border-white/5 rounded-2xl p-6 text-left hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group"
-            data-target="todos">
-            <p class="text-zinc-400 text-sm font-medium mb-1">Total de alunos</p>
-            <p class="text-zinc-100 text-3xl font-bold group-hover:text-emerald-400 transition-colors"
-              id="total-alunos">140</p>
-          </button>
+        <div class="flex flex-wrap gap-6 mb-8 items-start relative z-20">
+          
+          <!-- Presença Hoje Slot -->
+          <div class="flex-1 min-w-[200px] relative"> 
+             <!-- Invisible Spacer -->
+             <div class="p-6 border border-transparent invisible">
+                <p class="text-sm mb-1">Presença hoje</p>
+                <div class="flex items-end justify-between"><p class="text-3xl font-bold">125</p></div>
+             </div>
+             
+             <!-- Actual Floating Card -->
+             <div 
+                class="dashboard-card absolute top-0 left-0 w-full bg-zinc-900 border border-white/5 rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 cursor-pointer z-10"
+                data-target="presentes">
+                <!-- Header -->
+                <div class="p-6">
+                    <p class="text-zinc-400 text-sm font-medium mb-1">Presença hoje</p>
+                    <div class="flex items-end justify-between">
+                        <p class="text-zinc-100 text-3xl font-bold group-hover:text-indigo-400 transition-colors" id="presenca-hoje">125</p>
+                        <svg class="w-5 h-5 text-zinc-500 group-hover:text-indigo-400 transition-transform duration-300 transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+                <!-- List -->
+                <div id="list-presentes" class="max-h-0 transition-all duration-500 ease-in-out opacity-0 bg-zinc-900">
+                    <div class="p-2 border-t border-white/5 bg-black/20">
+                       <div class="max-h-[300px] overflow-y-auto p-1 space-y-1 no-scrollbar"></div>
+                    </div>
+                </div>
+             </div>
+          </div>
+
+          <!-- Ausentes Hoje Slot -->
+          <div class="flex-1 min-w-[200px] relative">
+             <div class="p-6 border border-transparent invisible">
+                <p class="text-sm mb-1">Ausentes hoje</p>
+                <div class="flex items-end justify-between"><p class="text-3xl font-bold">15</p></div>
+             </div>
+             
+             <div 
+                class="dashboard-card absolute top-0 left-0 w-full bg-zinc-900 border border-white/5 rounded-2xl overflow-hidden hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 cursor-pointer z-10"
+                data-target="ausentes">
+                <div class="p-6">
+                    <p class="text-zinc-400 text-sm font-medium mb-1">Ausentes hoje</p>
+                    <div class="flex items-end justify-between">
+                        <p class="text-zinc-100 text-3xl font-bold group-hover:text-purple-400 transition-colors" id="ausentes-hoje">15</p>
+                        <svg class="w-5 h-5 text-zinc-500 group-hover:text-purple-400 transition-transform duration-300 transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+                <div id="list-ausentes" class="max-h-0 transition-all duration-500 ease-in-out opacity-0 bg-zinc-900">
+                    <div class="p-2 border-t border-white/5 bg-black/20">
+                       <div class="max-h-[300px] overflow-y-auto p-1 space-y-1 no-scrollbar"></div>
+                    </div>
+                </div>
+             </div>
+          </div>
+
+          <!-- Total de Alunos Slot -->
+          <div class="flex-1 min-w-[200px] relative">
+             <div class="p-6 border border-transparent invisible">
+                <p class="text-sm mb-1">Total de alunos</p>
+                <div class="flex items-end justify-between"><p class="text-3xl font-bold">140</p></div>
+             </div>
+             
+             <div 
+                class="dashboard-card absolute top-0 left-0 w-full bg-zinc-900 border border-white/5 rounded-2xl overflow-hidden hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 cursor-pointer z-10"
+                data-target="todos">
+                <div class="p-6">
+                    <p class="text-zinc-400 text-sm font-medium mb-1">Total de alunos</p>
+                    <div class="flex items-end justify-between">
+                        <p class="text-zinc-100 text-3xl font-bold group-hover:text-emerald-400 transition-colors" id="total-alunos">140</p>
+                        <svg class="w-5 h-5 text-zinc-500 group-hover:text-emerald-400 transition-transform duration-300 transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+                <div id="list-todos" class="max-h-0 transition-all duration-500 ease-in-out opacity-0 bg-zinc-900">
+                    <div class="p-2 border-t border-white/5 bg-black/20">
+                       <div class="max-h-[300px] overflow-y-auto p-1 space-y-1 no-scrollbar"></div>
+                    </div>
+                </div>
+             </div>
+          </div>
+
+
         </div>
 
         <!-- Charts Section -->
@@ -293,7 +364,6 @@
               <option value="">Todos os Turnos</option>
               <option value="Matutino">Matutino</option>
               <option value="Vespertino">Vespertino</option>
-              <option value="Noturno">Noturno</option>
             </select>
 
             <!-- Month/Year Group -->
@@ -345,273 +415,284 @@
                 <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
               </svg>
             </button>
+
+            <button id="toggle-faltas-btn"
+              class="h-11 px-4 rounded-xl bg-zinc-950/50 text-zinc-400 hover:text-amber-400 hover:bg-amber-500/10 border border-white/5 hover:border-amber-500/30 transition-all flex items-center gap-2 font-medium"
+              title="Alternar para Faltas">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 9v2m0 4v2m7.2-14H4.8c-1.12 0-2 .88-2 1.96V18c0 1.08.88 1.96 2 1.96h14.4c1.12 0 2-.88 2-1.96V2.96c0-1.08-.88-1.96-2-1.96z"></path>
+              </svg>
+              <span>Faltas</span>
+            </button>
+
           </div>
         </div>
-        <div class="rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-black/20">
-          <table class="min-w-full bg-zinc-900">
-            <thead>
-              <tr class="bg-zinc-950/50 border-b border-white/5">
-                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Aluno</th>
-                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Turma</th>
-                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Entrada</th>
-                <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Saída</th>
-              </tr>
-            </thead>
-            <tbody id="atividades-tbody">
-              <!-- Linhas de atividades serão inseridas aqui dinamicamente -->
-            </tbody>
-          </table>
+
+        <!-- Aba de Atividades -->
+        <div id="atividades-tab" class="block">
+          <div class="rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-black/20">
+            <table class="min-w-full bg-zinc-900">
+              <thead>
+                <tr class="bg-zinc-950/50 border-b border-white/5">
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Aluno</th>
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Turma</th>
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Entrada</th>
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Saída</th>
+                </tr>
+              </thead>
+              <tbody id="atividades-tbody">
+                <!-- Linhas de atividades serão inseridas aqui dinamicamente -->
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <!-- Aba de Faltas -->
+        <div id="faltas-tab" class="hidden">
+          <div class="rounded-xl overflow-hidden border border-white/5 shadow-2xl shadow-black/20">
+            <table class="min-w-full bg-zinc-900">
+              <thead>
+                <tr class="bg-zinc-950/50 border-b border-white/5">
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Aluno</th>
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Turma</th>
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Status</th>
+                  <th class="px-6 py-4 text-center text-zinc-400 text-sm font-semibold">Observação</th>
+                </tr>
+              </thead>
+              <tbody id="faltas-tbody">
+                <!-- Linhas de faltas serão inseridas aqui dinamicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </section>
       <!-- Seção de Ajuda -->
       <!-- Seção de Ajuda -->
       <section id="ajuda-section" class="p-8 hidden">
-        <h2 class="text-3xl font-bold tracking-tight text-zinc-100 mb-6">Guia de Ajuda e Suporte do Veritas</h2>
+        <h2 class="text-3xl font-bold tracking-tight text-zinc-100 mb-8">📚 Guia do Veritas - Sistema de Controle de Presença</h2>
 
-        <div class="space-y-8">
+        <div class="space-y-12">
           <!-- Visão Geral -->
-          <div>
-            <h3 class="text-2xl font-bold tracking-tight text-zinc-200 mb-3">Visão Geral do Sistema</h3>
-            <p class="text-zinc-400 leading-relaxed">
-              O Veritas é um sistema completo de controle de acesso e gestão de presença, utilizando tecnologia
-              biométrica para garantir segurança e precisão. Ele é composto por um dispositivo de hardware inteligente
-              (ESP + Sensor Biométrico) e uma aplicação desktop intuitiva para gerenciamento. Com o Veritas, você pode
-              facilmente cadastrar novos usuários, monitorar atividades em tempo real e gerenciar as configurações do
-              sistema.
+          <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+            <h3 class="text-2xl font-bold text-zinc-100 mb-4">🎯 O que é o Veritas?</h3>
+            <p class="text-zinc-300 leading-relaxed mb-4">
+              O <strong>Veritas</strong> é um sistema de gestão de presença e controle de acesso baseado em biometria (leitor de impressões digitais). 
+              Ele registra automaticamente quando alunos chegam (Entrada) e saem (Saída), mantendo um histórico completo para relatórios e análise de frequência.
             </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+              <div class="bg-zinc-800/50 p-4 rounded-lg border border-indigo-500/20">
+                <div class="text-indigo-400 font-bold mb-2">📊 Dashboard</div>
+                <p class="text-sm text-zinc-400">Visão geral com estatísticas de presença do dia</p>
+              </div>
+              <div class="bg-zinc-800/50 p-4 rounded-lg border border-indigo-500/20">
+                <div class="text-indigo-400 font-bold mb-2">📋 Atividades</div>
+                <p class="text-sm text-zinc-400">Histórico completo de entradas e saídas</p>
+              </div>
+              <div class="bg-zinc-800/50 p-4 rounded-lg border border-indigo-500/20">
+                <div class="text-indigo-400 font-bold mb-2">⛔ Faltas</div>
+                <p class="text-sm text-zinc-400">Alunos que não compareceram (frequência invertida)</p>
+              </div>
+            </div>
           </div>
 
           <!-- Como Usar -->
           <div>
-            <h3 class="text-2xl font-bold tracking-tight text-zinc-200 mb-3">Como Usar o Veritas</h3>
+            <h3 class="text-2xl font-bold text-zinc-100 mb-6">🚀 Como Usar</h3>
             <div class="space-y-6">
-              <div>
-                <h4 class="text-lg font-semibold text-indigo-400 mb-2">1. Início (Dashboard)</h4>
-                <ul class="list-disc list-inside text-zinc-400 mt-2 space-y-1 ml-2">
-                  <li>Visualize rapidamente as estatísticas de presença (presentes, ausentes, Total de alunos) para o
-                    dia atual.</li>
-                  <li>Acompanhe as últimas atividades de entrada e saída em tempo real no feed de atividades recentes.
-                  </li>
-                  <li>Utilize o calendário interativo para selecionar e visualizar atividades em datas específicas.</li>
-                </ul>
-              </div>
-              <div>
-                <h4 class="text-lg font-semibold text-indigo-400 mb-2">2. Atividade</h4>
-                <ul class="list-disc list-inside text-zinc-400 mt-2 space-y-1 ml-2">
-                  <li>Acesse a lista completa e detalhada de todas as atividades de entrada e saída registradas pelo
-                    sistema.</li>
-                  <li>As atividades são organizadas cronologicamente e incluem informações como nome do usuário, turma,
-                    tipo de registro (Entrada/Saída) e o horário exato.</li>
-                </ul>
-              </div>
-              <div>
-                <h4 class="text-lg font-semibold text-indigo-400 mb-2">3. Usuários</h4>
-                <ul class="list-disc list-inside text-zinc-400 mt-2 space-y-1 ml-2">
-                  <li><b>Cadastrar Novo Usuário:</b> Clique no ícone <svg xmlns="http://www.w3.org/2000/svg"
-                      class="inline-block w-4 h-4 align-text-bottom text-indigo-400" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg> para abrir o formulário. Preencha os dados solicitados (Nome, Matrícula, Turma, Email) e siga
-                    as instruções no sensor biométrico para registrar a digital do novo usuário.</li>
-                  <li><b>Sincronizar Usuários:</b> Utilize o ícone <svg xmlns="http://www.w3.org/2000/svg"
-                      class="inline-block w-4 h-4 align-text-bottom text-indigo-400" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l16 16" />
-                    </svg> para importar para o sistema usuários que podem ter sido cadastrados diretamente no
-                    dispositivo ou em outro ambiente.</li>
-                  <li><b>Editar/Excluir:</b> Use o menu de opções na tabela para gerenciar registros existentes.</li>
-                  <li><b>Buscar:</b> A barra de busca permite localizar rapidamente usuários por nome, matrícula ou ID.
-                  </li>
+              <!-- Dashboard -->
+              <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">1️⃣ Dashboard (Início)</h4>
+                <p class="text-zinc-300 mb-3">Sua tela inicial com informações em tempo real:</p>
+                <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
+                  <li><strong>Visão Geral Hoje:</strong> Mostra quantos alunos estão presentes, ausentes e o total esperado</li>
+                  <li><strong>Atividades Recentes:</strong> Feed das últimas entradas e saídas registradas</li>
+                  <li><strong>Calendário:</strong> Clique em qualquer data para ver atividades daquele dia</li>
+                  <li><strong>Gráficos:</strong> Visualização semanal e mensal de presença</li>
                 </ul>
               </div>
 
-              <div>
-                <h4 class="text-lg font-semibold text-indigo-400 mb-2">4. Assistente Inteligente (IA)</h4>
-                <p class="text-zinc-400 mb-3">O Veritas possui uma IA integrada capaz de responder perguntas sobre o
-                  sistema em linguagem natural. Você pode perguntar sobre:</p>
+              <!-- Atividades -->
+              <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">2️⃣ Atividades</h4>
+                <p class="text-zinc-300 mb-3">Tabela completa de todos os registros de presença:</p>
+                <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
+                  <li><strong>Coluna "Entrada":</strong> Horário que o aluno entrou no campus</li>
+                  <li><strong>Coluna "Saída":</strong> Horário que o aluno saiu</li>
+                  <li><strong>Filtros:</strong> Busque por aluno, turma, turno ou data específica</li>
+                  <li><strong>Exportar Relatório:</strong> Baixe os dados em arquivo para análise</li>
+                </ul>
+              </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-4">
-                    <h5 class="text-white font-medium mb-2 flex items-center gap-2">
-                      <span class="text-indigo-400">🔍</span> Alunos e Faltas
-                    </h5>
-                    <ul class="text-sm text-zinc-400 space-y-2">
-                      <li>"Quem é o <b>[Nome do Aluno]</b>?"</li>
-                      <li>"Quantas faltas o <b>[Nome]</b> tem?"</li>
-                      <li>"Quem faltou hoje?"</li>
-                      <li>"Quem está presente agora?"</li>
+              <!-- Faltas -->
+              <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">3️⃣ Faltas</h4>
+                <p class="text-zinc-300 mb-3">Visualize rapidamente quem ainda não compareceu:</p>
+                <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
+                  <li>Clique no botão <span class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-xs">📋 Faltas</span> para alternar para a aba</li>
+                  <li><strong>Status "Faltante":</strong> Aluno ainda não bateu ponto (durante o turno)</li>
+                  <li><strong>Status "Falta Confirmada":</strong> Turno passou e aluno não compareceu</li>
+                  <li>Faltantes são calculados automaticamente com base nos dias de aula de cada aluno</li>
+                </ul>
+              </div>
+
+              <!-- Nova Frequência -->
+              <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">4️⃣ Nova Frequência (Registro Manual)</h4>
+                <p class="text-zinc-300 mb-3">Para alunos que tiveram problema com o leitor de digitais:</p>
+                <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
+                  <li>Clique em <span class="bg-indigo-600 text-white px-2 py-1 rounded text-xs">+ Nova Frequência</span></li>
+                  <li>Busque o aluno pelo nome ou matrícula</li>
+                  <li>Selecione a data e hora (padrão é agora)</li>
+                  <li>Escolha se é "Entrada" ou "Saída"</li>
+                  <li>Clique em "Salvar" para registrar</li>
+                </ul>
+              </div>
+
+              <!-- Usuários -->
+              <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">5️⃣ Usuários</h4>
+                <p class="text-zinc-300 mb-3">Gerenciar a lista de alunos cadastrados:</p>
+                <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
+                  <li><strong>Visualizar:</strong> Veja todos os alunos, suas turmas, turnos e dias de aula</li>
+                  <li><strong>Buscar:</strong> Use o campo de busca para encontrar alunos rapidamente</li>
+                  <li><strong>Editar:</strong> Clique em um aluno para modificar suas informações</li>
+                  <li><strong>Atualizar diasSemana:</strong> Defina em quais dias cada aluno tem aula</li>
+                </ul>
+              </div>
+
+              <!-- Assistente IA -->
+              <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">6️⃣ Assistente Inteligente (Chat IA)</h4>
+                <p class="text-zinc-300 mb-3">Faça perguntas em linguagem natural sobre o sistema:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                  <div class="bg-zinc-800/50 p-3 rounded border border-white/10">
+                    <div class="font-medium text-indigo-400 text-sm mb-2">Exemplos de Perguntas:</div>
+                    <ul class="text-xs text-zinc-400 space-y-1">
+                      <li>✓ "Quem faltou hoje?"</li>
+                      <li>✓ "Quantas faltas o João tem?"</li>
+                      <li>✓ "Quem está presente agora?"</li>
+                      <li>✓ "Lista de alunos da turma DI5NA"</li>
                     </ul>
                   </div>
-
-                  <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-4">
-                    <h5 class="text-white font-medium mb-2 flex items-center gap-2">
-                      <span class="text-emerald-400">🏥</span> Atendimentos
-                    </h5>
-                    <ul class="text-sm text-zinc-400 space-y-2">
-                      <li>"Quem atende a <b>[Paciente]</b>?"</li>
-                      <li>"Quem é o aluno responsável por <b>[Paciente]</b>?"</li>
-                      <li>"Quantos assistidos a <b>[Aluno]</b> tem?"</li>
-                      <li>"Mostre a lista de pacientes do <b>[Aluno]</b>"</li>
+                  <div class="bg-zinc-800/50 p-3 rounded border border-white/10">
+                    <div class="font-medium text-indigo-400 text-sm mb-2">Recursos:</div>
+                    <ul class="text-xs text-zinc-400 space-y-1">
+                      <li>✓ Funciona offline (sem internet)</li>
+                      <li>✓ Responde em português</li>
+                      <li>✓ Entende contexto da conversa</li>
+                      <li>✓ Clique no botão azul para abrir</li>
                     </ul>
                   </div>
                 </div>
-                <p class="text-zinc-500 text-xs mt-3 italic">* Dica: Você pode continuar a conversa usando pronomes como
-                  "ele", "ela" ou "dele". Ex: "Quem é JAIR?", depois "Quantos assistidos ele tem?".</p>
               </div>
 
-              <div>
-                <h4 class="xl font-bold mb-2">5. Configurações</h4>
-                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
-                  <li>Nesta seção, você pode selecionar e configurar a porta serial correta para estabelecer a
-                    comunicação entre a aplicação desktop e o dispositivo ESP.</li>
-                  <li>Um indicador de status de conexão informa se a comunicação está ativa e funcionando corretamente.
-                  </li>
+              <!-- Configurações -->
+              <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">⚙️ Configurações</h4>
+                <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
+                  <li><strong>Porta Serial:</strong> Configure a porta para comunicação com o leitor biométrico</li>
+                  <li><strong>Email:</strong> Configure notificações por email (faltas recorrentes, alertas)</li>
+                  <li><strong>Status da Conexão:</strong> Verifique se o hardware está conectado corretamente</li>
                 </ul>
               </div>
             </div>
+          </div>
+
+          <!-- Turmas e Turnos -->
+          <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+            <h3 class="text-2xl font-bold text-zinc-100 mb-4">🏫 Turnos e Horários</h3>
+            <p class="text-zinc-300 mb-4">O sistema reconhece dois turnos para determinar o limite de presença:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-zinc-800/50 p-4 rounded-lg border border-amber-500/30">
+                <div class="font-bold text-amber-400 mb-2">☀️ MATUTINO</div>
+                <p class="text-sm text-zinc-400">Horário limite: <strong>12:00 (meio-dia)</strong></p>
+                <p class="text-xs text-zinc-500 mt-2">Faltas após 12h são marcadas como "Falta Confirmada"</p>
+              </div>
+              <div class="bg-zinc-800/50 p-4 rounded-lg border border-orange-500/30">
+                <div class="font-bold text-orange-400 mb-2">🌅 VESPERTINO</div>
+                <p class="text-sm text-zinc-400">Horário limite: <strong>18:00 (6 da tarde)</strong></p>
+                <p class="text-xs text-zinc-500 mt-2">Faltas após 18h são marcadas como "Falta Confirmada"</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dicas -->
+          <div class="bg-green-900/20 border border-green-500/30 rounded-xl p-6">
+            <h3 class="text-2xl font-bold text-green-400 mb-4">💡 Dicas Úteis</h3>
+            <ul class="space-y-3">
+              <li class="flex gap-3">
+                <span class="text-green-400">✓</span>
+                <span class="text-zinc-300"><strong>Faltas automáticas:</strong> O sistema cria automaticamente a lista de faltantes no início do dia, baseado no calendário de aulas de cada aluno</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="text-green-400">✓</span>
+                <span class="text-zinc-300"><strong>Atualização em tempo real:</strong> Quando um aluno bate ponto, sua falta é removida automaticamente da lista</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="text-green-400">✓</span>
+                <span class="text-zinc-300"><strong>Registro manual:</strong> Use "Nova Frequência" para casos de defeito no leitor ou problemas técnicos</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="text-green-400">✓</span>
+                <span class="text-zinc-300"><strong>Relatórios:</strong> Exporte dados completos de atividades para análises em Excel ou similares</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="text-green-400">✓</span>
+                <span class="text-zinc-300"><strong>Chat IA:</strong> Use o assistente para respostas rápidas sobre presença sem sair do app</span>
+              </li>
+            </ul>
           </div>
 
           <!-- Solução de Problemas -->
-          <div>
-            <h3 class="text-2xl font-bold mb-3">Solução de Problemas Comuns</h3>
+          <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6">
+            <h3 class="text-2xl font-bold text-red-400 mb-4">🔧 Solução de Problemas</h3>
             <div class="space-y-4">
               <div>
-                <h4 class="xl font-bold mb-2">"Sensor não responde" ou "Erro de comunicação serial"</h4>
-                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
-                  <li>Verifique se o dispositivo ESP está ligado, conectado fisicamente ao computador e recebendo
-                    energia.</li>
-                  <li>Na aba "Configurações", certifique-se de que a porta serial correta está selecionada e que não há
-                    outros programas utilizando-a.</li>
-                  <li>Tente reiniciar o dispositivo ESP e o aplicativo Veritas.</li>
-                </ul>
-              </div>
-              <div>
-                <h4 class="xl font-bold mb-2">"Digital não reconhecida" ou "Erro ao processar imagem"</h4>
-                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
-                  <li>Assegure-se de que o dedo (e o sensor) estejam limpos e secos.</li>
-                  <li>Pressione o dedo firmemente sobre o sensor, cobrindo completamente a área de leitura, e mantenha-o
-                    imóvel por alguns segundos.</li>
-                  <li>Tente cadastrar a digital novamente, prestando atenção às instruções e à posição do dedo.</li>
-                </ul>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- FAQ -->
-          <div>
-            <h3 class="text-2xl font-bold mb-3">Perguntas Frequentes (FAQ)</h3>
-            <div class="space-y-4">
-              <div>
-                <h4 class="xl font-bold mb-2">Posso usar o Veritas em vários computadores?</h4>
-                <p class="text-[#9badc0]">
-                  Atualmente, a aplicação desktop do Veritas é projetada para ser executada localmente em um único
-                  computador. O banco de dados de usuários e atividades é armazenado localmente. Para uso em múltiplos
-                  locais ou por múltiplos usuários simultaneamente, seria necessária uma solução de banco de dados
-                  centralizada e uma arquitetura diferente.
+                <h4 class="font-bold text-red-300 mb-2">❓ "Nenhuma falta registrada hoje"</h4>
+                <p class="text-zinc-300 text-sm">
+                  Isso significa que não há alunos agendados para hoje OU todos os alunos esperados já bateram ponto. 
+                  Verifique se o dia da semana está correto no calendário de cada aluno (campo diasSemana).
                 </p>
               </div>
               <div>
-                <h4 class="xl font-bold mb-2">O que acontece se a conexão com o sensor for perdida?</h4>
-                <p class="text-[#9badc0]">
-                  Se a conexão for perdida, o sistema não conseguirá registrar novas atividades biométricas ou gerenciar
-                  digitais no sensor. No entanto, os dados de usuários e atividades já armazenados no aplicativo (no
-                  arquivo database.json) permanecerão intactos. Reconecte o dispositivo e a porta serial para restaurar
-                  a funcionalidade completa.
+                <h4 class="font-bold text-red-300 mb-2">❓ "Status não muda para Falta Confirmada"</h4>
+                <p class="text-zinc-300 text-sm">
+                  O status muda automaticamente quando o horário atual ultrapassar o limite do turno (12h para matutino, 18h para vespertino). 
+                  Verifique se o relógio do servidor está sincronizado.
                 </p>
               </div>
               <div>
-                <h4 class="xl font-bold mb-2">Como faço para fazer backup dos dados?</h4>
-                <p class="text-[#9badc0]">
-                  O banco de dados do aplicativo é um arquivo simples chamado <code>database.json</code>, localizado na
-                  pasta <code>data/</code> do projeto. Você pode copiá-lo para um local seguro para fazer backup. Para
-                  restaurar, basta substituir o arquivo <code>database.json</code> existente pelo seu backup.
+                <h4 class="font-bold text-red-300 mb-2">❓ "Não consigo registrar frequência manual"</h4>
+                <p class="text-zinc-300 text-sm">
+                  Certifique-se de que você selecionou um aluno válido, escolheu uma data e clicou em "Salvar". 
+                  Verifique o console do navegador (F12) para mensagens de erro.
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- Arquitetura do Software -->
-          <div>
-            <h3 class="text-2xl font-bold mb-3">Arquitetura do Software (Informações Técnicas)</h3>
-            <div class="space-y-4">
-              <div>
-                <h4 class="xl font-bold mb-2">Firmware (Dispositivo Embarcado)</h4>
-                <p class="text-[#9badc0]">
-                  O cérebro do dispositivo de hardware é um microcontrolador (ESP8266/ESP32) programado em C++
-                  utilizando o framework Arduino através do PlatformIO.
-                </p>
-                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
-                  <li><b>Linguagem:</b> C++ (Arduino)</li>
-                  <li><b>Bibliotecas Principais:</b> Adafruit_Fingerprint (para o sensor biométrico), RTClib (para o
-                    relógio de tempo real), LittleFS (para armazenamento de dados), e ArduinoJson (para comunicação
-                    serial).</li>
-                  <li><b>Funcionalidades:</b> Gerencia o cadastro e a verificação de impressões digitais, armazena dados
-                    de usuários e logs de atividade em um sistema de arquivos interno e comunica-se com a aplicação
-                    desktop via porta serial usando o formato JSON.</li>
-                </ul>
-              </div>
-              <div>
-                <h4 class="xl font-bold mb-2">Aplicação Desktop (Painel de Controle)</h4>
-                <p class="text-[#9badc0]">
-                  A interface de gerenciamento é uma aplicação desktop multiplataforma construída com Electron.
-                </p>
-                <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
-                  <li><b>Tecnologias:</b> Electron, Node.js, HTML5, Tailwind CSS, JavaScript.</li>
-                  <li><b>Funcionalidades:</b> Permite listar e cadastrar novos usuários, visualizar a tabela de
-                    atividades, e configurar a porta de comunicação com o hardware. A comunicação é feita através da
-                    biblioteca `serialport`.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <!-- Montagem do Hardware -->
-          <div>
-            <h3 class="text-2xl font-bold mb-3">Montagem do Hardware</h3>
-            <p class="text-[#9badc0] mb-4">
-              Os componentes de hardware devem ser conectados ao microcontrolador (assumindo um NodeMCU/ESP8266) da
-              seguinte forma:
-            </p>
-            <ul class="list-disc list-inside text-[#9badc0] space-y-2">
-              <li>
-                <b>Sensor Biométrico (R307):</b>
-                <ul class="list-circle list-inside ml-6">
-                  <li><b>VCC:</b> 5V</li>
-                  <li><b>GND:</b> GND</li>
-                  <li><b>TX (Sensor):</b> Pino D7 (GPIO 13) do ESP</li>
-                  <li><b>RX (Sensor):</b> Pino D6 (GPIO 12) do ESP</li>
-                </ul>
-              </li>
-              <li>
-                <b>Módulo de Relógio (RTC DS3231):</b>
-                <ul class="list-circle list-inside ml-6">
-                  <li><b>VCC:</b> 3.3V</li>
-                  <li><b>GND:</b> GND</li>
-                  <li><b>SDA:</b> Pino D2 (GPIO 4) do ESP</li>
-                  <li><b>SCL:</b> Pino D1 (GPIO 5) do ESP</li>
-                </ul>
-              </li>
+          <!-- Informações Técnicas -->
+          <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+            <h3 class="text-2xl font-bold text-zinc-100 mb-4">⚡ Informações Técnicas</h3>
+            <ul class="text-zinc-400 space-y-2 ml-4">
+              <li><strong class="text-zinc-100">Tecnologia:</strong> Web App (Node.js + Express)</li>
+              <li><strong class="text-zinc-100">Banco de Dados:</strong> SQLite</li>
+              <li><strong class="text-zinc-100">Frontend:</strong> HTML5, TailwindCSS, JavaScript vanilla</li>
+              <li><strong class="text-zinc-100">Comunicação:</strong> REST API + WebSocket (Socket.io) para atualizações em tempo real</li>
+              <li><strong class="text-zinc-100">IA:</strong> LangChain com modelo local (offline)</li>
+              <li><strong class="text-zinc-100">Hardware:</strong> Leitor biométrico R307 conectado via porta serial ao ESP</li>
             </ul>
           </div>
 
-          <!-- Contato e Suporte -->
-          <div>
-            <h3 class="text-2xl font-bold mb-3">Contato e Suporte</h3>
-            <p class="text-[#9badc0]">
-              Para dúvidas, problemas ou sugestões, entre em contato com o desenvolvedor:
+          <!-- Rodapé -->
+          <!-- Rodapé -->
+          <div class="pt-8 border-t border-white/5 text-center">
+            <p class="text-zinc-400 text-sm mb-2">
+              <strong class="text-zinc-300">Veritas</strong> - Sistema Inteligente de Controle de Presença
             </p>
-            <ul class="list-disc list-inside text-[#9badc0] mt-2 space-y-1">
-              <li><b>Email:</b> <a href="mailto:suporte@veritas.com"
-                  class="text-blue-400 hover:underline">suporte@veritas.com</a></li>
-              <li><b>Telefone:</b> (91) 98765-4321</li>
-              <li><b>Horário de Atendimento:</b> Segunda a Sexta, 9h às 18h (horário de Belém)</li>
-            </ul>
-          </div>
-
-          <div class="pt-8 border-t border-t-[#293542]">
-            <p class="text-center text-sm text-[#9badc0]">
-              Copyright © 2025 Geovanni Honorato. Todos os direitos reservados.
+            <p class="text-zinc-500 text-xs">
+              Desenvolvido por <strong class="text-zinc-400">Geovanni Honorato</strong>
             </p>
           </div>
         </div>
@@ -928,16 +1009,7 @@
               </div>
 
               <div class="space-y-5 flex-1">
-                <!-- Base de Alunos -->
-                <div>
-                  <label class="text-sm font-medium text-zinc-400 mb-2 block">Base de Alunos (Excel)</label>
-                  <div class="flex gap-2">
-                    <input id="student-data-path-display" readonly placeholder="Selecionar arquivo..."
-                      class="flex-1 bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-zinc-400 cursor-not-allowed">
-                    <button id="select-student-data-path-btn"
-                      class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors border border-white/5">Buscar</button>
-                  </div>
-                </div>
+                <!-- Base de Alunos (Removido) -->
 
                 <!-- Pasta de Relatórios -->
                 <div>
@@ -1033,19 +1105,19 @@
       <div id="cadastro-aluno"
         class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
         <div
-          class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-xl p-6 md:p-8 relative max-h-full overflow-y-auto">
+          class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto no-scrollbar">
           <button id="fechar-cadastro"
             class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl transition-colors">&times;</button>
-          <h2 id="modal-title" class="text-zinc-100 text-2xl font-bold mb-6 tracking-tight">Adicionar Aluno</h2>
-          <form id="form-aluno" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+          <h2 id="modal-title" class="text-zinc-100 text-2xl font-bold mb-5 tracking-tight">Adicionar Aluno</h2>
+          <form id="form-aluno" class="grid grid-cols-1 md:grid-cols-6 gap-x-4 gap-y-3">
             <input type="hidden" name="id" id="aluno-id" />
-            <label class="flex flex-col md:col-span-2 relative group">
-              <span class="text-zinc-400 text-sm font-medium pb-2">Nome completo</span>
+            <label class="flex flex-col md:col-span-6 relative group">
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Nome completo</span>
               <input name="nome" required placeholder="Digite o nome completo"
-                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-9 px-4 text-sm placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
               <button type="button" id="search-by-name"
-                class="absolute right-3 top-9 text-zinc-500 hover:text-indigo-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
+                class="absolute right-3 top-[30px] text-zinc-500 hover:text-indigo-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor"
                   viewBox="0 0 256 256">
                   <path
                     d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
@@ -1053,13 +1125,13 @@
                 </svg>
               </button>
             </label>
-            <label class="flex flex-col relative">
-              <span class="text-zinc-400 text-sm font-medium pb-2">Matrícula</span>
+            <label class="flex flex-col items-start md:col-span-2 relative">
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Matrícula</span>
               <input name="matricula" required placeholder="Digite a matrícula"
-                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+                class="form-input w-full rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-9 px-4 text-sm placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
               <button type="button" id="search-by-matricula"
-                class="absolute right-3 top-9 text-zinc-500 hover:text-indigo-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
+                 class="absolute right-3 top-[30px] text-zinc-500 hover:text-indigo-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor"
                   viewBox="0 0 256 256">
                   <path
                     d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
@@ -1067,10 +1139,10 @@
                 </svg>
               </button>
             </label>
-            <label class="flex flex-col">
-              <span class="text-zinc-400 text-sm font-medium pb-2">Turma</span>
-              <select name="turma" required
-                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+            <label class="flex flex-col md:col-span-2">
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Turma</span>
+              <select name="turma" required id="modal-turma-select"
+                class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-colors cursor-pointer">
                 <option value="">Selecione a turma</option>
                 <option value="ADM">ADM</option>
                 <option value="DI7NA">DI7NA</option>
@@ -1085,32 +1157,31 @@
                 <option value="DI0NA">DI0NA</option>
               </select>
             </label>
-            <label class="flex flex-col">
-              <span class="text-zinc-400 text-sm font-medium pb-2">Turno</span>
-              <select name="turno" required
-                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+            <label class="flex flex-col md:col-span-2">
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Turno</span>
+              <select name="turno" required id="modal-turno-select"
+                class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-colors cursor-pointer">
                 <option value="">Selecione o turno</option>
                 <option value="Matutino">Matutino</option>
                 <option value="Vespertino">Vespertino</option>
-                <option value="Noturno">Noturno</option>
               </select>
             </label>
-            <label class="flex flex-col md:col-span-2">
-              <span class="text-zinc-400 text-sm font-medium pb-2">Email</span>
+            <label class="flex flex-col md:col-span-4">
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Email</span>
               <input name="email" type="email" required placeholder="Digite o email"
-                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-9 px-4 text-sm placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
             </label>
 
-            <label class="flex flex-col">
-              <span class="text-zinc-400 text-sm font-medium pb-2">Cabine</span>
-              <input name="cabine" placeholder="Digite a cabine do aluno"
-                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
+            <label class="flex flex-col md:col-span-2">
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Cabine</span>
+              <input name="cabine" placeholder="N/A"
+                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-9 px-4 text-sm placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
             </label>
 
-            <label class="flex flex-col">
-              <span class="text-zinc-400 text-sm font-medium pb-2">Gênero</span>
-              <select name="genero" required
-                class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
+            <label class="flex flex-col md:col-span-2">
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Gênero</span>
+              <select name="genero" required id="modal-genero-select"
+                class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-colors cursor-pointer">
                 <option value="">Selecione o gênero</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Feminino">Feminino</option>
@@ -1118,63 +1189,76 @@
               </select>
             </label>
 
-            <label class="flex flex-col md:col-span-2">
+            <div class="flex flex-col md:col-span-6">
               <span class="text-zinc-400 text-sm font-medium pb-2">Dias da semana</span>
-              <div class="grid grid-cols-4 sm:grid-cols-7 gap-2 mt-2">
+              <div class="grid grid-cols-7 gap-1 mt-0 h-9 items-center">
                 <label
-                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="1"
-                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
-                  <span class="text-zinc-300 text-sm">Seg</span>
+                    class="form-checkbox hidden" />
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Seg</span>
                 </label>
                 <label
-                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="2"
-                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
-                  <span class="text-zinc-300 text-sm">Ter</span>
+                    class="form-checkbox hidden" />
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Ter</span>
                 </label>
                 <label
-                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="3"
-                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
-                  <span class="text-zinc-300 text-sm">Qua</span>
+                    class="form-checkbox hidden" />
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Qua</span>
                 </label>
                 <label
-                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="4"
-                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
-                  <span class="text-zinc-300 text-sm">Qui</span>
+                    class="form-checkbox hidden" />
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Qui</span>
                 </label>
                 <label
-                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="5"
-                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
-                  <span class="text-zinc-300 text-sm">Sex</span>
+                    class="form-checkbox hidden" />
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Sex</span>
                 </label>
                 <label
-                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="6"
-                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
-                  <span class="text-zinc-300 text-sm">Sáb</span>
+                    class="form-checkbox hidden" />
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Sáb</span>
                 </label>
                 <label
-                  class="flex items-center gap-2 cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg p-2 hover:bg-zinc-800 transition-colors">
+                  class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="0"
-                    class="form-checkbox rounded bg-zinc-800 border-white/10 text-indigo-500 focus:ring-indigo-500/20" />
-                  <span class="text-zinc-300 text-sm">Dom</span>
+                    class="form-checkbox hidden" />
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Dom</span>
                 </label>
-              </div>
-            </label>
-            <div class="flex justify-between items-center mt-6 md:col-span-2 border-t border-white/5 pt-6">
-              <button type="button" id="delete-user-modal-btn"
-                class="rounded-full bg-red-600/10 text-red-500 font-bold px-6 h-10 hidden border border-red-500/20 hover:bg-red-600 hover:text-white transition-all text-sm">Excluir</button>
-              <div class="flex gap-3 ml-auto">
-                <button type="submit"
-                  class="rounded-full bg-indigo-600 text-white font-bold px-8 h-10 shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 hover:shadow-indigo-600/40 transition-all text-sm">Salvar</button>
               </div>
             </div>
+            <style>
+              .week-day-label { color: #52525b; }
+              label:has(input[name="dias-semana"]:checked) .week-day-label { color: #818cf8; font-weight: bold; }
+              label:has(input[name="dias-semana"]:checked) { background-color: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); }
+            </style>
+            <div class="md:col-span-6 border-t border-white/5 pt-4 mt-2">
+                 <!-- Status Message integrated above buttons -->
+                 <div id="status-biometria" class="text-zinc-400 text-xs text-center mb-3 min-h-[16px] transition-all"></div>
+                 
+                 <div class="flex justify-between items-center">
+                    <button type="button" id="delete-user-modal-btn"
+                        class="rounded-full bg-red-600/10 text-red-500 font-bold px-5 h-9 hidden border border-red-500/20 hover:bg-red-600 hover:text-white transition-all text-xs">Excluir</button>
+                    
+                    <div class="flex gap-3 ml-auto w-full md:w-auto justify-end">
+                        <button type="button" id="fechar-cadastro-btn-secondary" 
+                            class="rounded-full bg-zinc-950 text-zinc-400 font-medium px-5 h-9 border border-white/10 hover:bg-zinc-800 hover:text-white transition-all text-sm">Cancelar</button>
+                        <button type="submit"
+                            class="rounded-full bg-indigo-600 text-white font-bold px-6 h-9 shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 hover:shadow-indigo-600/40 transition-all text-sm">Salvar</button>
+                    </div>
+                 </div>
+            </div>
           </form>
-          <div id="status-biometria" class="text-zinc-300 text-sm font-medium mb-2 mt-4 text-center"></div>
+          <!-- Old status div removed -->
         </div>
       </div>
     </main>
@@ -1196,6 +1280,57 @@
           class="rounded-full bg-indigo-600 text-white font-bold px-8 h-10 shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 hover:shadow-indigo-600/40 transition-all text-sm">OK</button>
       </div>
     </div>
+  </div>
+
+  <!-- Detail Overlay Modal (Lista de Presença/Ausência) -->
+  <div id="detail-overlay" class="fixed inset-0 bg-zinc-950/95 backdrop-blur-xl hidden z-[100] flex flex-col transition-all duration-300 opacity-0 pointer-events-none transform scale-95">
+     <!-- Header -->
+     <div class="p-6 md:p-8 flex justify-between items-center border-b border-white/5 bg-zinc-900/30">
+       <div>
+          <h2 id="detail-overlay-title" class="text-2xl md:text-3xl font-bold text-white tracking-tight">Detalhes</h2>
+          <p id="detail-overlay-subtitle" class="text-zinc-400 mt-1 text-sm md:text-base">Lista de alunos</p>
+       </div>
+       <button id="close-detail-overlay" class="p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all ring-1 ring-white/5 hover:ring-white/10">
+         <svg xmlns="http://www.w3.org/2000/svg" class="size-6 md:size-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+         </svg>
+       </button>
+     </div>
+     
+     <!-- Content -->
+     <div class="flex-1 overflow-y-auto p-6 md:p-8">
+       <div class="max-w-6xl mx-auto">
+         <!-- Search within modal -->
+         <div class="mb-8 relative max-w-xl mx-auto md:mx-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <input type="text" id="detail-search" placeholder="Buscar aluno nesta lista..." class="w-full bg-zinc-900/50 border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all">
+         </div>
+         
+         <!-- Loading State -->
+         <div id="detail-loading" class="hidden flex justify-center py-20">
+            <svg class="animate-spin size-10 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+         </div>
+
+         <!-- List Grid -->
+         <div id="detail-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+             <!-- Items will be injected here via JS -->
+         </div>
+         
+         <!-- Empty State -->
+         <div id="detail-empty-state" class="hidden flex flex-col items-center justify-center py-20 text-zinc-500">
+            <div class="p-6 rounded-full bg-zinc-900/50 mb-4 ring-1 ring-white/5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+            </div>
+            <p class="text-lg font-medium">Nenhum aluno encontrado.</p>
+            <p class="text-sm">Tente ajustar o termo de busca.</p>
+         </div>
+       </div>
+     </div>
   </div>
 
   <!-- Modal de Edição de Atividade -->
@@ -1273,7 +1408,7 @@
           <select id="manual-frequency-type"
             class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
             <option value="Entrada">Entrada</option>
-            <option value="SAIDA">Saída</option>
+            <option value="Saída">Saída</option>
           </select>
         </label>
 

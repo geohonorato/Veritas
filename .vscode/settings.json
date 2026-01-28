@@ -1,3 +1,9 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "chat.tools.terminal.autoApprove": {
+        "/^node desktop-app/test_final\\.js$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

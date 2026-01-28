@@ -19,7 +19,7 @@
         const settingsSection = document.getElementById('settings-section');
         const usuariosSection = document.getElementById('usuarios-section');
         const atividadesSection = document.getElementById('atividades-section');
-        /* Removed helpSection */
+        const ajudaSection = document.getElementById('ajuda-section');
         const dailySummarySection = document.getElementById('daily-summary-section');
 
         navItems.forEach((item, idx) => {
@@ -36,7 +36,7 @@
             settingsSection.classList.add('hidden');
             usuariosSection.classList.add('hidden');
             atividadesSection.classList.add('hidden');
-            /* Removed helpSection hide */
+            ajudaSection.classList.add('hidden');
             dailySummarySection.classList.add('hidden');
 
             if (item.textContent.includes('Configurações') || item.textContent.includes('ConfiguraÃ§Ãµes')) {
@@ -50,7 +50,7 @@
               atividadesSection.classList.remove('hidden');
               renderizarTabelaAtividades();
             } else if (item.textContent.includes('Ajuda')) {
-              /* Removed helpSection show */
+              ajudaSection.classList.remove('hidden');
             } else {
               dashboardSection.classList.remove('hidden');
             }
@@ -275,6 +275,11 @@
         formAluno.genero.value = user.genero || '';
         formAluno.cabine.value = user.cabine || '';
 
+        // Dispatch change events for custom dropdowns
+        formAluno.turma.dispatchEvent(new Event('change'));
+        formAluno.turno.dispatchEvent(new Event('change'));
+        formAluno.genero.dispatchEvent(new Event('change'));
+
         const diasSemanaCheckboxes = formAluno.querySelectorAll('input[name="dias-semana"]');
         diasSemanaCheckboxes.forEach(checkbox => {
           checkbox.checked = user.diasSemana && user.diasSemana.includes(parseInt(checkbox.value));
@@ -282,7 +287,7 @@
 
         modalTitle.textContent = 'Editar Aluno';
         statusDiv.textContent = '';
-        statusDiv.className = '';
+        statusDiv.className = 'text-zinc-400 text-xs text-center mb-3 min-h-[16px] transition-all';
         btnSalvar.disabled = false;
         deleteUserModalBtn.classList.remove('hidden');
 
@@ -294,8 +299,8 @@
           formAluno.reset();
           alunoIdInput.value = '';
           modalTitle.textContent = 'Adicionar Aluno';
-          statusDiv.textContent = 'Preencha os dados do aluno e siga as instruÃ§Ãµes para o cadastro da digital.';
-          statusDiv.className = 'text-white text-base font-medium mb-2';
+          statusDiv.textContent = 'Preencha os dados e cadastre a digital se necessário.';
+          statusDiv.className = 'text-zinc-400 text-xs text-center mb-3 min-h-[16px] transition-all';
           btnSalvar.disabled = false;
           deleteUserModalBtn.classList.add('hidden');
           modalCadastro.classList.remove('hidden');
@@ -308,6 +313,8 @@
 
       if (btnAddUser) btnAddUser.addEventListener('click', abrirModalCadastro);
       if (btnFecharCadastro) btnFecharCadastro.addEventListener('click', fecharModalCadastro);
+      const btnFecharCadastroSecondary = document.getElementById('fechar-cadastro-btn-secondary');
+      if (btnFecharCadastroSecondary) btnFecharCadastroSecondary.addEventListener('click', fecharModalCadastro);
 
       const searchByNameBtn = document.getElementById('search-by-name');
       const searchByMatriculaBtn = document.getElementById('search-by-matricula');
@@ -912,6 +919,7 @@
         window.api.send('set-csv-path', savedExcelPath);
       }
 
+      /* Base de Alunos logic removed
       const selectStudentDataBtn = document.getElementById('select-student-data-path-btn');
       const studentDataPathDisplay = document.getElementById('student-data-path-display');
 
@@ -930,6 +938,7 @@
       if (savedStudentDataPath && studentDataPathDisplay) {
         studentDataPathDisplay.value = savedStudentDataPath;
       }
+      */
 
       const userMenuBtn = document.getElementById('user-menu-btn');
       const userMenuDropdown = document.getElementById('user-menu-dropdown');
@@ -1069,41 +1078,7 @@
         });
       }
 
-      const dashboardCards = document.querySelectorAll('.dashboard-card');
-      dashboardCards.forEach(card => {
-        card.addEventListener('click', async (e) => {
-          const target = e.currentTarget.dataset.target;
-          navItems.forEach((el) => el.classList.remove('active', 'bg-[#293542]'));
-          const usuariosNavItem = document.querySelector('.nav-item:nth-child(3)');
-
-          dashboardSection.classList.add('hidden');
-          settingsSection.classList.add('hidden');
-          usuariosSection.classList.add('hidden');
-          atividadesSection.classList.add('hidden');
-          ajudaSection.classList.add('hidden');
-          dailySummarySection.classList.add('hidden');
-
-          let activeNavItem = null;
-
-          if (target === 'presentes') {
-            dailySummarySection.classList.remove('hidden');
-            renderizarDailySummary('presentes');
-            activeNavItem = document.querySelector('.nav-item:nth-child(1)');
-          } else if (target === 'ausentes') {
-            dailySummarySection.classList.remove('hidden');
-            renderizarDailySummary('ausentes');
-            activeNavItem = document.querySelector('.nav-item:nth-child(1)');
-          } else if (target === 'todos') {
-            usuariosSection.classList.remove('hidden');
-            renderizarTabelaUsuarios();
-            activeNavItem = document.querySelector('.nav-item:nth-child(3)');
-          }
-
-          if (activeNavItem) {
-            activeNavItem.classList.add('active', 'bg-[#293542]');
-          }
-        });
-      });
+      /* Duplicate logic removed - see below around line 1300+ for the correct card handler */
 
       const btnExportActivities = document.getElementById('export-activities-btn');
       if (btnExportActivities) {
@@ -1111,13 +1086,16 @@
           try {
             const filters = {
               turma: filterTurma.value,
-              mes: filterMes.value,
+              mes: getFilterMesValue(),
               turno: filterTurno.value,
               nome: filterNome.value
             };
-            const result = await window.api.invoke('export-activities-excel', filters);
+
+            const channel = 'export-complete-report';
+            const result = await window.api.invoke(channel, filters);
+
             if (result.success) {
-              await showCustomAlert('Sucesso', `Atividades exportadas para: ${result.filePath}`);
+              await showCustomAlert('Sucesso', `Relatório completo exportado para: ${result.filePath}`);
             } else {
               if (!result.canceled) {
                 await showCustomAlert('Erro', `Erro ao exportar: ${result.error}`);
@@ -1226,11 +1204,17 @@
         const todayDay = today.getDay();
         const todayDate = today.toLocaleDateString('pt-BR');
 
-        const usuariosHoje = users.filter(u => u.diasSemana && u.diasSemana.includes(todayDay));
+        // Users scheduled for today
+        const usuariosHoje = users.filter(u => {
+           if (!u.diasSemana) return false;
+           // Verificar de forma robusta (string vs number)
+           return u.diasSemana.some(d => String(d) === String(todayDay));
+        });
         const totalHoje = usuariosHoje.length;
 
         const presencasHoje = new Set();
         const saidasHoje = new Set();
+        const entryTimes = {}; // Map to store entry times
 
         activities.forEach(activity => {
           const activityDate = new Date(activity.timestamp).toLocaleDateString('pt-BR');
@@ -1238,6 +1222,7 @@
             if (activity.type === 'Entrada') {
               presencasHoje.add(activity.userId);
               saidasHoje.delete(activity.userId);
+              entryTimes[activity.userId] = new Date(activity.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
             } else {
               saidasHoje.add(activity.userId);
               presencasHoje.delete(activity.userId);
@@ -1245,12 +1230,167 @@
           }
         });
 
-        const presentes = Array.from(presencasHoje).filter(userId => !saidasHoje.has(userId));
-        const presencaHojeCount = presentes.length;
+        const presentesIds = Array.from(presencasHoje).filter(userId => !saidasHoje.has(userId));
+        const presencaHojeCount = presentesIds.length;
+
+        // Populate Global Lists for Overlay
+        window.currentPresentesList = users
+          .filter(u => presentesIds.includes(u.id))
+          .map(u => ({ ...u, status: 'Presente', time: entryTimes[u.id] }));
+
+        window.currentAusentesList = usuariosHoje
+          .filter(u => !presentesIds.includes(u.id))
+          .map(u => ({ ...u, status: 'Ausente', time: '--:--' }));
+        
+        window.totalUsersList = users.map(u => ({ ...u, status: 'Cadastrado', time: u.horario || '--:--' }));
+        
+        // Handle "Unscheduled Presence" (Extra students) to avoid negative absent counts
+        // If someone came who wasn't scheduled, they are in 'Presentes' list but not 'Ausentes' calculation base.
+        // We stick to the request: "nos cards ausentes... contar apenas os do dia em questão"
+        // Ausentes Logic: (Scheduled) - (Scheduled AND Present)
+        const scheduledAndPresentCount = usuariosHoje.filter(u => presentesIds.includes(u.id)).length;
+        const ausentesCount = Math.max(0, totalHoje - scheduledAndPresentCount);
 
         document.getElementById('presenca-hoje').textContent = presencaHojeCount;
-        document.getElementById('ausentes-hoje').textContent = totalHoje - presencaHojeCount;
+        document.getElementById('ausentes-hoje').textContent = ausentesCount;
       }
+      
+      /* --- Old Detail Overlay Logic Removed --- */
+      
+      function renderInlineList(containerId, listData, hideTime = false) {
+        // We look for the inner container: #list-xyz > div > div
+        const container = document.querySelector(`#${containerId} > div > div`);
+        if (!container) return;
+        container.innerHTML = '';
+        
+        if (!listData || listData.length === 0) {
+            container.innerHTML = '<div class="text-zinc-500 text-sm p-4 text-center italic">Nenhum registro encontrado hoje.</div>';
+            return;
+        }
+
+        const toTitleCase = (str) => {
+            if (!str) return '';
+            const exceptions = ['da', 'de', 'do', 'das', 'dos', 'e'];
+            return str.toLowerCase().split(' ').map((word, index) => {
+                if (!word) return ''; // Handle multiple spaces
+                // Always capitalize first word, otherwise check exceptions
+                if (index !== 0 && exceptions.includes(word)) {
+                    return word;
+                }
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            }).join(' ');
+        };
+
+        listData.forEach(user => {
+            const item = document.createElement('div');
+            // Improved Layout: More spacing (p-3), Better border, items-start for long names alignment
+            item.className = 'flex items-center justify-between bg-zinc-800/30 p-3 rounded-xl hover:bg-zinc-800/80 transition-all border border-white/5 group/item mb-1';
+            
+            const nomeFormatado = toTitleCase(user.nome || 'Desconhecido');
+            const primeiraLetra = nomeFormatado.charAt(0).toUpperCase();
+
+            const timeElement = hideTime ? '' : `
+                <div class="flex flex-col items-end gap-1">
+                    <span class="text-zinc-300 text-xs font-mono font-medium bg-zinc-950/50 px-2 py-1 rounded-md border border-white/5 whitespace-nowrap group-hover/item:border-indigo-500/30 transition-colors">
+                        ${user.time || user.horario || '--:--'}
+                    </span>
+                </div>
+            `;
+
+            item.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0 flex-1 mr-3">
+                    <div class="size-9 min-w-[36px] rounded-full bg-indigo-500/10 flex items-center justify-center text-sm font-bold text-indigo-400 border border-indigo-500/20 group-hover/item:border-indigo-500/40 group-hover/item:bg-indigo-500/20 transition-colors">
+                        ${primeiraLetra}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-zinc-200 text-sm font-medium leading-tight truncate px-0.5 group-hover/item:text-white transition-colors" title="${nomeFormatado}">${nomeFormatado}</p>
+                        <p class="text-zinc-500 text-[11px] mt-0.5 group-hover/item:text-zinc-400 transition-colors flex items-center gap-1">
+                           ${user.turma || 'Sem turma'}
+                           <span class="w-1 h-1 rounded-full bg-zinc-700"></span>
+                           ${user.matricula || 'N/A'}
+                        </p>
+                    </div>
+                </div>
+                ${timeElement}
+            `;
+            container.appendChild(item);
+        });
+      }
+
+
+      const dashboardCards = document.querySelectorAll('.dashboard-card');
+      dashboardCards.forEach(card => {
+        // Remove old listeners by cloning (simple hack) or just assume they are overwritten/removed by logic
+        // But since we are replacing the code block, it is fine.
+        
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation(); 
+          
+          const target = e.currentTarget.dataset.target;
+          const listId = `list-${target}`;
+          const listOuterEl = document.getElementById(listId);
+          const icon = e.currentTarget.querySelector('svg');
+          
+          if (!listOuterEl) return;
+
+          // Check expanded state via max-height
+          const isExpanded = listOuterEl.style.maxHeight && listOuterEl.style.maxHeight !== '0px';
+          
+          // Collapse All Others
+          document.querySelectorAll('[id^="list-"]').forEach(el => {
+              if (el.id !== listId) {
+                  el.style.maxHeight = '0px';
+                  el.classList.remove('opacity-100');
+                  el.classList.add('opacity-0');
+                  
+                  // Reset other icons
+                  const otherTarget = el.id.replace('list-', '');
+                  const otherCard = document.querySelector(`.dashboard-card[data-target="${otherTarget}"]`);
+                  if (otherCard) {
+                      otherCard.style.zIndex = ''; // Reset Z-Index
+                      const otherIcon = otherCard.querySelector('svg');
+                      if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                      otherCard.classList.remove('ring-1', 'ring-indigo-500/50');
+                  }
+              }
+          });
+
+          if (!isExpanded) {
+             // Expand
+             listOuterEl.style.maxHeight = '500px'; 
+             listOuterEl.classList.remove('opacity-0');
+             listOuterEl.classList.add('opacity-100');
+             e.currentTarget.style.zIndex = '50'; // Bring to front
+             
+             if (icon) icon.style.transform = 'rotate(180deg)';
+             e.currentTarget.classList.add('ring-1', 'ring-indigo-500/50');
+
+
+             // Render data if empty
+             if (target === 'presentes') {
+                renderInlineList(listId, window.currentPresentesList || []);
+             } else if (target === 'ausentes') {
+                renderInlineList(listId, window.currentAusentesList || [], true);
+             } else if (target === 'todos') {
+                renderInlineList(listId, window.totalUsersList || [], true);
+             }
+          } else {
+             // Collapse
+             listOuterEl.style.maxHeight = '0px';
+             listOuterEl.classList.remove('opacity-100');
+             listOuterEl.classList.add('opacity-0');
+             e.currentTarget.style.zIndex = ''; // Reset Z-Index
+             
+             if (icon) icon.style.transform = 'rotate(0deg)';
+             e.currentTarget.classList.remove('ring-1', 'ring-indigo-500/50');
+          }
+        });
+      });
+
+
+            
+      // --- Old Listeners and Helpers Removed --- 
 
       const syncTimeBtn = document.getElementById('sync-time-btn');
       if (syncTimeBtn) {
@@ -1695,9 +1835,12 @@
         if (manualFrequencyForm) {
           manualFrequencyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log("Submitting manual frequency form..."); // DEBUG
             const userId = manualFrequencyUserId.value;
             const timestampLocal = document.getElementById('manual-frequency-timestamp').value;
             const type = document.getElementById('manual-frequency-type').value;
+            
+            console.log("Form values:", { userId, timestampLocal, type }); // DEBUG
 
             if (!userId) {
               showCustomAlert('Erro', 'Por favor, selecione um aluno válido da lista.');
@@ -1709,23 +1852,33 @@
               timestamp: new Date(timestampLocal).toISOString(),
               type: type,
             };
+            
+            console.log("Invoking add-manual-activity with:", activityData); // DEBUG
 
             try {
-              await window.api.invoke('add-manual-activity', activityData);
-              showCustomAlert('Sucesso', 'Frequência adicionada manualmente.');
-              closeManualFrequencyModal();
-
-              // Refresh Lists
-              if (typeof allActivitiesCache !== 'undefined') allActivitiesCache = [];
-              if (typeof renderizarTabelaAtividades === 'function') renderizarTabelaAtividades();
-              if (typeof renderizarAtividadesRecentes === 'function') renderizarAtividadesRecentes();
-              if (typeof atualizarCardsDashboard === 'function') atualizarCardsDashboard();
-
-              const activityDate = new Date(activityData.timestamp);
-              if (typeof selectedDay !== 'undefined' && selectedDay === activityDate.getDate() && selectedMonth === activityDate.getMonth() && selectedYear === activityDate.getFullYear()) {
-                if (typeof renderizarAtividadesPorData === 'function') renderizarAtividadesPorData(activityDate);
+              const result = await window.api.invoke('add-manual-activity', activityData);
+              console.log("Invoke result:", result); // DEBUG
+              
+              if (result && result.success) {
+                   showCustomAlert('Sucesso', 'Frequência adicionada manualmente.');
+                   closeManualFrequencyModal();
+    
+                  // Refresh Lists
+                  if (typeof allActivitiesCache !== 'undefined') allActivitiesCache = [];
+                  if (typeof renderizarTabelaAtividades === 'function') renderizarTabelaAtividades();
+                  if (typeof renderizarAtividadesRecentes === 'function') renderizarAtividadesRecentes();
+                  if (typeof atualizarCardsDashboard === 'function') atualizarCardsDashboard();
+    
+                  const activityDate = new Date(activityData.timestamp);
+                  if (typeof selectedDay !== 'undefined' && selectedDay === activityDate.getDate() && selectedMonth === activityDate.getMonth() && selectedYear === activityDate.getFullYear()) {
+                    if (typeof renderizarAtividadesPorData === 'function') renderizarAtividadesPorData(activityDate);
+                  }
+              } else {
+                   showCustomAlert('Erro', result.error || 'Falha desconhecida ao salvar.');
               }
+              
             } catch (error) {
+              console.error("Invoke Error:", error); // DEBUG
               showCustomAlert('Erro', `Falha ao adicionar frequência: ${error.message}`);
             }
           });
@@ -1939,30 +2092,55 @@
           }
 
           // 1. Fetch Data
-          const [weeklyRes, usersRes] = await Promise.all([
+          const [weeklyRes, usersRes, activitiesRes] = await Promise.all([
             fetch('/api/stats/weekly'),
-            fetch('/api/users')
+            fetch('/api/users'),
+            fetch('/api/activities')
           ]);
 
           const weeklyData = await weeklyRes.json();
           const users = await usersRes.json();
-          const totalUsers = users.length;
+          const activities = await activitiesRes.json();
 
-          // 2. Process Data
-          const todayStats = weeklyData[weeklyData.length - 1]; // Ãšltimo dia (Hoje)
-          const presentToday = todayStats ? todayStats.count : 0;
-          const absentToday = Math.max(0, totalUsers - presentToday);
-          const presencePercentage = totalUsers > 0 ? Math.round((presentToday / totalUsers) * 100) : 0;
+          // 2. Process Data - Count only students scheduled for today
+          const today = new Date();
+          const todayDay = today.getDay();
+          const todayDate = today.toLocaleDateString('pt-BR');
 
-          // 3. Update UI Cards
-          const elPresenca = document.getElementById('presenca-hoje');
-          const elAusentes = document.getElementById('ausentes-hoje');
-          const elTotal = document.getElementById('total-alunos');
+          // Filter users that have classes today (diasSemana includes today's day of week)
+          const usersScheduledToday = users.filter(u => {
+             if (!u.diasSemana) return false;
+             // Handle both string and number types, and 0-6 vs 1-7 formats if necessary
+             const todayDayStr = String(todayDay);
+             return u.diasSemana.includes(todayDay) || u.diasSemana.includes(todayDayStr);
+          });
+          const totalUsersScheduledToday = usersScheduledToday.length;
+
+          // Count present users (had entrada today)
+          const presentUserIds = new Set();
+          activities.forEach(activity => {
+            const activityDate = new Date(activity.timestamp).toLocaleDateString('pt-BR');
+            if (activityDate === todayDate && activity.type === 'Entrada') {
+              presentUserIds.add(activity.userId);
+            }
+          });
+
+          const presentToday = Array.from(presentUserIds).filter(userId => 
+            usersScheduledToday.some(u => u.id === userId)
+          ).length;
+
+          const absentToday = Math.max(0, totalUsersScheduledToday - presentToday);
+          const presencePercentage = totalUsersScheduledToday > 0 ? Math.round((presentToday / totalUsersScheduledToday) * 100) : 0;
+
+          // 3. Update UI Cards (DISABLED: Handled by atualizarCardsDashboard)
+          // const elPresenca = document.getElementById('presenca-hoje');
+          // const elAusentes = document.getElementById('ausentes-hoje');
+          // const elTotal = document.getElementById('total-alunos');
           const elChartText = document.getElementById('chart-total-text');
 
-          if (elPresenca) elPresenca.textContent = presentToday;
-          if (elAusentes) elAusentes.textContent = absentToday;
-          if (elTotal) elTotal.textContent = totalUsers;
+          // if (elPresenca) elPresenca.textContent = presentToday;
+          // if (elAusentes) elAusentes.textContent = absentToday;
+          // if (elTotal) elTotal.textContent = totalUsers;
           if (elChartText) elChartText.textContent = `${presencePercentage}%`;
 
           // 4. Render Weekly Chart (Line)
@@ -2166,15 +2344,142 @@
       }
 
 
-      // Alias para compatibilidade com chamadas antigas
-      async function atualizarCardsDashboard() {
-        await initCharts();
+      // --- Lógica de Faltas Automáticas ---
+      const toggleFaltasBtn = document.getElementById('toggle-faltas-btn');
+      const atividadesTab = document.getElementById('atividades-tab');
+      const faltasTab = document.getElementById('faltas-tab');
+      const faltasTbody = document.getElementById('faltas-tbody');
+
+      let viewingFaltas = false;
+
+      if (toggleFaltasBtn) {
+        toggleFaltasBtn.addEventListener('click', async () => {
+          viewingFaltas = !viewingFaltas;
+
+          if (viewingFaltas) {
+            toggleFaltasBtn.classList.add('bg-amber-500/20', 'text-amber-400', 'border-amber-500/30');
+            toggleFaltasBtn.classList.remove('bg-zinc-950/50', 'text-zinc-400', 'border-white/5');
+            atividadesTab.classList.add('hidden');
+            faltasTab.classList.remove('hidden');
+            await renderizarTabelaFaltas();
+          } else {
+            toggleFaltasBtn.classList.remove('bg-amber-500/20', 'text-amber-400', 'border-amber-500/30');
+            toggleFaltasBtn.classList.add('bg-zinc-950/50', 'text-zinc-400', 'border-white/5');
+            atividadesTab.classList.remove('hidden');
+            faltasTab.classList.add('hidden');
+          }
+        });
+      }
+
+      async function renderizarTabelaFaltas() {
+        // Buscar faltas de hoje
+        const today = new Date().toLocaleDateString('pt-BR');
+        const faltas = await window.api.invoke('get-faltas', { date: today });
+
+        faltasTbody.innerHTML = '';
+        if (!faltas || faltas.length === 0) {
+          faltasTbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-zinc-400">Nenhuma falta registrada hoje! 🎉</td></tr>';
+          return;
+        }
+
+        // Função para verificar se o turno já passou
+        const isTurnoPassado = (turno) => {
+          const now = new Date();
+          const horaAtual = now.getHours();
+          
+          // Definir horários limite por turno
+          const limites = {
+            'MATUTINO': 12,  // Até meio-dia
+            'VESPERTINO': 18 // Até 18h
+          };
+          
+          const limite = limites[turno?.toUpperCase()] || 18;
+          return horaAtual >= limite;
+        };
+
+        // Agrupar por turno
+        const faltasPorTurno = faltas.reduce((acc, falta) => {
+           const turno = falta.userTurno || 'INDEFINIDO';
+           if (!acc[turno]) acc[turno] = [];
+           acc[turno].push(falta);
+           return acc;
+        }, {});
+
+        // Definir ordem de exibição dos turnos
+        const turnosOrdem = ['MATUTINO', 'VESPERTINO', 'INTEGRAL', 'INDEFINIDO'];
+        
+        // Obter chaves presentes e ordenar
+        const turnosPresentes = Object.keys(faltasPorTurno).sort((a, b) => {
+             const indexA = turnosOrdem.indexOf(a.toUpperCase());
+             const indexB = turnosOrdem.indexOf(b.toUpperCase());
+             // Se não encontrado na ordem, jogar para o final
+             return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+        });
+
+        turnosPresentes.forEach(turno => {
+          // Cabeçalho do Turno
+          const trHeader = document.createElement('tr');
+          trHeader.className = 'bg-zinc-800/80 border-y border-white/10';
+          trHeader.innerHTML = `
+            <td colspan="4" class="px-4 py-2 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+              ${turno === 'INDEFINIDO' ? 'Turno Não Definido' : turno} <span class="text-zinc-500 font-normal ml-1">(${faltasPorTurno[turno].length})</span>
+            </td>
+          `;
+          faltasTbody.appendChild(trHeader);
+
+          // Renderizar linhas do turno
+          faltasPorTurno[turno].forEach(falta => {
+            const turnoPassou = isTurnoPassado(falta.userTurno);
+            const statusText = turnoPassou ? 'FALTA CONFIRMADA' : 'FALTANTE';
+            const badgeClass = turnoPassou ? 'bg-red-600/30 text-red-300' : 'bg-red-500/20 text-red-400';
+            const badgeText = turnoPassou ? 'Falta Confirmada' : 'Aguardando Entrada';
+            
+            const tr = document.createElement('tr');
+            tr.className = 'border-t border-t-[#314c68] group hover:bg-red-500/5 transition-colors';
+
+            tr.innerHTML = `
+              <td class="h-[60px] px-4 py-2 text-white text-sm font-normal">${falta.userName}</td>
+              <td class="h-[60px] px-4 py-2 text-[#9badc0] text-sm font-normal">${falta.userTurma}</td>
+              <td class="h-[60px] px-4 py-2 ${turnoPassou ? 'text-red-300' : 'text-red-400'} text-sm font-semibold">${statusText}</td>
+              <td class="h-[60px] px-4 py-2 text-center">
+                <span class="inline-block px-3 py-1 ${badgeClass} text-xs font-semibold rounded-full">
+                  ${badgeText}
+                </span>
+              </td>
+            `;
+            faltasTbody.appendChild(tr);
+          });
+        });
+      }
+
+      window.api.receive('nova-atividade', async () => {
+        if (viewingFaltas) {
+          await renderizarTabelaFaltas();
+        }
+      });
+
+      window.api.receive('falta-added', async () => {
+        if (viewingFaltas) {
+          await renderizarTabelaFaltas();
+        }
+      });
+
+      // Inicializar faltas do dia ao carregar
+      async function initFaltasDodia() {
+        try {
+          await window.api.invoke('initialize-todays-faltas');
+          console.log('[Faltas] Faltas do dia inicializadas');
+        } catch (error) {
+          console.error('[Faltas] Erro ao inicializar faltas:', error);
+        }
       }
 
       document.addEventListener('DOMContentLoaded', () => {
         initCharts();
+        atualizarCardsDashboard();
         initDashboardAI();
         loadEmailSettings();
+        initFaltasDodia(); // Inicializar faltas do dia
 
 
         // --- Smart Year Selection Logic ---

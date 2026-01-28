@@ -2,6 +2,10 @@ const express = require('express');
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+const xlsx = require('xlsx'); 
+// Load env vars from root
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+
 const { Server } = require('socket.io');
 const cors = require('cors');
 const os = require('os');
@@ -86,6 +90,166 @@ app.post('/api/email/test', async (req, res) => {
 });
 
 app.use(express.json());
+// --- Exportação Completa - Endpoint WEB ---
+app.post('/api/export/report', (req, res) => {
+    try {
+        const filters = req.body || {};
+        const wb = xlsx.utils.book_new();
+        let hasContent = false;
+
+        // --- PARTE 1: FREQUÊNCIA ---
+        let activities = db.getActivities();
+        // Filtros
+        if (filters.turma) activities = activities.filter(a => a.userTurma === filters.turma);
+        if (filters.turno) activities = activities.filter(a => a.userTurno === filters.turno);
+        if (filters.nome) {
+            const lowerNome = filters.nome.toLowerCase();
+            activities = activities.filter(a => a.userName && a.userName.toLowerCase().includes(lowerNome));
+        }
+        if (filters.mes) {
+            activities = activities.filter(a => {
+                const d = new Date(a.timestamp);
+                const [filterYear, filterMonth] = filters.mes.split('-').map(Number);
+                return d.getMonth() === (filterMonth - 1) && d.getFullYear() === filterYear;
+            });
+        }
+
+        if (activities.length > 0) {
+            const users = db.getUsers();
+            const userMap = new Map(users.map(u => [u.id, u]));
+            const dailyRecords = {};
+
+            activities.forEach(a => {
+                const date = new Date(a.timestamp).toLocaleDateString('pt-BR');
+                const key = `${a.userId}_${date}`;
+                if (!dailyRecords[key]) {
+                    const user = userMap.get(a.userId);
+                    dailyRecords[key] = {
+                        cabine: user ? user.cabine : 'N/A', 
+                        userName: a.userName, 
+                        userTurma: a.userTurma,
+                        date: date, 
+                        entrada: null, 
+                        saida: null
+                    };
+                }
+                const r = dailyRecords[key];
+                const t = new Date(a.timestamp);
+                if (a.type === 'Entrada') (!r.entrada || t < r.entrada) ? r.entrada = t : null;
+                else if (a.type === 'SAIDA') (!r.saida || t > r.saida) ? r.saida = t : null;
+            });
+
+            const headerFreq = ['Cabine', 'Nome', 'Turma', 'Data', 'Entrada', 'Saída'];
+            const rowsFreq = Object.values(dailyRecords).map(r => ({
+                'Cabine': r.cabine, 
+                'Nome': r.userName, 
+                'Turma': r.userTurma, 
+                'Data': r.date,
+                'Entrada': r.entrada ? r.entrada.toLocaleTimeString('pt-BR') : '---',
+                'Saída': r.saida ? r.saida.toLocaleTimeString('pt-BR') : '---'
+            }));
+            const wsFreq = xlsx.utils.json_to_sheet(rowsFreq, { header: headerFreq });
+            xlsx.utils.book_append_sheet(wb, wsFreq, 'Frequência');
+            hasContent = true;
+        }
+
+        // --- PARTE 2: FALTAS (Baseado na tabela 'faltas') ---
+        const users = db.getUsers();
+        let filteredUsers = users;
+
+        if (filters.turma) filteredUsers = filteredUsers.filter(u => u.turma === filters.turma);
+        if (filters.turno) filteredUsers = filteredUsers.filter(u => u.turno === filters.turno);
+        if (filters.nome) {
+            const lower = filters.nome.toLowerCase();
+            filteredUsers = filteredUsers.filter(u => u.nome && u.nome.toLowerCase().includes(lower));
+        }
+
+        if (filteredUsers.length > 0) {
+            // Buscar TODAS as faltas registradas no banco (pois a tabela faltas é a fonte da verdade da UI)
+            let allFaltasRecorded = db.getFaltas({});
+            
+            // Filtro de Mês nas faltas
+            if (filters.mes) {
+                const [filterYear, filterMonth] = filters.mes.split('-').map(Number);
+                allFaltasRecorded = allFaltasRecorded.filter(f => {
+                    // f.date deve estar no formato DD/MM/YYYY
+                    if (!f.date) return false;
+                    const parts = f.date.split('/');
+                    if (parts.length !== 3) return false;
+                    const fDay = parseInt(parts[0]);
+                    const fMonth = parseInt(parts[1]); 
+                    const fYear = parseInt(parts[2]);
+                    // Compara ano e mês (fMonth é 1-12, filterMonth é 1-12 vindo do split padrão?)
+                    // filters.mes vem "2026-01". filterYear=2026, filterMonth=1.
+                    return fYear === filterYear && fMonth === filterMonth;
+                });
+            }
+
+            // Mapear faltas por usuário: userId -> [datas...]
+            const faltasMap = {};
+            allFaltasRecorded.forEach(f => {
+                const uid = f.userId;
+                if (!faltasMap[uid]) faltasMap[uid] = [];
+                faltasMap[uid].push(f.date);
+            });
+
+            const usersByTurma = {};
+            filteredUsers.forEach(u => {
+                const t = u.turma || 'Sem Turma';
+                if (!usersByTurma[t]) usersByTurma[t] = [];
+                usersByTurma[t].push(u);
+            });
+
+            for (const [turmaName, turmaUsers] of Object.entries(usersByTurma)) {
+                turmaUsers.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+                const rowsAB = [];
+
+                turmaUsers.forEach(user => {
+                    const dates = faltasMap[user.id] || [];
+                    // Ordenar datas
+                    dates.sort((a, b) => {
+                         const da = a.split('/').reverse().join('');
+                         const db = b.split('/').reverse().join('');
+                         return da.localeCompare(db);
+                    });
+
+                    const totalFaltas = dates.length * 3;
+                    
+                    rowsAB.push({
+                        'Nome': user.nome,
+                        'Qtd Faltas': totalFaltas,
+                        'Dias das Faltas': dates.length > 0 ? dates.join(', ') : '---'
+                    });
+                });
+
+                if (rowsAB.length > 0) {
+                    const headerAB = ['Nome', 'Qtd Faltas', 'Dias das Faltas'];
+                    const wsAB = xlsx.utils.json_to_sheet(rowsAB, { header: headerAB });
+                    wsAB['!cols'] = [{ wch: 40 }, { wch: 10 }, { wch: 60 }];
+                    let sheetName = `Faltas - ${turmaName}`;
+                    sheetName = sheetName.slice(0, 31).replace(/[\[\]\*\/\\\?]/g, '');
+                    xlsx.utils.book_append_sheet(wb, wsAB, sheetName);
+                    hasContent = true;
+                }
+            }
+        }
+
+        if (!hasContent) {
+           return res.status(404).json({ error: 'Sem dados para exportar' });
+        }
+
+        const buffer = xlsx.write(wb, { type: 'buffer', bookType: 'xlsx' });
+        
+        res.setHeader('Content-Disposition', `attachment; filename="relatorio-${Date.now()}.xlsx"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(buffer);
+
+    } catch (error) {
+        console.error('Erro na exportação:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Middleware de Autenticação (Simples) ---
@@ -173,11 +337,75 @@ app.delete('/api/users/:id', (req, res) => {
 
 // Activities
 app.get('/api/activities', (req, res) => res.json(db.getActivities()));
+app.post('/api/activities', async (req, res) => {
+    try {
+        const activityData = req.body;
+        console.log("[API] Adding manual activity:", activityData);
+        
+        const newActivity = db.addActivity(activityData);
+        
+        if (newActivity) {
+             io.emit('nova-atividade', newActivity);
+             io.emit('data-update', { type: 'activities' });
+             
+             // Email
+             const user = db.getUserById(activityData.userId);
+             if (user) {
+                  EmailService.sendPointNotification(user, newActivity).catch(e => console.error("Email Error:", e));
+             }
+             
+             res.json({ success: true, activity: newActivity });
+        } else {
+             res.status(400).json({ success: false, error: "Falha ao gravar no banco." });
+        }
+    } catch(e) {
+        console.error("[API] Error adding activity:", e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
 app.delete('/api/activities', (req, res) => {
     db.clearAllActivities();
     io.emit('data-update', { type: 'activities' });
     io.emit('data-update', { type: 'activities' });
     res.json({ success: true });
+});
+
+// Faltas
+app.get('/api/faltas', (req, res) => {
+    try {
+        const { date, turma, userId } = req.query;
+        const filters = {};
+        if (date) filters.date = date;
+        if (turma) filters.turma = turma;
+        if (userId) filters.userId = parseInt(userId);
+        
+        const faltas = db.getFaltas(filters);
+        res.json(faltas);
+    } catch (error) {
+        console.error('[API] Erro ao buscar faltas:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/faltas/initialize', (req, res) => {
+    try {
+        db.initializeTodaysFaltas();
+        res.json({ success: true, message: 'Faltas inicializadas' });
+    } catch (error) {
+        console.error('[API] Erro ao inicializar faltas:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/faltas/:id', (req, res) => {
+    try {
+        const result = db.deleteFalta(parseInt(req.params.id));
+        io.emit('data-update', { type: 'faltas' });
+        res.json({ success: result });
+    } catch (error) {
+        console.error('[API] Erro ao deletar falta:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Settings API
@@ -411,7 +639,15 @@ function processSerialData(line) {
                 // Enviar email de notificação
                 const user = db.getUserById(data.id);
                 if (user) {
-                    EmailService.sendPointNotification(user, newActivity);
+                    console.log(`[Automation] Disparando email de registro (${newActivity.type}) para ${user.nome}...`);
+                    EmailService.sendPointNotification(user, newActivity)
+                        .then(info => {
+                            if (info) console.log(`[Automation] Email enviado com sucesso! ID: ${info.messageId}`);
+                            else console.warn(`[Automation] Email não enviado (verifique logs do EmailService).`);
+                        })
+                        .catch(err => {
+                            console.error(`[Automation] ERRO CRÍTICO ao enviar email:`, err);
+                        });
                 }
             }
         }
@@ -560,4 +796,12 @@ server.listen(PORT, '0.0.0.0', () => {
     Login Padrão: admin / admin
     =======================================================
     `);
+    
+    // Inicializar faltas do dia
+    try {
+        db.initializeTodaysFaltas();
+        console.log('✅ Faltas do dia inicializadas');
+    } catch (error) {
+        console.error('❌ Erro ao inicializar faltas:', error);
+    }
 });

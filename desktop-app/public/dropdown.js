@@ -202,6 +202,9 @@
             }
         };
 
+        // Listen for external change events to sync UI
+        select.addEventListener('change', wrapper._updateValue);
+
         return wrapper;
     }
 
@@ -251,8 +254,9 @@
             'filter-turma',
             'filter-turno',
             'filter-mes-select',
-            'modal-genero',
-            'modal-cabine'
+            'modal-turma-select',
+            'modal-turno-select',
+            'modal-genero-select'
         ];
 
         let converted = 0;

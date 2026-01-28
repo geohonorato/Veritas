@@ -27,8 +27,8 @@ contextBridge.exposeInMainWorld('api', {
     },
     invoke: (channel, data) => {
         let validChannels = [
-            'select-student-data-path',
-            'search-student-data',
+            // 'select-student-data-path', // Removed
+            // 'search-student-data', // Removed
             'get-users',
             'get-activities',
             'add-manual-activity',

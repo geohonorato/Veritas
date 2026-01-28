@@ -44,13 +44,13 @@ button:hover {
 
 /* Ocultar a barra de rolagem */
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+  display: none !important;
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;
+  -ms-overflow-style: none !important;
   /* IE and Edge */
-  scrollbar-width: none;
+  scrollbar-width: none !important;
   /* Firefox */
 }
 
@@ -65,9 +65,7 @@ input:checked~.block {
 }
 
 /* Correção para o ícone do select sobrepor o texto */
-#filter-turma,
-select[name="turma"],
-select[name="genero"] {
+#filter-turma {
   padding-right: 2.5rem;
   /* Aumenta o padding à direita para o ícone */
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
@@ -522,3 +520,53 @@ select[name="genero"] {
   background: #18181b !important;
   /* Solid Zinc 950 */
 }
+ 
+ / *   C u s t o m   S c r o l l b a r   -   d a r k / t h i n   * / 
+ 
+ . c u s t o m - s c r o l l b a r : : - w e b k i t - s c r o l l b a r   { 
+ 
+     w i d t h :   6 p x ; 
+ 
+     h e i g h t :   6 p x ; 
+ 
+ } 
+ 
+ . c u s t o m - s c r o l l b a r : : - w e b k i t - s c r o l l b a r - t r a c k   { 
+ 
+     b a c k g r o u n d :   r g b a ( 0 ,   0 ,   0 ,   0 . 2 ) ; 
+ 
+ } 
+ 
+ . c u s t o m - s c r o l l b a r : : - w e b k i t - s c r o l l b a r - t h u m b   { 
+ 
+     b a c k g r o u n d :   r g b a ( 2 5 5 ,   2 5 5 ,   2 5 5 ,   0 . 1 ) ; 
+ 
+     b o r d e r - r a d i u s :   3 p x ; 
+ 
+ } 
+ 
+ . c u s t o m - s c r o l l b a r : : - w e b k i t - s c r o l l b a r - t h u m b : h o v e r   { 
+ 
+     b a c k g r o u n d :   r g b a ( 2 5 5 ,   2 5 5 ,   2 5 5 ,   0 . 2 ) ; 
+ 
+ } 
+ 
+ 
+ 
+ / *   C u s t o m   S c r o l l b a r   -   H I D D E N   * / 
+ 
+ . c u s t o m - s c r o l l b a r : : - w e b k i t - s c r o l l b a r   { 
+ 
+     d i s p l a y :   n o n e   ! i m p o r t a n t ; 
+ 
+ } 
+ 
+ . c u s t o m - s c r o l l b a r   { 
+ 
+     - m s - o v e r f l o w - s t y l e :   n o n e ;     / *   I E   a n d   E d g e   * / 
+ 
+     s c r o l l b a r - w i d t h :   n o n e ;     / *   F i r e f o x   * / 
+ 
+ } 
+ 
+ 

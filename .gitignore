@@ -21,3 +21,5 @@ thumbs.db
 
 build/
 data/
+
+.env
