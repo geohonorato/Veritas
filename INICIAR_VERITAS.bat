@@ -8,6 +8,19 @@ echo           INICIANDO VERITAS DESKTOP...
 echo =======================================================
 echo.
 
+echo [INFO] Verificando atualizacoes...
+git fetch origin main >nul 2>&1
+for /f %%i in ('git rev-list HEAD...origin/main --count') do set BEHIND=%%i
+
+if "%BEHIND%"=="0" (
+    echo [INFO] O sistema ja esta atualizado.
+) else (
+    echo [INFO] Nova atualizacao encontrada! Baixando...
+    git pull origin main
+    echo [INFO] Sistema atualizado.
+)
+echo.
+
 if not exist "desktop-app" (
     color 0C
     echo [ERRO] Pasta 'desktop-app' nao encontrada!
