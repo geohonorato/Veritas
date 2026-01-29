@@ -28,7 +28,7 @@ class AIService {
         // Initialize Model (User Selected)
         this.model = new ChatGroq({
             apiKey: apiKey,
-            model: "openai/gpt-oss-20b",
+            model: "openai/gpt-oss-20b", // MODELO DEFINIDO PELO USUÁRIO. NÃO ALTERAR.
             temperature: 0.1
         });
         
@@ -145,20 +145,26 @@ class AIService {
 
         // --- Tool 3: Assisted/Patients Search (Excel) ---
         const searchAssistedTool = tool(async ({ query }) => {
+            if (!query) return "Erro: Query vazia.";
             console.log(`[Tool] Buscando assistido/vínculo: ${query}`);
             const normalizedQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
             // Search in assistedData logic
+            if (!this.assistedData) {
+                this.loadAssistedList(); // Tenta recarregar se estiver vazio
+                if (!this.assistedData || this.assistedData.length === 0) return "Lista de assistidos indisponível no momento.";
+            }
+
             const matches = this.assistedData.filter(d =>
-                d.assistedName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery) ||
-                d.studentName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery)
+                (d.assistedName && d.assistedName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery)) ||
+                (d.studentName && d.studentName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery))
             ).slice(0, 10);
 
             if (matches.length === 0) return "Nenhum vínculo encontrado.";
             return JSON.stringify(matches);
         }, {
             name: "search_assisted_relationship",
-            description: "Busca na planilha de Assistidos/Pacientes. Retorna par { Aluno, Assistido }.",
+            description: "Busca na planilha de Assistidos/Pacientes. Use para perguntas como 'quem atende fulano' ou 'qual paciente de sicrano'. Retorna par { Aluno, Assistido }.",
             schema: z.object({
                 query: z.string()
             })
@@ -203,8 +209,11 @@ class AIService {
 
     loadAssistedList() {
         try {
-            const filePath = path.join('e:\\Códigos\\PONTO', 'LISTA DE ASSISTIDOS.xlsx');
+            // Caminho relativo à estrutura organizada: ../../../data/LISTA DE ASSISTIDOS.xlsx
+            const filePath = path.join(__dirname, '../../../data/LISTA DE ASSISTIDOS.xlsx');
+            
             if (!fs.existsSync(filePath)) {
+                console.warn(`[Veritas AI] Aviso: Lista de assistidos não encontrada em ${filePath}`);
                 this.assistedData = [];
                 return;
             }

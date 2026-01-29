@@ -129,6 +129,29 @@ def chunk_text(text):
     )
     return text_splitter.split_text(text)
 
+def get_metadata_path():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Metadata file next to the DB
+    return os.path.join(script_dir, DB_REL_PATH + '.metadata.json')
+
+def load_metadata():
+    path = get_metadata_path()
+    if os.path.exists(path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def save_metadata(metadata):
+    path = get_metadata_path()
+    try:
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
+    except:
+        pass
+
 def cmd_ingest(source_dir):
     sys.stderr.write(f"--- Ingesting from {source_dir} ---\n")
     if not os.path.exists(source_dir):
@@ -139,15 +162,160 @@ def cmd_ingest(source_dir):
     db = lancedb.connect(db_path)
     model = get_model()
     
+    # Load previous ingestion state
+    metadata = load_metadata()
+    current_files = {} # To track what currently exists
+    
     files = [f for f in os.listdir(source_dir) if os.path.isfile(os.path.join(source_dir, f)) and not f.startswith('.')]
     
     data_to_insert = []
     
     processed_count = 0
+    skipped_count = 0
     errors = []
 
+    # Identify files to process
+    files_to_process = []
     for f in files:
+        full_path = os.path.join(source_dir, f)
+        mtime = os.path.getmtime(full_path)
+        current_files[f] = mtime
+        
+        # Check if already ingested and unchanged
+        if f in metadata and metadata[f] == mtime:
+             skipped_count += 1
+             sys.stderr.write(f"Skipping {f} (Unchanged)\n")
+             continue
+        
+        files_to_process.append(f)
+
+    # Clean up DB for deleted files or changed files
+    # LanceDB doesn't support simple delete by filename efficiently without rewriting usually,
+    # but we can try to delete where source = filename.
+    # Note: If LanceDB version supports delete. If not, we might need to overwrite table mode.
+    # For simplicity/robustness in this setup:
+    # If there are changed/deleted files, we might need to rebuild or delete specific rows.
+    # Assuming 'overwrite' mode for simplicity if we are re-ingesting EVERYTHING that changed?
+    # Actually, if we use 'append', we duplicate. 
+    # Best strategy for simple RAG: If many changes, overwrite. If incremental, we need 'delete' support.
+    # Let's check if we can delete. If not, we rebuild metadata only for VALID files but we might have junk in DB.
+    # Given the scale (NPJ docs), rebuilding provided we skip unchanged PARSING is hard because we need to clear DB.
+    
+    # REVISED STRATEGY:
+    # 1. If we have any file to process (new or changed) OR any file deleted:
+    #    We unfortunately usually need to clear the table to avoid duplicates if we can't delete by ID.
+    #    LanceDB `delete` is available in newer versions.
+    #    Let's try to be smart: If we re-ingest, we must re-ingest EVERYTHNG if we can't granularly delete.
+    #    Result: "Persistencia no treinamento" = CACHE the parsing?
+    #    Or: Does LanceDB support overwrite? Yes.
+    #    To support "Skipping", we should:
+    #    - Keep the old data for skipped files.
+    #    - Add new data for new/changed files.
+    #    - Remove data for deleted files.
+    
+    #    Implementation with overwrite (safest for consistency):
+    #    We need to re-insert the embeddings for skipped files too? No, that's slow.
+    #    We need valid text/vectors for them.
+    #    
+    #    Let's assume we can use `delete` where `source = filename`.
+    #    Try: table.delete(f"source = '{filename}'")
+    
+    table = None
+    if TABLE_NAME in db.table_names():
+        table = db.open_table(TABLE_NAME)
+
+    # Handle Deletions (Files in metadata but not in current folder)
+    deleted_files = [f for f in metadata if f not in current_files]
+    if table and deleted_files:
+        sys.stderr.write(f"Removing {len(deleted_files)} deleted files from DB...\n")
+        try:
+             # Construct delete query
+             # table.delete(where="source IN ...") might be complex. loop.
+             for df in deleted_files:
+                 table.delete(f"source = '{df}'")
+                 del metadata[df]
+        except Exception as e:
+            sys.stderr.write(f"Warning: Could not delete from DB: {e}. Re-creating table might be needed eventually.\n")
+
+    if not files_to_process and not deleted_files:
+        print(json.dumps({"status": "success", "message": "No changes detected.", "count": 0, "skipped": skipped_count}))
+        return
+
+    # Process New/Changed
+    for f in files_to_process:
         sys.stderr.write(f"Processing {f}...\n")
+        full_path = os.path.join(source_dir, f)
+        
+        # Remove old version if it existed (update case)
+        if table and f in metadata:
+             try:
+                table.delete(f"source = '{f}'")
+             except: pass 
+
+        try:
+            text, method = extract_text(full_path)
+            if not text:
+                sys.stderr.write(f"  [Warn] Empty text context for {f}\n")
+                errors.append(f"{f} (empty)")
+                continue
+            
+            chunks = chunk_text(text)
+            
+            # Embed
+            embeddings = model.encode(chunks)
+            
+            for i, chunk in enumerate(chunks):
+                data_to_insert.append({
+                    "vector": embeddings[i],
+                    "text": chunk,
+                    "source": f,
+                    "id": f"{f}_{i}"
+                })
+            
+            # Update metadata on success
+            metadata[f] = current_files[f]
+            processed_count += 1
+            
+        except Exception as e:
+            sys.stderr.write(f"  [Error] Failed {f}: {e}\n")
+            errors.append(f"{f} ({str(e)})")
+            #traceback.print_exc()
+
+    if data_to_insert:
+        if TABLE_NAME in db.table_names():
+            table = db.open_table(TABLE_NAME)
+            table.add(data_to_insert)
+        else:
+            db.create_table(TABLE_NAME, data=data_to_insert)
+            
+    # Save updated metadata
+    save_metadata(metadata)
+
+    result = {
+        "status": "success",
+        "count": processed_count,
+        "skipped": skipped_count,
+        "errors": errors
+    }
+    print(json.dumps(result))
+
+def cmd_serve():
+    sys.stderr.write("[RAG Server] Starting...\n")
+    # Pre-load model and DB
+    sys.stderr.write("[RAG Server] Loading Model...\n")
+    model = get_model() # This is slow
+    
+    sys.stderr.write("[RAG Server] Connecting DB...\n")
+    db_path = get_db_path()
+    db = lancedb.connect(db_path)
+    
+    sys.stderr.write("[RAG Server] Ready. Listening on stdin.\n")
+    
+    while True:
+        try:
+            line = sys.stdin.readline()
+            if not line: break
+
         file_path = os.path.join(source_dir, f)
         try:
             text, method = extract_text(file_path)

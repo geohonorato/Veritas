@@ -1,12 +1,10 @@
 {
   "name": "cesupa-dashboard",
   "version": "1.0.0",
-  "description": "Dashboard de controle de acesso",
-  "main": "src/main.js",
+  "description": "Servidor Veritas - Sistema de Controle de Presença",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dist": "electron-builder",
-    "rebuild": "electron-rebuild"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "Geovanni Honorato",
@@ -29,36 +27,5 @@
     "socket.io": "^4.8.3",
     "xlsx": "^0.18.5",
     "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@electron/rebuild": "^4.0.1",
-    "electron": "^29.0.0",
-    "electron-builder": "^26.0.12"
-  },
-  "build": {
-    "appId": "com.geovanni.cesupadashboard",
-    "productName": "Veritas Desktop",
-    "directories": {
-      "output": "../build"
-    },
-    "files": [
-      "**/*"
-    ],
-    "extraResources": [
-      "database.json",
-      "ai"
-    ],
-    "win": {
-      "target": "portable",
-      "icon": "build/icon.ico"
-    },
-    "mac": {
-      "target": "dmg",
-      "icon": "build/icon.icns"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "build/icon.png"
-    }
   }
 }

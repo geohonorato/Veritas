@@ -10,6 +10,11 @@ class KnowledgeService {
     }
 
     async initialize() {
+        // Auto-ingest on startup? 
+        // User asked: "o aprendizado e rag iniciam junto com o resto do servidor?"
+        // Let's implement a checked startup ingest.
+        this.runStartupIngest(); 
+
         if (this.pythonProcess) return;
 
         console.log('[Knowledge] Inicializando serviço Persistent Python RAG...');
@@ -30,7 +35,12 @@ class KnowledgeService {
         });
 
         this.pythonProcess.on('exit', (code) => {
-            console.warn(`[Knowledge] Python process died with code ${code}.`);
+            // Se foi kill intencional (code null), é apenas reinicialização
+            if (code === null) {
+                console.log(`[Knowledge] Serviço Python parado para atualização.`);
+            } else {
+                console.warn(`[Knowledge] Processo Python encerrou inesperadamente (código ${code}).`);
+            }
             this.pythonProcess = null;
             // Reject all pending
             while (this.requestQueue.length > 0) {
@@ -40,6 +50,23 @@ class KnowledgeService {
         });
         
         console.log('[Knowledge] Serviço iniciado em background.');
+    }
+
+    async runStartupIngest() {
+        // Prevent double run
+        if (this._startupIngestRun) return;
+        this._startupIngestRun = true;
+
+        setTimeout(async () => {
+             console.log('[Knowledge] Verificando novos documentos para treinamento (Background)...');
+             try {
+                 const res = await this.ingestAll();
+                 if (res.skipped > 0) console.log(`[Knowledge] Treinamento Inteligente: ${res.skipped} arquivos ignorados (já conhecidos).`);
+                 if (res.count > 0) console.log(`[Knowledge] Treinamento Concluído: ${res.count} novos arquivos aprendidos.`);
+             } catch (e) {
+                 console.error("[Knowledge] Falha na verificação de startup:", e);
+             }
+        }, 5000); // 5s delay to let server boot
     }
 
     handleData(data) {
