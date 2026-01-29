@@ -32,7 +32,7 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [2/2] Baixando Modelos de IA para cache local...
+echo [2/3] Baixando Modelos de IA para cache local...
 echo O script vai iniciar o gerenciador apenas para baixar os modelos.
 echo Aguarde ate aparecer "Servidor RAG pronto" ou similar, e entao feche.
 echo.
@@ -42,11 +42,22 @@ echo.
 python scripts/rag_manager.py download_only
 
 echo.
+echo [3/3] Criando arquivo ZIP pronto para envio...
+echo Compactando arquivos do projeto + python_portable...
+echo Isso pode demorar alguns minutos.
+
+powershell -Command "Compress-Archive -Path 'desktop-app', 'scripts', 'python_portable', 'INSTALAR_TUDO.bat', 'INICIAR_VERITAS.bat', 'README.md' -DestinationPath 'VERITAS_OFFLINE_INSTALLER.zip' -Force"
+
+echo.
 echo =======================================================
-echo      SUCESSO! PACOTE PORTATIL CRIADO.
+echo      SUCESSO! PACOTE COMPLETO CRIADO.
 echo =======================================================
-echo Agora a pasta 'python_portable' contem as libs.
-echo A pasta 'desktop-app/data/models_cache' contem os modelos.
-echo Voce pode mover este projeto para qualquer PC sem internet.
+echo O arquivo 'VERITAS_OFFLINE_INSTALLER.zip' foi gerado.
+echo Ele ja contem:
+echo  - O sistema (desktop-app)
+echo  - O python configurado com as libs (python_portable)
+echo  - Os modelos de IA baixados
+echo.
+echo Basta enviar esse ZIP para o outro computador, extrair e rodar INSTALAR_TUDO.bat
 echo.
 pause
