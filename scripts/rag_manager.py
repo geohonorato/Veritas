@@ -7,6 +7,20 @@ import traceback
 import re
 from sentence_transformers import SentenceTransformer
 
+# ---------------------------------------------------------
+# SETUP DE IMPORTAÇÃO (PORTABLE/OFFLINE)
+# Verifica se existe uma pasta 'python_portable' na raiz e usa as libs de lá
+# ---------------------------------------------------------
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+portable_lib_path = os.path.join(project_root, 'python_portable', 'Lib', 'site-packages')
+
+if os.path.exists(portable_lib_path):
+    # Insere no inicio do path para ter prioridade
+    sys.path.insert(0, portable_lib_path)
+    # Tambem adiciona o proprio diretorio do script para imports locais se houver
+    sys.path.insert(0, script_dir)
+
 # Suppress warnings
 warnings.filterwarnings("ignore")
 

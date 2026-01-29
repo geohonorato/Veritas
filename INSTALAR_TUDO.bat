@@ -34,22 +34,28 @@ if %errorlevel% neq 0 (
 )
 
 echo [3/4] Instalando dependencias do Python (IA de Documentos)...
-echo Baixando bibliotecas de IA (Docling). Aguarde...
 
-python --version >nul 2>&1
-if %errorlevel% neq 0 (
-    color 0C
-    echo [ERRO] Python nao encontrado!
-    echo Instale o Python 3.10 ou superior e marque "Add to PATH".
-    echo Site: python.org
-    pause
-    exit /b
-)
+if exist "python_portable\python.exe" (
+    echo [INFO] Python Portatil detectado em 'python_portable'.
+    echo Pulando instalacao via PIP e usando ambiente local.
+) else (
+    echo Baixando bibliotecas de IA (Docling). Aguarde...
+    
+    python --version >nul 2>&1
+    if %errorlevel% neq 0 (
+        color 0C
+        echo [ERRO] Python nao encontrado!
+        echo Instale o Python 3.10 ou superior e marque "Add to PATH".
+        echo Site: python.org
+        pause
+        exit /b
+    )
 
-python -m pip install docling langchain-text-splitters langchain-community pypdf
-if %errorlevel% neq 0 (
-    echo [AVISO] Falha ao instalar no Python padrao. Tentando comando alternativo...
-    pip3 install docling langchain-text-splitters langchain-community pypdf
+    python -m pip install docling langchain-text-splitters langchain-community pypdf
+    if %errorlevel% neq 0 (
+        echo [AVISO] Falha ao instalar no Python padrao. Tentando comando alternativo...
+        pip3 install docling langchain-text-splitters langchain-community pypdf
+    )
 )
 
 cd ..

@@ -19,9 +19,17 @@ class KnowledgeService {
 
         console.log('[Knowledge] Inicializando serviço Persistent Python RAG...');
         const scriptPath = path.join(__dirname, '../../../scripts/rag_manager.py');
+        const projectRoot = path.join(__dirname, '../../../');
+        const localPythonCmd = path.join(projectRoot, 'python_portable', 'python.exe');
         
+        let pythonCommand = 'python';
+        if (fs.existsSync(localPythonCmd)) {
+            console.log('[Knowledge] Usando Python Portátil detectado.');
+            pythonCommand = localPythonCmd;
+        }
+
         // Spawn persistent process with UTF-8 env
-        this.pythonProcess = spawn('python', [scriptPath, 'serve'], {
+        this.pythonProcess = spawn(pythonCommand, [scriptPath, 'serve'], {
             env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONLEGACYWINDOWSSTDIO: 'utf-8' }
         });
 
