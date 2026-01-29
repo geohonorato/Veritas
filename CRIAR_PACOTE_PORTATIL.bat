@@ -17,11 +17,9 @@ echo [1/2] Instalando bibliotecas na pasta local...
 echo Isso pode demorar e requer internet.
 echo.
 
-:: Instalando versoes especificas para evitar conflitos conhecidos com datasets
-python -m pip install --target=python_portable/Lib/site-packages "dill<0.4.1" "multiprocess<0.70.19" "fsspec<=2025.10.0"
-
-:: Instalando pacotes principais
-python -m pip install --target=python_portable/Lib/site-packages docling langchain-text-splitters langchain-community pypdf sentence_transformers
+:: Instalando tudo em um unico comando para o PIP resolver as versoes corretamente
+:: Forcando versoes compativeis com datasets
+python -m pip install --target=python_portable/Lib/site-packages "dill<0.4.1" "multiprocess<0.70.19" "fsspec<=2025.10.0" docling langchain-text-splitters langchain-community pypdf sentence_transformers
 
 if %errorlevel% neq 0 (
     color 0C
