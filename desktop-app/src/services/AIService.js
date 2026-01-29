@@ -173,16 +173,25 @@ class AIService {
         // --- Tool 4: Knowledge Base (RAG) ---
         const ragSearchTool = tool(async ({ query }) => {
             console.log(`[Tool] RAG Search: ${query}`);
-            const results = await KnowledgeService.search(query, 5);
-            if (!results || results.length === 0) return "Nenhum documento relevante encontrado.";
+            try {
+                const results = await KnowledgeService.search(query, 5);
+                
+                if (!results || results.length === 0) {
+                     return "Nenhum documento encontrado na base de conhecimento sobre este tópico. Tente reformular a busca com palavras-chave diferentes.";
+                }
 
-            // Format for LLM
-            return results.map(r => `[Fonte: ${r.source}]\n${r.text}`).join('\n---\n');
+                // Format for LLM
+                return results.map(r => `[Fonte: ${path.basename(r.source)}]\n${r.text}`).join('\n---\n');
+            } catch (error) {
+                console.error("[Tool Error] RAG failed:", error);
+                return "Erro interno ao buscar documentos. Informe ao usuário que a base de conhecimento está temporariamente indisponível.";
+            }
+
         }, {
             name: "search_knowledge_base",
-            description: "Busca documentos do NPJ (Regras, Prazos, Coordenadores, Horários).",
+            description: "ESSENCIAL PARA PERGUNTAS SOBRE REGRAS, DOCUMENTOS OU PROCEDIMENTOS. O sistema buscará trechos relevantes nos PDFs/Documentos do NPJ. Dica: Envie uma pergunta completa ou palavras-chave específicas (ex: 'documentos ação alimentos', 'prazos curatela'). O sistema usa busca semântica, então perguntas naturais funcionam bem.",
             schema: z.object({
-                query: z.string()
+                query: z.string().describe("A pergunta específica ou tópicos para buscar nos documentos.")
             })
         });
 
@@ -293,6 +302,10 @@ class AIService {
 
                         // Safety Truncate
                         if (toolOutput.length > 5000) toolOutput = toolOutput.substring(0, 5000) + "... [Truncated]";
+                        
+                        // Debug log to confirm tool finished
+                        console.log(`[Veritas AI] Tool ${toolCall.name} finished. Output length: ${toolOutput.length}`);
+
                     } catch (err) {
                         console.error(`Error tool ${toolCall.name}:`, err);
                         toolOutput = `Erro: ${err.message}`;
@@ -322,9 +335,13 @@ class AIService {
 
             return aiMsg.content; // Direct response if no tool needed
         } catch (error) {
-            console.error("[Veritas Agent Error]", error);
-            // Even more robust fallback
-            return "Desculpe, tive um erro técnico crítico ao processar sua solicitação.";
+            console.error("[Veritas Agent] Critical Error:", error);
+            // Return user-friendly error but log details
+            if (error.status === 429) return "Erro 429: Muitos pedidos. Aguarde um momento.";
+            if (error.status === 401) return "Erro 401: Chave de API inválida.";
+            if (error.status === 400 && error.error?.code === 'context_length_exceeded') return "Erro: O documento é muito grande para analisar de uma vez.";
+            
+            throw error; // Let server.js handle and send 500
         }
     }
 }

@@ -20,18 +20,19 @@ class KnowledgeService {
         console.log('[Knowledge] Inicializando serviço Persistent Python RAG...');
         const scriptPath = path.join(__dirname, '../../../scripts/rag_manager.py');
         
-        // Spawn persistent process
-        this.pythonProcess = spawn('python', [scriptPath, 'serve']);
+        // Spawn persistent process with UTF-8 env
+        this.pythonProcess = spawn('python', [scriptPath, 'serve'], {
+            env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONLEGACYWINDOWSSTDIO: 'utf-8' }
+        });
 
         // Data Handler
         this.pythonProcess.stdout.on('data', (data) => this.handleData(data));
         
         // Error/Log Handler
         this.pythonProcess.stderr.on('data', (data) => {
-            // Log backend messages but don't treat all as errors (some are info)
+            // Log ALL backend messages for debugging
             const msg = data.toString();
-            if (msg.includes('Error')) console.error(`[RAG Server Log]: ${msg.trim()}`);
-            // else console.log(`[RAG Server]: ${msg.trim()}`);
+            console.log(`[RAG Server Log]: ${msg.trim()}`);
         });
 
         this.pythonProcess.on('exit', (code) => {
@@ -72,6 +73,9 @@ class KnowledgeService {
     handleData(data) {
         this.buffer += data.toString();
         
+        // Log raw data size for debugging
+        // console.log(`[Knowledge Debug] Received ${data.length} bytes from Python.`);
+
         // Process complete lines
         let boundary = this.buffer.indexOf('\n');
         while (boundary !== -1) {
@@ -82,6 +86,7 @@ class KnowledgeService {
             if (!line) continue;
 
             try {
+                // console.log(`[Knowledge Debug] Parsing line: ${line.substring(0, 50)}...`);
                 const response = JSON.parse(line);
                 
                 // Matches the oldest request in queue
@@ -96,6 +101,8 @@ class KnowledgeService {
                         console.error('[Knowledge] Search Error form Backend:', response);
                         req.resolve([]); // Fallback
                     }
+                } else {
+                    // console.warn("[Knowledge] Received response but no pending request:", response);
                 }
             } catch (e) {
                 console.error('[Knowledge] JSON Parse error:', e, "Raw Line:", line);
@@ -107,15 +114,26 @@ class KnowledgeService {
         if (!this.pythonProcess) await this.initialize();
 
         return new Promise((resolve, reject) => {
-            this.requestQueue.push({ resolve, reject });
+            const req = { resolve, reject };
+            this.requestQueue.push(req);
             
+            // Timeout to prevent hanging forever
+            setTimeout(() => {
+                const idx = this.requestQueue.indexOf(req);
+                if (idx > -1) {
+                    this.requestQueue.splice(idx, 1);
+                    console.error("[Knowledge] Search Timeout (Python script stuck).");
+                    resolve([]); // Return empty to avoid crashing flow
+                }
+            }, 10000); // 10s timeout
+
             try {
                 // Ensure query is safe
                 const payload = JSON.stringify({ action: "search", query: query }) + "\n";
                 this.pythonProcess.stdin.write(payload);
             } catch (err) {
                 console.error("Write error:", err);
-                const idx = this.requestQueue.indexOf({resolve, reject}); 
+                const idx = this.requestQueue.indexOf(req); 
                 if (idx > -1) this.requestQueue.splice(idx, 1);
                 resolve([]);
             }

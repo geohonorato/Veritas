@@ -575,7 +575,10 @@ app.post('/api/query-ai', async (req, res) => {
         const result = await AIService.processQuery(req.body.query);
         res.json({ text: result });
     } catch (e) {
-        res.status(500).json({ error: e.toString() });
+        console.error('[API Error] /api/query-ai failed:', e);
+        // Extract useful message if possible
+        const msg = e.response?.data?.error?.message || e.message || e.toString();
+        res.status(500).json({ error: msg });
     }
 });
 

@@ -129,13 +129,12 @@ def chunk_text(text):
     )
     return text_splitter.split_text(text)
 
-def get_metadata_path():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Metadata file next to the DB
-    return os.path.join(script_dir, DB_REL_PATH + '.metadata.json')
+def get_metadata_path(source_dir):
+    # Metadata file INSIDE the source directory (portability)
+    return os.path.join(source_dir, '.veritas_ingest_metadata.json')
 
-def load_metadata():
-    path = get_metadata_path()
+def load_metadata(source_dir):
+    path = get_metadata_path(source_dir)
     if os.path.exists(path):
         try:
             with open(path, 'r', encoding='utf-8') as f:
@@ -144,8 +143,8 @@ def load_metadata():
             return {}
     return {}
 
-def save_metadata(metadata):
-    path = get_metadata_path()
+def save_metadata(metadata, source_dir):
+    path = get_metadata_path(source_dir)
     try:
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)
@@ -162,8 +161,20 @@ def cmd_ingest(source_dir):
     db = lancedb.connect(db_path)
     model = get_model()
     
-    # Load previous ingestion state
-    metadata = load_metadata()
+    # Load previous ingestion state FROM source_dir
+    metadata = load_metadata(source_dir)
+    
+    # Check for schema compatibility (Migration to schema with 'id')
+    if TABLE_NAME in db.table_names():
+        try:
+            t = db.open_table(TABLE_NAME)
+            if 'id' not in t.schema.names:
+                sys.stderr.write("[System] Migrating database schema (adding IDs). Full re-ingest required.\n")
+                db.drop_table(TABLE_NAME)
+                metadata = {} # Clear metadata to force re-processing of all files
+        except Exception as e:
+            sys.stderr.write(f"[System] Warning checking schema: {e}\n")
+
     current_files = {} # To track what currently exists
     
     files = [f for f in os.listdir(source_dir) if os.path.isfile(os.path.join(source_dir, f)) and not f.startswith('.')]
@@ -286,10 +297,17 @@ def cmd_ingest(source_dir):
             table = db.open_table(TABLE_NAME)
             table.add(data_to_insert)
         else:
-            db.create_table(TABLE_NAME, data=data_to_insert)
-            
-    # Save updated metadata
-    save_metadata(metadata)
+            table = db.create_table(TABLE_NAME, data=data_to_insert)
+        
+        # Create FTS Index for Keyword Search support
+        try:
+            table.create_fts_index("text", replace=True)
+            sys.stderr.write("[System] FTS Index created/updated.\n")
+        except Exception as e:
+            sys.stderr.write(f"[Warning] Could not create FTS index: {e}\n")
+
+    # Save updated metadata TO source_dir
+    save_metadata(metadata, source_dir)
 
     result = {
         "status": "success",
@@ -315,193 +333,85 @@ def cmd_serve():
         try:
             line = sys.stdin.readline()
             if not line: break
-
-        file_path = os.path.join(source_dir, f)
-        try:
-            text, method = extract_text(file_path)
-            if not text:
-                sys.stderr.write(f"Skipping {f}: No text extracted.\n")
-                continue
-                
-            chunks = chunk_text(text)
-            sys.stderr.write(f"  Got {len(chunks)} chunks via {method}.\n")
-            
-            # Embed chunks
-            vectors = model.encode(chunks, normalize_embeddings=True)
-            
-            for i, chunk in enumerate(chunks):
-                data_to_insert.append({
-                    "vector": vectors[i],
-                    "text": chunk,
-                    "source": f,
-                    "model": MODEL_NAME
-                })
-            
-            processed_count += 1
-            
-        except Exception as e:
-            err_msg = f"Error processing {f}: {str(e)}"
-            sys.stderr.write(err_msg + "\n")
-            errors.append(err_msg)
-
-    if not data_to_insert:
-        print(json.dumps({"status": "success", "processed": 0, "message": "No data found to ingest"}))
-        return
-
-    # Write to DB
-    sys.stderr.write(f"Writing {len(data_to_insert)} records to LanceDB...\n")
-    try:
-        # Always overwrite for "Reaprender" (Full Ingest) to ensure clean state and schema match
-        db.create_table(TABLE_NAME, data=data_to_insert, mode="overwrite")
-            
-        print(json.dumps({
-            "status": "success", 
-            "processed": processed_count, 
-            "chunks": len(data_to_insert),
-            "errors": errors
-        }))
-    except Exception as e:
-         print(json.dumps({"status": "error", "message": f"DB Write Failed: {str(e)}"}))
-
-
-def cmd_search(query):
-    db_path = get_db_path()
-    if not os.path.exists(db_path):
-         print(json.dumps({"error": "Database not exist"}))
-         return
-
-    db = lancedb.connect(db_path)
-    if TABLE_NAME not in db.table_names():
-        print(json.dumps([]))
-        return
-
-    tbl = db.open_table(TABLE_NAME)
-    model = get_model()
-    
-    query_vec = model.encode(query, normalize_embeddings=True)
-    results = tbl.search(query_vec).limit(5).to_list()
-    
-    output = []
-    for r in results:
-        output.append({
-            "text": r.get("text", ""),
-            "source": r.get("source", "unknown"),
-            "score": r.get("_distance", 0) 
-        })
-    print(json.dumps(output, ensure_ascii=False))
-
-def cmd_serve():
-    """
-    Persistent server mode for low-latency searches.
-    Reads JSON lines from stdin: {"action": "search", "query": "..."}
-    Writes JSON lines to stdout: {"status": "success", "data": [...]}
-    """
-    sys.stderr.write("[Server] Starting Persistent Mode...\n")
-    
-    # 1. Preload Model and DB
-    try:
-        sys.stderr.write("[Server] Loading Model...\n")
-        model = get_model()
-        sys.stderr.write("[Server] Connecting DB...\n")
-        db_path = get_db_path()
-        db = lancedb.connect(db_path)
-        
-        # Check table
-        tbl = None
-        if TABLE_NAME in db.table_names():
-            tbl = db.open_table(TABLE_NAME)
-        else:
-            sys.stderr.write("[Server] Warning: Table not found. Searches will return empty.\n")
-            
-        sys.stderr.write("[Server] Ready to accept commands.\n")
-        
-    except Exception as e:
-        sys.stderr.write(f"[Server] Critical Startup Error: {e}\n")
-        return
-
-    # 2. Loop
-    while True:
-        try:
-            line = sys.stdin.readline()
-            if not line:
-                break # EOF
             
             line = line.strip()
-            if not line:
-                continue
-                
+            if not line: continue
+            
             req = json.loads(line)
-            action = req.get("action")
             
-            if action == 'search':
-                query = req.get("query")
-                if not tbl:
-                    print(json.dumps({"status": "success", "data": []}))
-                else:
-                    try:
-                        query_vec = model.encode(query, normalize_embeddings=True)
-                        results = tbl.search(query_vec).limit(5).to_list()
-                        safe_results = [{"text": r.get("text", ""), "source": r.get("source", "unknown"), "score": r.get("_distance")} for r in results]
-                        print(json.dumps({"status": "success", "data": safe_results}))
-                    except Exception as s_err:
-                        print(json.dumps({"status": "error", "message": str(s_err)}))
-                        
-            elif action == 'ping':
-                print(json.dumps({"status": "pong"}))
+            if req.get("action") == "search":
+                sys.stderr.write(f"[DEBUG] Search requested: {req}\n")
+                query = req.get("query", "")
+                limit = req.get("limit", 5)
                 
-            elif action == 'reload':
-                # Re-open table if ingestion happened externally
-                sys.stderr.write("[Server] Reloading table...\n")
-                if TABLE_NAME in db.table_names():
-                    tbl = db.open_table(TABLE_NAME)
-                print(json.dumps({"status": "reloaded"}))
-            
-            else:
-                 print(json.dumps({"status": "error", "message": "Unknown action"}))
-            
-            sys.stdout.flush()
-            
-        except json.JSONDecodeError:
-            print(json.dumps({"status": "error", "message": "Invalid JSON"}))
-            sys.stdout.flush()
+                # Check table existence
+                if TABLE_NAME not in db.table_names():
+                    sys.stderr.write(f"[DEBUG] Table {TABLE_NAME} not found.\n")
+                    print(json.dumps({"status": "success", "data": []}))
+                    sys.stdout.flush()
+                    continue
+
+                table = db.open_table(TABLE_NAME)
+                
+                # Search (Semantic/Vector)
+                try:
+                    sys.stderr.write(f"[DEBUG] Encoding query...\n")
+                    query_vector = model.encode(query)
+                    sys.stderr.write(f"[DEBUG] Searching LanceDB...\n")
+                    results = table.search(query_vector).limit(limit).to_list()
+                    sys.stderr.write(f"[DEBUG] Found {len(results)} results.\n")
+                except Exception as e:
+                    sys.stderr.write(f"[Search Error while searching] {e}\n")
+                    results = []
+                
+                # Format output
+                clean_results = []
+                try:
+                    for r in results:
+                        clean_results.append({
+                            "text": r.get("text", "")[:2000], # Slice to prevent huge payloads
+                            "source": r.get("source", "unknown"),
+                            "score": 0
+                        })
+                    
+                    sys.stderr.write(f"[DEBUG] Serializing {len(clean_results)} results...\n")
+                    json_output = json.dumps({"status": "success", "data": clean_results}, ensure_ascii=True)
+                    
+                    sys.stderr.write(f"[DEBUG] Printing to stdout...\n")
+                    print(json_output)
+                    sys.stdout.flush()
+                    sys.stderr.write(f"[DEBUG] Flush complete.\n")
+                except Exception as e:
+                     sys.stderr.write(f"[Output Error] Failed to print/serialize: {e}\n")
+                     print(json.dumps({"status": "error", "message": f"Serialization error: {str(e)}"}))
+                     sys.stdout.flush()
+
+
+            elif req.get("action") == "ping":
+                print(json.dumps({"status": "pong"}))
+                sys.stdout.flush()
+
         except Exception as e:
-            sys.stderr.write(f"[Server] Error loop: {e}\n")
+            # sys.stderr.write(f"[RAG Error] {e}\n")
             print(json.dumps({"status": "error", "message": str(e)}))
             sys.stdout.flush()
 
-def main():
+if __name__ == "__main__":
+    sys.stdin.reconfigure(encoding='utf-8')
     sys.stdout.reconfigure(encoding='utf-8')
     sys.stderr.reconfigure(encoding='utf-8')
-
-    if len(sys.argv) < 2:
-        print(json.dumps({"error": "Usage: rag_manager.py <command> [args]"}));
-        return
-
-    command = sys.argv[1]
     
-    try:
-        if command == "ingest":
-            if len(sys.argv) < 3:
-                print(json.dumps({"error": "Ingest requires source directory argument"}))
-                return
-            cmd_ingest(sys.argv[2])
-            
-        elif command == "search":
-             if len(sys.argv) < 3:
-                print(json.dumps({"error": "Search requires query"}))
-                return
-             cmd_search(sys.argv[2])
-        
-        elif command == "serve":
-            cmd_serve()
-
-        else:
-             print(json.dumps({"error": f"Unknown command: {command}"}))
-             
-    except Exception as e:
-        err = f"Critical Error: {str(e)}\n{traceback.format_exc()}"
-        print(json.dumps({"status": "error", "message": err, "error": err}))
+    if len(sys.argv) < 2:
+        print("Usage: python rag_manager.py [ingest|serve] <args>")
         sys.exit(1)
-
-if __name__ == "__main__":
-    main()
+        
+    cmd = sys.argv[1]
+    
+    if cmd == "ingest":
+        if len(sys.argv) < 3:
+            print("Usage: python rag_manager.py ingest <source_dir>")
+            sys.exit(1)
+        cmd_ingest(sys.argv[2])
+        
+    elif cmd == "serve":
+        cmd_serve()

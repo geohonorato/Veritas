@@ -12,6 +12,10 @@
       // Alias for local usage if needed, or just use window.allActivitiesCache
       var allActivitiesCache = window.allActivitiesCache;
 
+      // Variables for Chart Instances (Global within IIFE)
+      let weeklyChartInstance = null;
+      let dailyChartInstance = null;
+
       document.addEventListener('DOMContentLoaded', () => {
         // --- Funcionalidade da Navegação Lateral ---
         const navItems = document.querySelectorAll('#sidebar-nav .nav-item');
@@ -1253,6 +1257,21 @@
 
         document.getElementById('presenca-hoje').textContent = presencaHojeCount;
         document.getElementById('ausentes-hoje').textContent = ausentesCount;
+
+        // --- ATUALIZAÇÃO DO GRÁFICO DIÁRIO ---
+        if (typeof dailyChartInstance !== 'undefined' && dailyChartInstance) {
+          // Atualiza dados do gráfico (Presentes vs Ausentes)
+          dailyChartInstance.data.datasets[0].data = [presencaHojeCount, ausentesCount];
+          dailyChartInstance.update();
+
+          // Atualiza texto de porcentagem central
+          // Base de cálculo: Presentes + Ausentes (Representa o universo de pessoas esperadas ou presentes)
+          const totalForChart = presencaHojeCount + ausentesCount;
+          const percentage = totalForChart > 0 ? Math.round((presencaHojeCount / totalForChart) * 100) : 0;
+          
+          const elChartText = document.getElementById('chart-total-text');
+          if (elChartText) elChartText.textContent = `${percentage}%`;
+        }
       }
       
       /* --- Old Detail Overlay Logic Removed --- */
@@ -2144,7 +2163,8 @@
           if (elChartText) elChartText.textContent = `${presencePercentage}%`;
 
           // 4. Render Weekly Chart (Line)
-          new Chart(weeklyCtx.getContext('2d'), {
+          if (weeklyChartInstance) weeklyChartInstance.destroy();
+          weeklyChartInstance = new Chart(weeklyCtx.getContext('2d'), {
             type: 'line',
             data: {
               labels: weeklyData.map(d => {
@@ -2195,7 +2215,8 @@
           });
 
           // 5. Render Daily Chart (Doughnut)
-          new Chart(dailyCtx.getContext('2d'), {
+          if (dailyChartInstance) dailyChartInstance.destroy();
+          dailyChartInstance = new Chart(dailyCtx.getContext('2d'), {
             type: 'doughnut',
             data: {
               labels: ['Presentes', 'Ausentes'],
