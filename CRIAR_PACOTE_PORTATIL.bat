@@ -17,7 +17,7 @@ echo [1/2] Instalando bibliotecas na pasta local...
 echo Isso pode demorar e requer internet.
 echo.
 
-pip install --target=python_portable/Lib/site-packages docling langchain-text-splitters langchain-community pypdf sentence_transformers
+python -m pip install --target=python_portable/Lib/site-packages docling langchain-text-splitters langchain-community pypdf sentence_transformers
 
 if %errorlevel% neq 0 (
     color 0C
