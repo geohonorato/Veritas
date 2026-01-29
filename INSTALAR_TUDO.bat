@@ -8,7 +8,7 @@ echo.
 echo Este script vai preparar tudo para voce.
 echo Isso pode levar alguns minutos.
 echo.
-echo [1/3] Verificando pasta do projeto...
+echo [1/4] Verificando pasta do projeto...
 
 if not exist "desktop-app" (
     color 0C
@@ -21,7 +21,7 @@ if not exist "desktop-app" (
 
 cd desktop-app
 
-echo [2/3] Instalando dependencias do Node.js (Servidor)...
+echo [2/4] Instalando dependencias do Node.js (Servidor)...
 call npm install --legacy-peer-deps
 call npm install apache-arrow@18.1.0
 if %errorlevel% neq 0 (
@@ -33,7 +33,7 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
-echo [3/3] Instalando dependencias do Python (IA de Documentos)...
+echo [3/4] Instalando dependencias do Python (IA de Documentos)...
 echo Baixando bibliotecas de IA (Docling). Aguarde...
 
 python --version >nul 2>&1
@@ -52,10 +52,19 @@ if %errorlevel% neq 0 (
     pip3 install docling langchain-text-splitters langchain-community pypdf
 )
 
+cd ..
+
+echo [4/4] Configurando Inicializacao Automatica (Tray)...
+set "SCRIPT_PATH=%~dp0scripts\systray_launcher.ps1"
+set "TARGET_DIR=%~dp0desktop-app"
+
+powershell -Command "$WS = New-Object -ComObject WScript.Shell; $SC = $WS.CreateShortcut('$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\VeritasTray.lnk'); $SC.TargetPath = 'powershell.exe'; $SC.Arguments = '-ExecutionPolicy Bypass -WindowStyle Hidden -File \""%SCRIPT_PATH%\"" -TargetDir \""%TARGET_DIR%\""'; $SC.IconLocation = 'shell32.dll,1'; $SC.WindowStyle = 7; $SC.Description = 'Veritas Tray'; $SC.Save()"
+
 echo.
 echo =======================================================
 echo      SUCESSO! INSTALACAO CONCLUIDA.
 echo =======================================================
-echo Agora voce pode usar o arquivo 'INICIAR_VERITAS' para abrir.
+echo O sistema foi configurado e iniciara minimizado na bandeja.
 echo.
+start "" powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File "%SCRIPT_PATH%" -TargetDir "%TARGET_DIR%"
 pause
