@@ -74,7 +74,7 @@
               settingsSection.classList.remove('hidden');
               listarPortasSeriais();
               loadEmailSettings();
-            } else if (item.textContent.includes('Usuários') || item.textContent.includes('UsuÃ¡rios')) {
+            } else if (item.textContent.includes('Alunos')) {
               usuariosSection.classList.remove('hidden');
               renderizarTabelaUsuarios();
             } else if (item.textContent.includes('Atividade')) {
