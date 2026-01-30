@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 cd /d "%~dp0"
 color 0A
 echo =======================================================
@@ -60,16 +60,16 @@ if exist "python_portable\python.exe" (
 
 cd ..
 
-echo [4/5] Criando arquivo de configuracao (config.json)...
-if not exist "desktop-app\config.json" (
-    if exist "desktop-app\config.json.example" (
-        copy "desktop-app\config.json.example" "desktop-app\config.json" >nul
-        echo [INFO] config.json criado. IMPORTANTE: Edite desktop-app\config.json com suas chaves de API!
+echo [4/5] Criando arquivo de configuracao (.env)...
+if not exist "desktop-app\.env" (
+    if exist "desktop-app\.env.example" (
+        copy "desktop-app\.env.example" "desktop-app\.env" >nul
+        echo [INFO] .env criado. IMPORTANTE: Edite desktop-app\.env com suas chaves de API!
     ) else (
-        echo [AVISO] config.json.example nao encontrado.
+        echo [AVISO] .env.example nao encontrado.
     )
 ) else (
-    echo [INFO] config.json ja existe.
+    echo [INFO] .env ja existe.
 )
 
 echo [5/5] Configurando Inicializacao Automatica (Tray)...
@@ -86,3 +86,4 @@ echo O sistema foi configurado e iniciara minimizado na bandeja.
 echo.
 start "" powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File "%SCRIPT_PATH%" -TargetDir "%TARGET_DIR%"
 pause
+

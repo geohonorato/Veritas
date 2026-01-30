@@ -1,4 +1,4 @@
-.pio
+﻿.pio
 .vscode/.browse.c_cpp.db*
 .vscode/c_cpp_properties.json
 .vscode/launch.json
@@ -14,7 +14,8 @@ LISTA DE ASSISTIDOS.xlsx
 desktop-app/data/
 *.sqlite
 *.db
-desktop-app/config.json
+.env
+desktop-app/.env
 
 # Logs and OS
 npm-debug.log
@@ -25,3 +26,4 @@ build/
 data/
 
 .env
+
