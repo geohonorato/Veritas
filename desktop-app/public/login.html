@@ -137,7 +137,7 @@
 
                 if (data.success) {
                     sessionStorage.setItem('veritas_user', data.username);
-                    window.location.href = '/';
+                    window.location.href = '/index.html';
                 } else {
                     errorText.textContent = data.message || 'Credenciais inválidas';
                     errorMsg.classList.remove('hidden');

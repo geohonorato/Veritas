@@ -16,32 +16,6 @@ if (-not (Test-Path $serverScript)) {
     exit
 }
 
-# --- AUTO UPDATE CHECK ---
-try {
-    # Evita janela pop-up do git, redirecionando erro
-    git fetch origin main *>&1 | Out-Null
-    $local = git rev-parse HEAD
-    $remote = git rev-parse origin/main
-    
-    if ($local -ne $remote) {
-        $notifyIconPre = New-Object System.Windows.Forms.NotifyIcon
-        $notifyIconPre.Text = "Veritas - Atualizando..."
-        $notifyIconPre.Icon = [System.Drawing.SystemIcons]::Information
-        $notifyIconPre.Visible = $true
-        
-        # Pull changes
-        git pull origin main *>&1 | Out-Null
-        
-        $notifyIconPre.ShowBalloonTip(3000, "Veritas Atualizado", "Uma nova versao foi baixada e aplicada corretamente.", [System.Windows.Forms.ToolTipIcon]::Info)
-        Start-Sleep -Seconds 3
-        $notifyIconPre.Visible = $false
-        $notifyIconPre.Dispose()
-    }
-} catch {
-    # Ignora erros de update (sem internet, etc)
-}
-# -------------------------
-
 # Iniciar Processo Node Oculto
 $nodeProc = Start-Process node -ArgumentList "server.js" -WorkingDirectory $TargetDir -WindowStyle Hidden -PassThru
 

@@ -17,6 +17,24 @@
       let dailyChartInstance = null;
 
       document.addEventListener('DOMContentLoaded', () => {
+        // Verificação adicional de segurança (redundante, mas garante)
+        const user = sessionStorage.getItem('veritas_user');
+        if (!user) {
+          console.warn('[Security] Usuário não autenticado detectado. Redirecionando...');
+          window.location.replace('/login.html');
+          return;
+        }
+
+        // --- Logout Functionality ---
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            sessionStorage.removeItem('veritas_user');
+            window.location.replace('/login.html');
+          });
+        }
+
         // --- Funcionalidade da Navegação Lateral ---
         const navItems = document.querySelectorAll('#sidebar-nav .nav-item');
         const dashboardSection = document.getElementById('dashboard-section');

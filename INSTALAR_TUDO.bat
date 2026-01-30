@@ -60,7 +60,19 @@ if exist "python_portable\python.exe" (
 
 cd ..
 
-echo [4/4] Configurando Inicializacao Automatica (Tray)...
+echo [4/5] Criando arquivo de configuracao (config.json)...
+if not exist "desktop-app\config.json" (
+    if exist "desktop-app\config.json.example" (
+        copy "desktop-app\config.json.example" "desktop-app\config.json" >nul
+        echo [INFO] config.json criado. IMPORTANTE: Edite desktop-app\config.json com suas chaves de API!
+    ) else (
+        echo [AVISO] config.json.example nao encontrado.
+    )
+) else (
+    echo [INFO] config.json ja existe.
+)
+
+echo [5/5] Configurando Inicializacao Automatica (Tray)...
 set "SCRIPT_PATH=%~dp0scripts\systray_launcher.ps1"
 set "TARGET_DIR=%~dp0desktop-app"
 

@@ -7,12 +7,14 @@
 # Dependencies
 node_modules/
 desktop-app/node_modules/
+python_portable/
 
 # Sensitive Data
 LISTA DE ASSISTIDOS.xlsx
 desktop-app/data/
 *.sqlite
 *.db
+desktop-app/config.json
 
 # Logs and OS
 npm-debug.log

@@ -3,8 +3,22 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const xlsx = require('xlsx'); 
-// Load env vars from root
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+
+// --- Carrega Configurações Locais (config.json) ---
+const configPath = path.join(__dirname, 'config.json');
+if (fs.existsSync(configPath)) {
+    try {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        if (config.GEMINI_API_KEY) process.env.GEMINI_API_KEY = config.GEMINI_API_KEY;
+        if (config.GROQ_API_KEY) process.env.GROQ_API_KEY = config.GROQ_API_KEY;
+        console.log('[Config] Chaves de API carregadas de config.json');
+    } catch (err) {
+        console.error('[Config] Erro ao ler config.json:', err.message);
+    }
+} else {
+    console.warn('[Config] Arquivo config.json não encontrado. Crie um com suas chaves de API.');
+}
+// -------------------------------------------------
 
 const { Server } = require('socket.io');
 const cors = require('cors');
@@ -248,6 +262,15 @@ app.post('/api/export/report', (req, res) => {
         console.error('Erro na exportação:', error);
         res.status(500).json({ error: error.message });
     }
+});
+
+// --- Middleware de Redirecionamento para Login ---
+// Redireciona acesso direto ao index.html sem autenticação
+app.get('/', (req, res, next) => {
+    // Como a autenticação está no sessionStorage (lado cliente), 
+    // vamos deixar o navegador carregar login.html por padrão
+    // A verificação inline no index.html fará o trabalho principal
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
