@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
   <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
     href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900" />
-  <title>Veritas Desktop - Sistema de Ponto EletrÃ´nico com Biometria</title>
+  <title>Veritas Desktop - Sistema de Ponto Eletrá´nico com Biometria</title>
   <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="chart.js"></script>
@@ -16,7 +16,7 @@
     section.hidden {
       display: none !important;
     }
-    /* Oculta conteÃºdo sensÃ­vel atÃ© verificar autenticaÃ§Ã£o */
+    /* Oculta conteáºdo sensá­vel atá© verificar autenticaçáo */
     body {
       opacity: 0;
       transition: opacity 0.2s;
@@ -28,16 +28,16 @@
 </head>
 
 <body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-indigo-500/30 overflow-hidden">
-  <!-- VerificaÃ§Ã£o de AutenticaÃ§Ã£o ANTES de renderizar -->
+  <!-- Verificaçáo de Autenticaçáo ANTES de renderizar -->
   <script>
     (function() {
       const user = sessionStorage.getItem('veritas_user');
       if (!user) {
-        // Redireciona IMEDIATAMENTE antes de qualquer renderizaÃ§Ã£o
+        // Redireciona IMEDIATAMENTE antes de qualquer renderizaçáo
         window.location.replace('/login.html');
         return;
       }
-      // Autorizado: permite visualizaÃ§Ã£o
+      // Autorizado: permite visualizaçáo
       document.body.classList.add('auth-verified');
     })();
   </script>
@@ -57,7 +57,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M3 12l2-2m0 0l7-7 7 7m-9 2v6m0 0h4m-4 0a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2z" />
           </svg>
-          <span class="text-sm font-medium leading-normal transition-colors">InÃ­cio</span>
+          <span class="text-sm font-medium leading-normal transition-colors">Iná­cio</span>
         </a>
         <a href="#"
           class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-white/5 transition-all">
@@ -84,7 +84,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M11.25 3.75a.75.75 0 011.5 0v1.1a7.5 7.5 0 015.65 5.65h1.1a.75.75 0 010 1.5h-1.1a7.5 7.5 0 01-5.65 5.65v1.1a.75.75 0 01-1.5 0v-1.1a7.5 7.5 0 01-5.65-5.65h-1.1a.75.75 0 010-1.5h1.1a7.5 7.5 0 015.65-5.65v-1.1z" />
           </svg>
-          <span class="text-sm font-medium leading-normal transition-colors">ConfiguraÃ§Ãµes</span>
+          <span class="text-sm font-medium leading-normal transition-colors">Configurações</span>
         </a>
         <a href="#"
           class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-white/5 transition-all">
@@ -177,11 +177,11 @@
         <!-- Cards -->
         <div class="flex flex-wrap gap-6 mb-8 items-start relative z-20">
           
-          <!-- PresenÃ§a Hoje Slot -->
+          <!-- Presença Hoje Slot -->
           <div class="flex-1 min-w-[200px] relative"> 
              <!-- Invisible Spacer -->
              <div class="p-6 border border-transparent invisible">
-                <p class="text-sm mb-1">PresenÃ§a hoje</p>
+                <p class="text-sm mb-1">Presença hoje</p>
                 <div class="flex items-end justify-between"><p class="text-3xl font-bold">125</p></div>
              </div>
              
@@ -191,7 +191,7 @@
                 data-target="presentes">
                 <!-- Header -->
                 <div class="p-6">
-                    <p class="text-zinc-400 text-sm font-medium mb-1">PresenÃ§a hoje</p>
+                    <p class="text-zinc-400 text-sm font-medium mb-1">Presença hoje</p>
                     <div class="flex items-end justify-between">
                         <p class="text-zinc-100 text-3xl font-bold group-hover:text-indigo-400 transition-colors" id="presenca-hoje">125</p>
                         <svg class="w-5 h-5 text-zinc-500 group-hover:text-indigo-400 transition-transform duration-300 transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -270,10 +270,10 @@
           <!-- Weekly Trend (Line Chart) -->
           <div class="lg:col-span-2 bg-zinc-900 border border-white/5 rounded-2xl p-6 shadow-lg shadow-black/20">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-zinc-400 text-sm font-medium">TendÃªncia Semanal</h3>
+              <h3 class="text-zinc-400 text-sm font-medium">Tendáªncia Semanal</h3>
               <div class="flex items-center gap-2">
                 <span class="size-2 rounded-full bg-indigo-500"></span>
-                <span class="text-xs text-zinc-500">PresenÃ§as</span>
+                <span class="text-xs text-zinc-500">Presenças</span>
               </div>
             </div>
             <div class="relative h-64 w-full">
@@ -283,13 +283,13 @@
 
           <!-- Daily Overview (Doughnut) -->
           <div class="bg-zinc-900 border border-white/5 rounded-2xl p-6 shadow-lg shadow-black/20 flex flex-col">
-            <h3 class="text-zinc-400 text-sm font-medium mb-4">VisÃ£o Geral Hoje</h3>
+            <h3 class="text-zinc-400 text-sm font-medium mb-4">Visáo Geral Hoje</h3>
             <div class="relative flex-1 min-h-[200px] flex items-center justify-center">
               <canvas id="chart-daily"></canvas>
               <!-- Center Text Overlay -->
               <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                 <span id="chart-total-text" class="text-3xl font-bold text-white">0%</span>
-                <span class="text-[10px] text-zinc-500 uppercase tracking-wider">PresenÃ§a</span>
+                <span class="text-[10px] text-zinc-500 uppercase tracking-wider">Presença</span>
               </div>
             </div>
           </div>
@@ -302,14 +302,14 @@
 
 
 
-        <!-- Tabela dinÃ¢mica de alunos -->
+        <!-- Tabela diná¢mica de alunos -->
         <!-- REMOVER a tabela daqui -->
       </section>
-      <!-- Nova SeÃ§Ã£o: Resumo DiÃ¡rio (Presentes/Ausentes) -->
+      <!-- Nova Seçáo: Resumo Diá¡rio (Presentes/Ausentes) -->
       <section id="daily-summary-section" class="p-8 hidden">
         <div class="flex flex-wrap justify-between items-center gap-3 p-4">
           <p id="daily-summary-title" class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">
-            Resumo DiÃ¡rio</p>
+            Resumo Diá¡rio</p>
         </div>
         <div class="px-4 py-3">
           <table
@@ -317,26 +317,26 @@
             <thead>
               <tr class="bg-zinc-950/50 border-b border-white/5">
                 <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Nome</th>
-                <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">MatrÃ­cula</th>
+                <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Matrá­cula</th>
                 <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Turma</th>
                 <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold">Email</th>
                 <th class="px-4 py-3 text-left text-zinc-400 text-sm font-semibold w-32">Dias da Semana</th>
               </tr>
             </thead>
             <tbody id="daily-summary-tbody">
-              <!-- Alunos presentes/ausentes serÃ£o inseridos aqui dinamicamente -->
+              <!-- Alunos presentes/ausentes seráo inseridos aqui dinamicamente -->
             </tbody>
           </table>
         </div>
       </section>
-      <!-- SeÃ§Ã£o de Atividades -->
+      <!-- Seçáo de Atividades -->
       <section id="atividades-section" class="p-8 hidden">
-        <!-- Header Row: Title e AÃ§Ãµes Principais -->
-        <!-- Header Row: Title e AÃ§Ãµes Principais -->
+        <!-- Header Row: Title e Ações Principais -->
+        <!-- Header Row: Title e Ações Principais -->
         <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8">
           <div class="flex flex-col gap-2">
             <h1 class="text-zinc-100 text-3xl font-bold tracking-tight">Atividades</h1>
-            <p class="text-zinc-400 text-sm">Gerencie e visualize os registros de entrada e saÃ­da em tempo real.</p>
+            <p class="text-zinc-400 text-sm">Gerencie e visualize os registros de entrada e saá­da em tempo real.</p>
           </div>
 
           <div class="flex flex-wrap gap-3">
@@ -350,7 +350,7 @@
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
-              <span class="font-medium">Exportar RelatÃ³rio</span>
+              <span class="font-medium">Exportar Relatá³rio</span>
             </button>
             <button id="manual-frequency-btn"
               class="group flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all hover:shadow-indigo-600/40 ring-1 ring-white/10">
@@ -360,7 +360,7 @@
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
-              <span class="font-semibold">Nova FrequÃªncia</span>
+              <span class="font-semibold">Nova Frequáªncia</span>
             </button>
           </div>
         </div>
@@ -404,10 +404,10 @@
             <!-- Month Filter -->
             <select id="filter-mes-select"
               class="h-11 pl-4 pr-10 rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-300 text-sm focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all outline-none cursor-pointer min-w-[140px]">
-              <option value="">MÃªs</option>
+              <option value="">Máªs</option>
               <option value="01">Janeiro</option>
               <option value="02">Fevereiro</option>
-              <option value="03">MarÃ§o</option>
+              <option value="03">Março</option>
               <option value="04">Abril</option>
               <option value="05">Maio</option>
               <option value="06">Junho</option>
@@ -471,11 +471,11 @@
                   <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Aluno</th>
                   <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Turma</th>
                   <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Entrada</th>
-                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">SaÃ­da</th>
+                  <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Saá­da</th>
                 </tr>
               </thead>
               <tbody id="atividades-tbody">
-                <!-- Linhas de atividades serÃ£o inseridas aqui dinamicamente -->
+                <!-- Linhas de atividades seráo inseridas aqui dinamicamente -->
               </tbody>
             </table>
           </div>
@@ -490,42 +490,42 @@
                   <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Aluno</th>
                   <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Turma</th>
                   <th class="px-6 py-4 text-left text-zinc-400 text-sm font-semibold">Status</th>
-                  <th class="px-6 py-4 text-center text-zinc-400 text-sm font-semibold">ObservaÃ§Ã£o</th>
+                  <th class="px-6 py-4 text-center text-zinc-400 text-sm font-semibold">Observaçáo</th>
                 </tr>
               </thead>
               <tbody id="faltas-tbody">
-                <!-- Linhas de faltas serÃ£o inseridas aqui dinamicamente -->
+                <!-- Linhas de faltas seráo inseridas aqui dinamicamente -->
               </tbody>
             </table>
           </div>
         </div>
 
       </section>
-      <!-- SeÃ§Ã£o de Ajuda -->
-      <!-- SeÃ§Ã£o de Ajuda -->
+      <!-- Seçáo de Ajuda -->
+      <!-- Seçáo de Ajuda -->
       <section id="ajuda-section" class="p-8 hidden">
-        <h2 class="text-3xl font-bold tracking-tight text-zinc-100 mb-8">ðŸ“š Guia do Veritas - Sistema de Controle de PresenÃ§a</h2>
+        <h2 class="text-3xl font-bold tracking-tight text-zinc-100 mb-8">ðŸ“š Guia do Veritas - Sistema de Controle de Presença</h2>
 
         <div class="space-y-12">
-          <!-- VisÃ£o Geral -->
+          <!-- Visáo Geral -->
           <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-            <h3 class="text-2xl font-bold text-zinc-100 mb-4">ðŸŽ¯ O que Ã© o Veritas?</h3>
+            <h3 class="text-2xl font-bold text-zinc-100 mb-4">ðŸŽ¯ O que á© o Veritas?</h3>
             <p class="text-zinc-300 leading-relaxed mb-4">
-              O <strong>Veritas</strong> Ã© um sistema de gestÃ£o de presenÃ§a e controle de acesso baseado em biometria (leitor de impressÃµes digitais). 
-              Ele registra automaticamente quando alunos chegam (Entrada) e saem (SaÃ­da), mantendo um histÃ³rico completo para relatÃ³rios e anÃ¡lise de frequÃªncia.
+              O <strong>Veritas</strong> á© um sistema de gestáo de presença e controle de acesso baseado em biometria (leitor de impressões digitais). 
+              Ele registra automaticamente quando alunos chegam (Entrada) e saem (Saá­da), mantendo um histá³rico completo para relatá³rios e aná¡lise de frequáªncia.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               <div class="bg-zinc-800/50 p-4 rounded-lg border border-indigo-500/20">
                 <div class="text-indigo-400 font-bold mb-2">ðŸ“Š Dashboard</div>
-                <p class="text-sm text-zinc-400">VisÃ£o geral com estatÃ­sticas de presenÃ§a do dia</p>
+                <p class="text-sm text-zinc-400">Visáo geral com estatá­sticas de presença do dia</p>
               </div>
               <div class="bg-zinc-800/50 p-4 rounded-lg border border-indigo-500/20">
                 <div class="text-indigo-400 font-bold mb-2">ðŸ“‹ Atividades</div>
-                <p class="text-sm text-zinc-400">HistÃ³rico completo de entradas e saÃ­das</p>
+                <p class="text-sm text-zinc-400">Histá³rico completo de entradas e saá­das</p>
               </div>
               <div class="bg-zinc-800/50 p-4 rounded-lg border border-indigo-500/20">
                 <div class="text-indigo-400 font-bold mb-2">â›” Faltas</div>
-                <p class="text-sm text-zinc-400">Alunos que nÃ£o compareceram (frequÃªncia invertida)</p>
+                <p class="text-sm text-zinc-400">Alunos que náo compareceram (frequáªncia invertida)</p>
               </div>
             </div>
           </div>
@@ -536,61 +536,61 @@
             <div class="space-y-6">
               <!-- Dashboard -->
               <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
-                <h4 class="text-lg font-bold text-indigo-400 mb-3">1ï¸âƒ£ Dashboard (InÃ­cio)</h4>
-                <p class="text-zinc-300 mb-3">Sua tela inicial com informaÃ§Ãµes em tempo real:</p>
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">1ï¸âƒ£ Dashboard (Iná­cio)</h4>
+                <p class="text-zinc-300 mb-3">Sua tela inicial com informações em tempo real:</p>
                 <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
-                  <li><strong>VisÃ£o Geral Hoje:</strong> Mostra quantos alunos estÃ£o presentes, ausentes e o total esperado</li>
-                  <li><strong>Atividades Recentes:</strong> Feed das Ãºltimas entradas e saÃ­das registradas</li>
-                  <li><strong>CalendÃ¡rio:</strong> Clique em qualquer data para ver atividades daquele dia</li>
-                  <li><strong>GrÃ¡ficos:</strong> VisualizaÃ§Ã£o semanal e mensal de presenÃ§a</li>
+                  <li><strong>Visáo Geral Hoje:</strong> Mostra quantos alunos estáo presentes, ausentes e o total esperado</li>
+                  <li><strong>Atividades Recentes:</strong> Feed das áºltimas entradas e saá­das registradas</li>
+                  <li><strong>Calendá¡rio:</strong> Clique em qualquer data para ver atividades daquele dia</li>
+                  <li><strong>Grá¡ficos:</strong> Visualizaçáo semanal e mensal de presença</li>
                 </ul>
               </div>
 
               <!-- Atividades -->
               <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
                 <h4 class="text-lg font-bold text-indigo-400 mb-3">2ï¸âƒ£ Atividades</h4>
-                <p class="text-zinc-300 mb-3">Tabela completa de todos os registros de presenÃ§a:</p>
+                <p class="text-zinc-300 mb-3">Tabela completa de todos os registros de presença:</p>
                 <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
-                  <li><strong>Coluna "Entrada":</strong> HorÃ¡rio que o aluno entrou no campus</li>
-                  <li><strong>Coluna "SaÃ­da":</strong> HorÃ¡rio que o aluno saiu</li>
-                  <li><strong>Filtros:</strong> Busque por aluno, turma, turno ou data especÃ­fica</li>
-                  <li><strong>Exportar RelatÃ³rio:</strong> Baixe os dados em arquivo para anÃ¡lise</li>
+                  <li><strong>Coluna "Entrada":</strong> Horá¡rio que o aluno entrou no campus</li>
+                  <li><strong>Coluna "Saá­da":</strong> Horá¡rio que o aluno saiu</li>
+                  <li><strong>Filtros:</strong> Busque por aluno, turma, turno ou data especá­fica</li>
+                  <li><strong>Exportar Relatá³rio:</strong> Baixe os dados em arquivo para aná¡lise</li>
                 </ul>
               </div>
 
               <!-- Faltas -->
               <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
                 <h4 class="text-lg font-bold text-indigo-400 mb-3">3ï¸âƒ£ Faltas</h4>
-                <p class="text-zinc-300 mb-3">Visualize rapidamente quem ainda nÃ£o compareceu:</p>
+                <p class="text-zinc-300 mb-3">Visualize rapidamente quem ainda náo compareceu:</p>
                 <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
-                  <li>Clique no botÃ£o <span class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-xs">ðŸ“‹ Faltas</span> para alternar para a aba</li>
-                  <li><strong>Status "Faltante":</strong> Aluno ainda nÃ£o bateu ponto (durante o turno)</li>
-                  <li><strong>Status "Falta Confirmada":</strong> Turno passou e aluno nÃ£o compareceu</li>
-                  <li>Faltantes sÃ£o calculados automaticamente com base nos dias de aula de cada aluno</li>
+                  <li>Clique no botáo <span class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-xs">ðŸ“‹ Faltas</span> para alternar para a aba</li>
+                  <li><strong>Status "Faltante":</strong> Aluno ainda náo bateu ponto (durante o turno)</li>
+                  <li><strong>Status "Falta Confirmada":</strong> Turno passou e aluno náo compareceu</li>
+                  <li>Faltantes sáo calculados automaticamente com base nos dias de aula de cada aluno</li>
                 </ul>
               </div>
 
-              <!-- Nova FrequÃªncia -->
+              <!-- Nova Frequáªncia -->
               <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
-                <h4 class="text-lg font-bold text-indigo-400 mb-3">4ï¸âƒ£ Nova FrequÃªncia (Registro Manual)</h4>
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">4ï¸âƒ£ Nova Frequáªncia (Registro Manual)</h4>
                 <p class="text-zinc-300 mb-3">Para alunos que tiveram problema com o leitor de digitais:</p>
                 <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
-                  <li>Clique em <span class="bg-indigo-600 text-white px-2 py-1 rounded text-xs">+ Nova FrequÃªncia</span></li>
-                  <li>Busque o aluno pelo nome ou matrÃ­cula</li>
-                  <li>Selecione a data e hora (padrÃ£o Ã© agora)</li>
-                  <li>Escolha se Ã© "Entrada" ou "SaÃ­da"</li>
+                  <li>Clique em <span class="bg-indigo-600 text-white px-2 py-1 rounded text-xs">+ Nova Frequáªncia</span></li>
+                  <li>Busque o aluno pelo nome ou matrá­cula</li>
+                  <li>Selecione a data e hora (padráo á© agora)</li>
+                  <li>Escolha se á© "Entrada" ou "Saá­da"</li>
                   <li>Clique em "Salvar" para registrar</li>
                 </ul>
               </div>
 
-              <!-- UsuÃ¡rios -->
+              <!-- Usuá¡rios -->
               <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
-                <h4 class="text-lg font-bold text-indigo-400 mb-3">5ï¸âƒ£ UsuÃ¡rios</h4>
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">5ï¸âƒ£ Usuá¡rios</h4>
                 <p class="text-zinc-300 mb-3">Gerenciar a lista de alunos cadastrados:</p>
                 <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
                   <li><strong>Visualizar:</strong> Veja todos os alunos, suas turmas, turnos e dias de aula</li>
                   <li><strong>Buscar:</strong> Use o campo de busca para encontrar alunos rapidamente</li>
-                  <li><strong>Editar:</strong> Clique em um aluno para modificar suas informaÃ§Ãµes</li>
+                  <li><strong>Editar:</strong> Clique em um aluno para modificar suas informações</li>
                   <li><strong>Atualizar diasSemana:</strong> Defina em quais dias cada aluno tem aula</li>
                 </ul>
               </div>
@@ -598,14 +598,14 @@
               <!-- Assistente IA -->
               <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
                 <h4 class="text-lg font-bold text-indigo-400 mb-3">6ï¸âƒ£ Assistente Inteligente (Chat IA)</h4>
-                <p class="text-zinc-300 mb-3">FaÃ§a perguntas em linguagem natural sobre o sistema:</p>
+                <p class="text-zinc-300 mb-3">Faça perguntas em linguagem natural sobre o sistema:</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
                   <div class="bg-zinc-800/50 p-3 rounded border border-white/10">
                     <div class="font-medium text-indigo-400 text-sm mb-2">Exemplos de Perguntas:</div>
                     <ul class="text-xs text-zinc-400 space-y-1">
                       <li>âœ“ "Quem faltou hoje?"</li>
-                      <li>âœ“ "Quantas faltas o JoÃ£o tem?"</li>
-                      <li>âœ“ "Quem estÃ¡ presente agora?"</li>
+                      <li>âœ“ "Quantas faltas o Joáo tem?"</li>
+                      <li>âœ“ "Quem está¡ presente agora?"</li>
                       <li>âœ“ "Lista de alunos da turma DI5NA"</li>
                     </ul>
                   </div>
@@ -613,21 +613,21 @@
                     <div class="font-medium text-indigo-400 text-sm mb-2">Recursos:</div>
                     <ul class="text-xs text-zinc-400 space-y-1">
                       <li>âœ“ Funciona offline (sem internet)</li>
-                      <li>âœ“ Responde em portuguÃªs</li>
+                      <li>âœ“ Responde em portuguáªs</li>
                       <li>âœ“ Entende contexto da conversa</li>
-                      <li>âœ“ Clique no botÃ£o azul para abrir</li>
+                      <li>âœ“ Clique no botáo azul para abrir</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <!-- ConfiguraÃ§Ãµes -->
+              <!-- Configurações -->
               <div class="border border-white/5 rounded-xl p-6 hover:border-indigo-500/30 transition-colors">
-                <h4 class="text-lg font-bold text-indigo-400 mb-3">âš™ï¸ ConfiguraÃ§Ãµes</h4>
+                <h4 class="text-lg font-bold text-indigo-400 mb-3">âš™ï¸ Configurações</h4>
                 <ul class="list-disc list-inside text-zinc-400 space-y-2 ml-2">
-                  <li><strong>Porta Serial:</strong> Configure a porta para comunicaÃ§Ã£o com o leitor biomÃ©trico</li>
-                  <li><strong>Email:</strong> Configure notificaÃ§Ãµes por email (faltas recorrentes, alertas)</li>
-                  <li><strong>Status da ConexÃ£o:</strong> Verifique se o hardware estÃ¡ conectado corretamente</li>
+                  <li><strong>Porta Serial:</strong> Configure a porta para comunicaçáo com o leitor biomá©trico</li>
+                  <li><strong>Email:</strong> Configure notificações por email (faltas recorrentes, alertas)</li>
+                  <li><strong>Status da Conexáo:</strong> Verifique se o hardware está¡ conectado corretamente</li>
                 </ul>
               </div>
             </div>
@@ -635,95 +635,95 @@
 
           <!-- Turmas e Turnos -->
           <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-            <h3 class="text-2xl font-bold text-zinc-100 mb-4">ðŸ« Turnos e HorÃ¡rios</h3>
-            <p class="text-zinc-300 mb-4">O sistema reconhece dois turnos para determinar o limite de presenÃ§a:</p>
+            <h3 class="text-2xl font-bold text-zinc-100 mb-4">ðŸ« Turnos e Horá¡rios</h3>
+            <p class="text-zinc-300 mb-4">O sistema reconhece dois turnos para determinar o limite de presença:</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-zinc-800/50 p-4 rounded-lg border border-amber-500/30">
                 <div class="font-bold text-amber-400 mb-2">â˜€ï¸ MATUTINO</div>
-                <p class="text-sm text-zinc-400">HorÃ¡rio limite: <strong>12:00 (meio-dia)</strong></p>
-                <p class="text-xs text-zinc-500 mt-2">Faltas apÃ³s 12h sÃ£o marcadas como "Falta Confirmada"</p>
+                <p class="text-sm text-zinc-400">Horá¡rio limite: <strong>12:00 (meio-dia)</strong></p>
+                <p class="text-xs text-zinc-500 mt-2">Faltas apá³s 12h sáo marcadas como "Falta Confirmada"</p>
               </div>
               <div class="bg-zinc-800/50 p-4 rounded-lg border border-orange-500/30">
                 <div class="font-bold text-orange-400 mb-2">ðŸŒ… VESPERTINO</div>
-                <p class="text-sm text-zinc-400">HorÃ¡rio limite: <strong>18:00 (6 da tarde)</strong></p>
-                <p class="text-xs text-zinc-500 mt-2">Faltas apÃ³s 18h sÃ£o marcadas como "Falta Confirmada"</p>
+                <p class="text-sm text-zinc-400">Horá¡rio limite: <strong>18:00 (6 da tarde)</strong></p>
+                <p class="text-xs text-zinc-500 mt-2">Faltas apá³s 18h sáo marcadas como "Falta Confirmada"</p>
               </div>
             </div>
           </div>
 
           <!-- Dicas -->
           <div class="bg-green-900/20 border border-green-500/30 rounded-xl p-6">
-            <h3 class="text-2xl font-bold text-green-400 mb-4">ðŸ’¡ Dicas Ãšteis</h3>
+            <h3 class="text-2xl font-bold text-green-400 mb-4">ðŸ’¡ Dicas ášteis</h3>
             <ul class="space-y-3">
               <li class="flex gap-3">
                 <span class="text-green-400">âœ“</span>
-                <span class="text-zinc-300"><strong>Faltas automÃ¡ticas:</strong> O sistema cria automaticamente a lista de faltantes no inÃ­cio do dia, baseado no calendÃ¡rio de aulas de cada aluno</span>
+                <span class="text-zinc-300"><strong>Faltas automá¡ticas:</strong> O sistema cria automaticamente a lista de faltantes no iná­cio do dia, baseado no calendá¡rio de aulas de cada aluno</span>
               </li>
               <li class="flex gap-3">
                 <span class="text-green-400">âœ“</span>
-                <span class="text-zinc-300"><strong>AtualizaÃ§Ã£o em tempo real:</strong> Quando um aluno bate ponto, sua falta Ã© removida automaticamente da lista</span>
+                <span class="text-zinc-300"><strong>Atualizaçáo em tempo real:</strong> Quando um aluno bate ponto, sua falta á© removida automaticamente da lista</span>
               </li>
               <li class="flex gap-3">
                 <span class="text-green-400">âœ“</span>
-                <span class="text-zinc-300"><strong>Registro manual:</strong> Use "Nova FrequÃªncia" para casos de defeito no leitor ou problemas tÃ©cnicos</span>
+                <span class="text-zinc-300"><strong>Registro manual:</strong> Use "Nova Frequáªncia" para casos de defeito no leitor ou problemas tá©cnicos</span>
               </li>
               <li class="flex gap-3">
                 <span class="text-green-400">âœ“</span>
-                <span class="text-zinc-300"><strong>RelatÃ³rios:</strong> Exporte dados completos de atividades para anÃ¡lises em Excel ou similares</span>
+                <span class="text-zinc-300"><strong>Relatá³rios:</strong> Exporte dados completos de atividades para aná¡lises em Excel ou similares</span>
               </li>
               <li class="flex gap-3">
                 <span class="text-green-400">âœ“</span>
-                <span class="text-zinc-300"><strong>Chat IA:</strong> Use o assistente para respostas rÃ¡pidas sobre presenÃ§a sem sair do app</span>
+                <span class="text-zinc-300"><strong>Chat IA:</strong> Use o assistente para respostas rá¡pidas sobre presença sem sair do app</span>
               </li>
             </ul>
           </div>
 
-          <!-- SoluÃ§Ã£o de Problemas -->
+          <!-- Soluçáo de Problemas -->
           <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6">
-            <h3 class="text-2xl font-bold text-red-400 mb-4">ðŸ”§ SoluÃ§Ã£o de Problemas</h3>
+            <h3 class="text-2xl font-bold text-red-400 mb-4">ðŸ”§ Soluçáo de Problemas</h3>
             <div class="space-y-4">
               <div>
                 <h4 class="font-bold text-red-300 mb-2">â“ "Nenhuma falta registrada hoje"</h4>
                 <p class="text-zinc-300 text-sm">
-                  Isso significa que nÃ£o hÃ¡ alunos agendados para hoje OU todos os alunos esperados jÃ¡ bateram ponto. 
-                  Verifique se o dia da semana estÃ¡ correto no calendÃ¡rio de cada aluno (campo diasSemana).
+                  Isso significa que náo há¡ alunos agendados para hoje OU todos os alunos esperados já¡ bateram ponto. 
+                  Verifique se o dia da semana está¡ correto no calendá¡rio de cada aluno (campo diasSemana).
                 </p>
               </div>
               <div>
-                <h4 class="font-bold text-red-300 mb-2">â“ "Status nÃ£o muda para Falta Confirmada"</h4>
+                <h4 class="font-bold text-red-300 mb-2">â“ "Status náo muda para Falta Confirmada"</h4>
                 <p class="text-zinc-300 text-sm">
-                  O status muda automaticamente quando o horÃ¡rio atual ultrapassar o limite do turno (12h para matutino, 18h para vespertino). 
-                  Verifique se o relÃ³gio do servidor estÃ¡ sincronizado.
+                  O status muda automaticamente quando o horá¡rio atual ultrapassar o limite do turno (12h para matutino, 18h para vespertino). 
+                  Verifique se o relá³gio do servidor está¡ sincronizado.
                 </p>
               </div>
               <div>
-                <h4 class="font-bold text-red-300 mb-2">â“ "NÃ£o consigo registrar frequÃªncia manual"</h4>
+                <h4 class="font-bold text-red-300 mb-2">â“ "Náo consigo registrar frequáªncia manual"</h4>
                 <p class="text-zinc-300 text-sm">
-                  Certifique-se de que vocÃª selecionou um aluno vÃ¡lido, escolheu uma data e clicou em "Salvar". 
+                  Certifique-se de que vocáª selecionou um aluno vá¡lido, escolheu uma data e clicou em "Salvar". 
                   Verifique o console do navegador (F12) para mensagens de erro.
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- InformaÃ§Ãµes TÃ©cnicas -->
+          <!-- Informações Tá©cnicas -->
           <div class="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-            <h3 class="text-2xl font-bold text-zinc-100 mb-4">âš¡ InformaÃ§Ãµes TÃ©cnicas</h3>
+            <h3 class="text-2xl font-bold text-zinc-100 mb-4">âš¡ Informações Tá©cnicas</h3>
             <ul class="text-zinc-400 space-y-2 ml-4">
               <li><strong class="text-zinc-100">Tecnologia:</strong> Web App (Node.js + Express)</li>
               <li><strong class="text-zinc-100">Banco de Dados:</strong> SQLite</li>
               <li><strong class="text-zinc-100">Frontend:</strong> HTML5, TailwindCSS, JavaScript vanilla</li>
-              <li><strong class="text-zinc-100">ComunicaÃ§Ã£o:</strong> REST API + WebSocket (Socket.io) para atualizaÃ§Ãµes em tempo real</li>
+              <li><strong class="text-zinc-100">Comunicaçáo:</strong> REST API + WebSocket (Socket.io) para atualizações em tempo real</li>
               <li><strong class="text-zinc-100">IA:</strong> LangChain com modelo local (offline)</li>
-              <li><strong class="text-zinc-100">Hardware:</strong> Leitor biomÃ©trico R307 conectado via porta serial ao ESP</li>
+              <li><strong class="text-zinc-100">Hardware:</strong> Leitor biomá©trico R307 conectado via porta serial ao ESP</li>
             </ul>
           </div>
 
-          <!-- RodapÃ© -->
-          <!-- RodapÃ© -->
+          <!-- Rodapá© -->
+          <!-- Rodapá© -->
           <div class="pt-8 border-t border-white/5 text-center">
             <p class="text-zinc-400 text-sm mb-2">
-              <strong class="text-zinc-300">Veritas</strong> - Sistema Inteligente de Controle de PresenÃ§a
+              <strong class="text-zinc-300">Veritas</strong> - Sistema Inteligente de Controle de Presença
             </p>
             <p class="text-zinc-500 text-xs">
               Desenvolvido por <strong class="text-zinc-400">Geovanni Honorato</strong>
@@ -731,7 +731,7 @@
           </div>
         </div>
       </section>
-      <!-- SeÃ§Ã£o de UsuÃ¡rios -->
+      <!-- Seçáo de Usuá¡rios -->
       <section id="usuarios-section" class="p-8 hidden">
         <div class="flex flex-wrap justify-between items-center gap-3 p-4">
           <p class="text-zinc-100 tracking-light text-3xl font-bold leading-tight min-w-72">Alunos</p>
@@ -745,7 +745,7 @@
               <span class="font-semibold">Adicionar</span>
             </button>
             <div class="relative">
-              <button id="user-menu-btn" title="Mais OpÃ§Ãµes"
+              <button id="user-menu-btn" title="Mais Opções"
                 class="flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" stroke-width="2">
@@ -795,7 +795,7 @@
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </div>
-            <input id="search-aluno" placeholder="Buscar por nome, matrÃ­cula ou ID"
+            <input id="search-aluno" placeholder="Buscar por nome, matrá­cula ou ID"
               class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 placeholder-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 h-full pl-10 text-base font-normal leading-normal outline-none transition-all" />
           </label>
         </div>
@@ -807,7 +807,7 @@
                 <th class="px-4 py-3 text-left w-10 delete-mode-col hidden"></th>
                 <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold border-r border-white/5">Nome</th>
                 <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">
-                  MatrÃ­cula</th>
+                  Matrá­cula</th>
                 <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">Turma
                 </th>
                 <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">Turno
@@ -818,7 +818,7 @@
                   Cabine
                 </th>
                 <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-24 border-r border-white/5">
-                  GÃªnero
+                  Gáªnero
                 </th>
                 <th class="px-4 py-3 text-center text-zinc-400 text-sm font-semibold w-16 border-r border-white/5">ID
                 </th>
@@ -832,12 +832,12 @@
           </table>
         </div>
       </section>
-      <!-- SeÃ§Ã£o de ConfiguraÃ§Ãµes (Redesign v2: Polido & Cores Suaves) -->
+      <!-- Seçáo de Configurações (Redesign v2: Polido & Cores Suaves) -->
       <section id="settings-section" class="p-8 hidden max-w-5xl mx-auto w-full"> 
 
         <header class="mb-10 border-b border-white/5 pb-6">
-          <h1 class="text-3xl font-bold text-zinc-100 tracking-tight">ConfiguraÃ§Ãµes</h1>
-          <p class="text-zinc-500 text-sm mt-1">Gerencie as preferÃªncias globais do sistema, hardware e integraÃ§Ãµes.</p>
+          <h1 class="text-3xl font-bold text-zinc-100 tracking-tight">Configurações</h1>
+          <p class="text-zinc-500 text-sm mt-1">Gerencie as preferáªncias globais do sistema, hardware e integrações.</p>
         </header>
 
         <div class="space-y-12">
@@ -848,7 +848,7 @@
                     <h3 class="text-lg font-medium text-zinc-100 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Hardware
                     </h3>
-                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">ConfiguraÃ§Ã£o da conexÃ£o com o leitor biomÃ©trico e feedback fÃ­sico do dispositivo.</p>
+                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">Configuraçáo da conexáo com o leitor biomá©trico e feedback fá­sico do dispositivo.</p>
                 </div>
                 <div class="md:col-span-2 space-y-6">
                     
@@ -862,7 +862,7 @@
                                     <span class="text-[10px] font-bold text-zinc-500 uppercase">OFF</span>
                                 </div>
                              </div>
-                             <p class="text-xs text-zinc-500">Selecione a porta onde o sensor estÃ¡ conectado.</p>
+                             <p class="text-xs text-zinc-500">Selecione a porta onde o sensor está¡ conectado.</p>
                         </div>
                         <div class="flex items-center gap-3 w-full sm:w-auto">
                             <select id="select-serial-port" class="bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-sm text-zinc-300 focus:border-indigo-500/50 outline-none flex-1 sm:w-48 h-[42px]">
@@ -879,7 +879,7 @@
                         <div class="flex items-start justify-between p-5 bg-zinc-900/50 rounded-xl border border-white/5">
                             <div>
                                 <h4 class="text-sm font-medium text-zinc-200">Bip Sonoro</h4>
-                                <p class="text-xs text-zinc-500 mt-1">Feedback de Ã¡udio ao registrar.</p>
+                                <p class="text-xs text-zinc-500 mt-1">Feedback de á¡udio ao registrar.</p>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer mt-1">
                                 <input type="checkbox" id="toggle-buzzer" class="sr-only peer">
@@ -888,7 +888,7 @@
                         </div>
                         <div class="flex items-start justify-between p-5 bg-zinc-900/50 rounded-xl border border-white/5">
                             <div>
-                                <h4 class="text-sm font-medium text-zinc-200">RelÃ³gio do Sensor</h4>
+                                <h4 class="text-sm font-medium text-zinc-200">Relá³gio do Sensor</h4>
                                 <p class="text-xs text-zinc-500 mt-1">Sincronizar hora com PC.</p>
                             </div>
                             <button id="sync-time-btn" class="mt-0.5 p-2 bg-zinc-950 hover:bg-zinc-800 border border-white/10 rounded-lg text-zinc-400 hover:text-indigo-400 transition-colors">
@@ -902,11 +902,11 @@
 
             <div class="w-full h-px bg-white/5"></div>
 
-            <!-- Grupo 2: InteligÃªncia Artificial -->
+            <!-- Grupo 2: Inteligáªncia Artificial -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="md:col-span-1">
                     <h3 class="text-lg font-medium text-zinc-100 flex items-center gap-2">
-                         <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> CÃ©rebro IA
+                         <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Cá©rebro IA
                     </h3>
                     <p class="text-sm text-zinc-500 mt-2 leading-relaxed">Configure onde a IA busca documentos para aprender e responder perguntas.</p>
                 </div>
@@ -919,7 +919,7 @@
                         </div>
                         <div class="p-5 grid gap-4">
                              <div>
-                                 <label class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2 block">DiretÃ³rio Fonte</label>
+                                 <label class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2 block">Diretá³rio Fonte</label>
                                  <div class="flex items-center gap-3">
                                     <div class="flex-1 relative">
                                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -944,20 +944,20 @@
 
             <div class="w-full h-px bg-white/5"></div>
 
-            <!-- Grupo 3: NotificaÃ§Ãµes -->
+            <!-- Grupo 3: Notificações -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="md:col-span-1">
                     <h3 class="text-lg font-medium text-zinc-100 flex items-center gap-2">
-                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ComunicaÃ§Ã£o
+                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Comunicaçáo
                     </h3>
-                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">ConfiguraÃ§Ãµes de envio de e-mails para notificaÃ§Ãµes de presenÃ§a.</p>
+                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">Configurações de envio de e-mails para notificações de presença.</p>
                 </div>
                 <div class="md:col-span-2 space-y-6">
                     
                     <div class="bg-zinc-900/50 rounded-xl border border-white/5 p-5 border-l-2 border-l-emerald-500/50">
                          <!-- Fixed Layout for Mobile/Desktop -->
                          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                            <h4 class="text-sm font-medium text-zinc-200">MÃ©todo de Envio</h4>
+                            <h4 class="text-sm font-medium text-zinc-200">Má©todo de Envio</h4>
                             <div class="relative w-full sm:w-64">
                                 <select id="email-mode-select" class="w-full appearance-none bg-zinc-950 border border-white/10 rounded-lg py-2 pl-3 pr-8 text-xs text-zinc-300 font-medium focus:outline-none focus:border-emerald-500/50 hover:bg-zinc-900 cursor-pointer transition-colors h-[38px]">
                                     <option value="oauth2">Google OAuth (Recomendado)</option>
@@ -975,7 +975,7 @@
                                  <svg viewBox="0 0 24 24" class="size-5"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
                              </div>
                              <div class="flex-1 text-center sm:text-left">
-                                 <p id="oauth-status" class="text-sm font-medium text-zinc-300">NÃ£o conectado</p>
+                                 <p id="oauth-status" class="text-sm font-medium text-zinc-300">Náo conectado</p>
                                  <p class="text-[11px] text-zinc-500">Conta Institucional</p>
                              </div>
                              <button id="connect-google-btn" class="text-xs font-bold text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 px-4 py-2 rounded transition-colors uppercase border border-indigo-500/20">
@@ -989,7 +989,7 @@
                                 <input id="smtp-host" placeholder="Host (smtp.gmail.com)" class="bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-300">
                                 <input id="smtp-port" placeholder="Porta (587)" class="bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-300">
                             </div>
-                            <input id="smtp-user" placeholder="UsuÃ¡rio" class="w-full bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-300">
+                            <input id="smtp-user" placeholder="Usuá¡rio" class="w-full bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-300">
                             <input id="smtp-pass" type="password" placeholder="Senha" class="w-full bg-zinc-950 border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-300">
                             <button id="save-settings-btn" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white py-2 rounded-lg text-xs font-bold transition-colors">Salvar Credenciais</button>
                          </div>
@@ -1014,11 +1014,11 @@
                     <h3 class="text-lg font-medium text-zinc-100 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Dados
                     </h3>
-                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">Gerencie onde os relatÃ³rios de presenÃ§a sÃ£o salvos e ferramentas de manutenÃ§Ã£o.</p>
+                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">Gerencie onde os relatá³rios de presença sáo salvos e ferramentas de manutençáo.</p>
                 </div>
                 <div class="md:col-span-2 space-y-6">
                     <div class="p-5 bg-zinc-900/50 rounded-xl border border-white/5 border-l-2 border-l-blue-500/50">
-                         <label class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-3 block">Caminho de ExportaÃ§Ã£o</label>
+                         <label class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-3 block">Caminho de Exportaçáo</label>
                          <div class="flex items-center gap-3">
                             <input id="excel-path-display" readonly class="flex-1 bg-zinc-950 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-zinc-400 font-mono outline-none h-[42px]" placeholder="C:/...">
                             <button id="select-excel-path-btn" class="px-4 h-[42px] bg-zinc-950 hover:bg-zinc-800 border border-white/10 text-zinc-300 rounded-lg text-sm font-medium transition-colors">Alterar</button>
@@ -1046,14 +1046,14 @@
                     <h3 class="text-lg font-medium text-red-400 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Zona de Perigo
                     </h3>
-                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">AÃ§Ãµes destrutivas e irreversÃ­veis.</p>
+                    <p class="text-sm text-zinc-500 mt-2 leading-relaxed">Ações destrutivas e irreversá­veis.</p>
                 </div>
                 <div class="md:col-span-2">
                     <div class="border border-red-500/10 bg-red-500/5 rounded-xl divide-y divide-red-500/10 border-l-2 border-l-red-500/50">
                         <div class="flex items-center justify-between p-4 border-b border-red-500/10">
                             <div>
-                                <h4 class="text-sm font-medium text-red-200">Resetar HistÃ³rico</h4>
-                                <p class="text-xs text-red-400/50">Apaga todos os registros de presenÃ§a.</p>
+                                <h4 class="text-sm font-medium text-red-200">Resetar Histá³rico</h4>
+                                <p class="text-xs text-red-400/50">Apaga todos os registros de presença.</p>
                             </div>
                             <button id="clear-activities-btn" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500 hover:text-white text-red-400 text-xs font-bold rounded transition-all border border-red-500/20">
                                 Resetar
@@ -1062,7 +1062,7 @@
                         <div class="flex items-center justify-between p-4">
                             <div>
                                 <h4 class="text-sm font-medium text-red-200">Formatar Sensor</h4>
-                                <p class="text-xs text-red-400/50">Apaga todas as digitais do dispositivo fÃ­sico.</p>
+                                <p class="text-xs text-red-400/50">Apaga todas as digitais do dispositivo fá­sico.</p>
                             </div>
                             <button id="empty-sensor-btn" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500 hover:text-white text-red-400 text-xs font-bold rounded transition-all border border-red-500/20">
                                 Formatar
@@ -1099,8 +1099,8 @@
               </button>
             </label>
             <label class="flex flex-col items-start md:col-span-2 relative">
-              <span class="text-zinc-400 text-sm font-medium pb-1.5">MatrÃ­cula</span>
-              <input name="matricula" required placeholder="Digite a matrÃ­cula"
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Matrá­cula</span>
+              <input name="matricula" required placeholder="Digite a matrá­cula"
                 class="form-input w-full rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-9 px-4 text-sm placeholder:text-zinc-600 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all" />
               <button type="button" id="search-by-matricula"
                  class="absolute right-3 top-[30px] text-zinc-500 hover:text-indigo-400 transition-colors">
@@ -1152,10 +1152,10 @@
             </label>
 
             <label class="flex flex-col md:col-span-2">
-              <span class="text-zinc-400 text-sm font-medium pb-1.5">GÃªnero</span>
+              <span class="text-zinc-400 text-sm font-medium pb-1.5">Gáªnero</span>
               <select name="genero" required id="modal-genero-select"
                 class="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 transition-colors cursor-pointer">
-                <option value="">Selecione o gÃªnero</option>
+                <option value="">Selecione o gáªnero</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Feminino">Feminino</option>
                 <option value="Outro">Outro</option>
@@ -1199,7 +1199,7 @@
                   class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
                   <input type="checkbox" name="dias-semana" value="6"
                     class="form-checkbox hidden" />
-                  <span class="text-zinc-300 text-xs font-medium week-day-label">SÃ¡b</span>
+                  <span class="text-zinc-300 text-xs font-medium week-day-label">Sá¡b</span>
                 </label>
                 <label
                   class="flex items-center justify-center cursor-pointer bg-zinc-950/50 border border-white/5 rounded-lg h-full hover:bg-zinc-800 transition-colors">
@@ -1240,7 +1240,7 @@
 
 
 
-  <!-- Modal de Alerta/ConfirmaÃ§Ã£o Customizado -->
+  <!-- Modal de Alerta/Confirmaçáo Customizado -->
   <div id="custom-alert-modal"
     class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
     <div class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-sm p-6 relative">
@@ -1255,7 +1255,7 @@
     </div>
   </div>
 
-  <!-- Detail Overlay Modal (Lista de PresenÃ§a/AusÃªncia) -->
+  <!-- Detail Overlay Modal (Lista de Presença/Ausáªncia) -->
   <div id="detail-overlay" class="fixed inset-0 bg-zinc-950/95 backdrop-blur-xl hidden z-[100] flex flex-col transition-all duration-300 opacity-0 pointer-events-none transform scale-95">
      <!-- Header -->
      <div class="p-6 md:p-8 flex justify-between items-center border-b border-white/5 bg-zinc-900/30">
@@ -1306,7 +1306,7 @@
      </div>
   </div>
 
-  <!-- Modal de EdiÃ§Ã£o de Atividade -->
+  <!-- Modal de Ediçáo de Atividade -->
   <div id="edit-activity-modal"
     class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
     <div
@@ -1319,7 +1319,7 @@
         <input type="hidden" id="edit-activity-user-id">
 
         <label class="flex flex-col mb-4">
-          <span class="text-zinc-400 text-sm font-medium pb-2">UsuÃ¡rio</span>
+          <span class="text-zinc-400 text-sm font-medium pb-2">Usuá¡rio</span>
           <input id="edit-activity-user-name" type="text" readonly
             class="form-input rounded-xl bg-zinc-950/30 border border-white/5 text-zinc-500 h-11 px-4 cursor-not-allowed">
         </label>
@@ -1348,14 +1348,14 @@
     </div>
   </div>
 
-  <!-- Modal de FrequÃªncia Manual -->
+  <!-- Modal de Frequáªncia Manual -->
   <div id="manual-frequency-modal"
     class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm hidden p-4">
     <div
       class="bg-zinc-900 border border-white/5 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-md p-6 md:p-8 relative">
       <button id="close-manual-frequency-modal"
         class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl transition-colors">&times;</button>
-      <h2 class="text-zinc-100 text-2xl font-bold mb-6 tracking-tight">Adicionar FrequÃªncia Manual</h2>
+      <h2 class="text-zinc-100 text-2xl font-bold mb-6 tracking-tight">Adicionar Frequáªncia Manual</h2>
       <form id="form-manual-frequency">
         <label class="flex flex-col mb-4 relative">
           <span class="text-zinc-400 text-sm font-medium pb-2">Aluno</span>
@@ -1365,7 +1365,7 @@
           <input type="hidden" id="manual-frequency-user-id">
           <div id="manual-frequency-user-results"
             class="absolute top-full left-0 right-0 bg-zinc-900 border border-white/5 rounded-b-xl max-h-48 overflow-y-auto z-10 hidden shadow-xl shadow-black/50">
-            <!-- Resultados da busca serÃ£o inseridos aqui -->
+            <!-- Resultados da busca seráo inseridos aqui -->
           </div>
         </label>
 
@@ -1381,7 +1381,7 @@
           <select id="manual-frequency-type"
             class="form-input rounded-xl bg-zinc-950/50 border border-white/5 text-zinc-100 h-11 px-4 focus:bg-zinc-900 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all cursor-pointer">
             <option value="Entrada">Entrada</option>
-            <option value="SaÃ­da">SaÃ­da</option>
+            <option value="Saá­da">Saá­da</option>
           </select>
         </label>
 
@@ -1425,8 +1425,8 @@
         <div class="flex flex-col gap-1 items-start max-w-[85%]">
           <div
             class="bg-zinc-800 border border-white/5 text-zinc-200 px-4 py-3 rounded-2xl rounded-tl-sm text-sm shadow-sm">
-            <p>OlÃ¡! Sou a assistente inteligente do Veritas. ðŸ¤–</p>
-            <p class="mt-2 text-zinc-400 text-xs">Posso responder sobre alunos, faltas, turmas e responsÃ¡veis. Tudo
+            <p>Olá¡! Sou a assistente inteligente do Veritas. ðŸ¤–</p>
+            <p class="mt-2 text-zinc-400 text-xs">Posso responder sobre alunos, faltas, turmas e responsá¡veis. Tudo
               offline!</p>
           </div>
           <span class="text-[10px] text-zinc-600 ml-1">Agora</span>
@@ -1465,3 +1465,4 @@
 </body>
 
 </html>
+
