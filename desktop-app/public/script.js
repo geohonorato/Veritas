@@ -12,6 +12,15 @@
       // Alias for local usage if needed, or just use window.allActivitiesCache
       var allActivitiesCache = window.allActivitiesCache;
 
+      // Função para formatar nomes (ALL CAPS → Title Case)
+      function formatarNome(nome) {
+        if (!nome) return 'N/A';
+        return nome.toLowerCase()
+          .split(' ')
+          .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+          .join(' ');
+      }
+
       // Variables for Chart Instances (Global within IIFE)
       let weeklyChartInstance = null;
       let dailyChartInstance = null;
@@ -706,10 +715,10 @@
           tr.className = 'border-t border-t-[#314c68]';
           const dias = aluno.diasSemana ? aluno.diasSemana.map(d => diasNomes[d]).join(', ') : 'N/A';
           tr.innerHTML = `
-        <td class="h-[72px] px-4 py-2 text-center delete-mode-col" style="display: ${deleteMode ? '' : 'none'};">
+        <td class="h-[72px] px-4 py-2 text-white text-sm font-normal text-center delete-mode-col" style="display: ${deleteMode ? '' : 'none'};">
           <input type="checkbox" data-id="${aluno.id}" class="form-checkbox rounded bg-[#223549] text-blue-500 delete-checkbox">
         </td>
-        <td class="h-[72px] px-4 py-2 text-white text-sm font-normal text-center border-r border-[#314c68]">${aluno.nome}</td>
+        <td class="h-[72px] px-4 py-2 text-white text-sm font-normal text-center border-r border-[#314c68]">${formatarNome(aluno.nome)}</td>
         <td class="h-[72px] px-4 py-2 text-[#9badc0] text-sm font-normal text-center border-r border-[#314c68]">${aluno.matricula}</td>
         <td class="h-[72px] px-4 py-2 text-white text-sm font-normal text-center border-r border-[#314c68]">${aluno.turma}</td>
         <td class="h-[72px] px-4 py-2 text-white text-sm font-normal text-center border-r border-[#314c68]">${aluno.turno || 'N/A'}</td>
@@ -1544,7 +1553,7 @@
           tr.className = 'border-t border-t-[#314c68]';
           const dias = aluno.diasSemana ? aluno.diasSemana.map(d => diasNomes[d]).join(', ') : 'N/A';
           tr.innerHTML = `
-        <td class="h-[72px] px-4 py-2 text-white text-sm font-normal">${aluno.nome}</td>
+        <td class="h-[72px] px-4 py-2 text-white text-sm font-normal">${formatarNome(aluno.nome)}</td>
         <td class="h-[72px] px-4 py-2 text-[#9badc0] text-sm font-normal">${aluno.matricula}</td>
         <td class="h-[72px] px-4 py-2 text-white text-sm font-normal">${aluno.turma}</td>
         <td class="h-[72px] px-4 py-2 text-[#9badc0] text-sm font-normal">${aluno.email}</td>
