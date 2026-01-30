@@ -12,7 +12,7 @@
       // Alias for local usage if needed, or just use window.allActivitiesCache
       var allActivitiesCache = window.allActivitiesCache;
 
-      // Funçáo para formatar nomes (ALL CAPS → Title Case)
+      // Função para formatar nomes (ALL CAPS → Title Case)
       function formatarNome(nome) {
         if (!nome) return 'N/A';
         return nome.toLowerCase()
@@ -26,10 +26,10 @@
       let dailyChartInstance = null;
 
       document.addEventListener('DOMContentLoaded', () => {
-        // Verificaçáo adicional de segurança (redundante, mas garante)
+        // Verificação adicional de segurança (redundante, mas garante)
         const user = sessionStorage.getItem('veritas_user');
         if (!user) {
-          console.warn('[Security] Usuário náo autenticado detectado. Redirecionando...');
+          console.warn('[Security] usuério não autenticado detectado. Redirecionando...');
           window.location.replace('/login.html');
           return;
         }
@@ -44,7 +44,7 @@
           });
         }
 
-        // --- Funcionalidade da Navegaçáo Lateral ---
+        // --- Funcionalidade da Navegação Lateral ---
         const navItems = document.querySelectorAll('#sidebar-nav .nav-item');
         const dashboardSection = document.getElementById('dashboard-section');
         const settingsSection = document.getElementById('settings-section');
@@ -113,7 +113,7 @@
           });
         });
 
-        // --- Funcionalidade do Calendário (Moved here) ---
+        // --- Funcionalidade do Calendério (Moved here) ---
         const monthYearEl = document.getElementById('month-year');
         const calendarGrid = document.getElementById('calendar-grid');
         const prevMonthBtn = document.getElementById('prev-month');
@@ -199,7 +199,7 @@
           })
           .catch(err => {
             console.error('Erro ao buscar info do servidor:', err);
-            serverUrlDisplay.textContent = 'Indisponá­vel';
+            serverUrlDisplay.textContent = 'Indisponé­vel';
           });
       }
 
@@ -292,7 +292,7 @@
         const users = await window.api.invoke('get-users');
         const user = users.find(u => u.id === userId);
         if (!user) {
-          await showCustomAlert('Erro', 'Usuá¡rio náo encontrado!');
+          await showCustomAlert('Erro', 'Usué¡rio não encontrado!');
           return;
         }
 
@@ -330,7 +330,7 @@
           formAluno.reset();
           alunoIdInput.value = '';
           modalTitle.textContent = 'Adicionar Aluno';
-          statusDiv.textContent = 'Preencha os dados e cadastre a digital se necessário.';
+          statusDiv.textContent = 'Preencha os dados e cadastre a digital se necessério.';
           statusDiv.className = 'text-zinc-400 text-xs text-center mb-3 min-h-[16px] transition-all';
           btnSalvar.disabled = false;
           deleteUserModalBtn.classList.add('hidden');
@@ -370,7 +370,7 @@
           formAluno.cabine.value = result.cabine || '';
           showCustomAlert('Sucesso', 'Dados do aluno preenchidos.');
         } else {
-          showCustomAlert('Náo encontrado', 'Nenhum aluno encontrado com os dados fornecidos. Prossiga com o cadastro manual.');
+          showCustomAlert('não encontrado', 'Nenhum aluno encontrado com os dados fornecidos. Prossiga com o cadastro manual.');
         }
       }
 
@@ -397,10 +397,10 @@
         };
 
         if (id) {
-          // --- MODO EDIá‡áƒO ---
+          // --- MODO EDIé‡éƒO ---
           try {
             await window.api.invoke('update-user', { id, data: userData });
-            await showCustomAlert('Sucesso!', 'Usuá¡rio atualizado com sucesso!');
+            await showCustomAlert('Sucesso!', 'Usué¡rio atualizado com sucesso!');
             fecharModalCadastro();
             renderizarTabelaUsuarios();
           } catch (error) {
@@ -408,13 +408,13 @@
             btnSalvar.disabled = false;
           }
         } else {
-          // --- MODO ADIá‡áƒO ---
+          // --- MODO ADIé‡éƒO ---
           statusDiv.textContent = 'Iniciando processo de cadastro...';
           try {
             const result = await window.api.invoke('add-user-and-enroll', { userData });
             fecharModalCadastro();
             renderizarTabelaUsuarios();
-            await showCustomAlert('Sucesso!', `Usuá¡rio ${result.user.nome} cadastrado com ID ${result.user.id}.`);
+            await showCustomAlert('Sucesso!', `Usué¡rio ${result.user.nome} cadastrado com ID ${result.user.id}.`);
           } catch (error) {
             await showCustomAlert('Erro de Cadastro', error.message);
             btnSalvar.disabled = false;
@@ -425,7 +425,7 @@
       if (deleteUserModalBtn) {
         deleteUserModalBtn.addEventListener('click', async () => {
           const userId = parseInt(alunoIdInput.value, 10);
-          const confirmed = await showCustomConfirm('Confirmaçáo', `Tem certeza que deseja excluir o usuá¡rio com ID ${userId} do banco de dados e do sensor?`);
+          const confirmed = await showCustomConfirm('Confirmação', `Tem certeza que deseja excluir o usué¡rio com ID ${userId} do banco de dados e do sensor?`);
           if (confirmed) {
             try {
               const result = await window.api.invoke('delete-user', userId);
@@ -433,13 +433,13 @@
               fecharModalCadastro();
               renderizarTabelaUsuarios();
             } catch (error) {
-              await showCustomAlert('Erro', `Erro ao excluir usuá¡rio: ${error.message}`);
+              await showCustomAlert('Erro', `Erro ao excluir usué¡rio: ${error.message}`);
             }
           }
         });
       }
 
-      // --- Comunicaçáo com Main Process (Refatorado para window.api) ---
+      // --- Comunicaçéo com Main Process (Refatorado para window.api) ---
       // Removido require('electron')
 
       const toggleBuzzer = document.getElementById('toggle-buzzer');
@@ -519,7 +519,7 @@
         }
       });
 
-      // --- Renderizaçáo das Tabelas e Listas ---
+      // --- Renderizaçéo das Tabelas e Listas ---
       async function renderizarAtividadesRecentes() {
         const container = document.getElementById('recent-activities-container');
         if (!container) return;
@@ -659,7 +659,7 @@
           <span class="text-white text-sm font-normal">${saidaTime}</span>
           ${r.saida ? `
           <button class="edit-activity-btn opacity-0 group-hover:opacity-100 transition-all text-zinc-500 hover:text-indigo-400 p-1.5 rounded-lg hover:bg-white/5" 
-            data-timestamp="${r.saida.timestamp}" data-userid="${r.saida.userId}" title="Editar Saá­da">
+            data-timestamp="${r.saida.timestamp}" data-userid="${r.saida.userId}" title="Editar Saé­da">
             ${editIconSvg}
           </button>` : ''}
         </div>
@@ -707,7 +707,7 @@
         }
 
         const diasNomes = {
-          0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sá¡b'
+          0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sé¡b'
         };
 
         filteredAlunos.forEach(aluno => {
@@ -830,7 +830,7 @@
             if (connectGoogleBtn) connectGoogleBtn.textContent = "Reconectar Conta";
           } else {
             if (oauthStatus) {
-              oauthStatus.textContent = "Náo Conectado";
+              oauthStatus.textContent = "não Conectado";
               oauthStatus.className = "font-bold text-white";
             }
           }
@@ -895,7 +895,7 @@
               window.open(data.url, '_blank', 'width=500,height=600');
             }
           } catch (err) {
-            showCustomAlert('Erro', 'Falha ao iniciar autenticaçáo Google.');
+            showCustomAlert('Erro', 'Falha ao iniciar autenticaçéo Google.');
           }
         });
       }
@@ -984,20 +984,20 @@
 
           const confirmed = await showCustomConfirm(
             'Sincronizar com Sensor',
-            'Esta açáo buscará¡ por digitais cadastradas diretamente no sensor e as importará¡ para o aplicativo. Deseja continuar?'
+            'Esta açéo buscaré¡ por digitais cadastradas diretamente no sensor e as importaré¡ para o aplicativo. Deseja continuar?'
           );
 
           if (confirmed) {
-            showCustomAlert('Sincronizando...', 'Buscando por novos usuá¡rios no sensor. Isso pode levar alguns segundos.');
+            showCustomAlert('Sincronizando...', 'Buscando por novos usué¡rios no sensor. Isso pode levar alguns segundos.');
             try {
               const result = await window.api.invoke('sync-from-sensor');
               await showCustomAlert(
-                'Sincronizaçáo Concluá­da',
-                `${result.newUsers} novo(s) usuá¡rio(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
+                'Sincronizaçéo Conclué­da',
+                `${result.newUsers} novo(s) usué¡rio(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
               );
               renderizarTabelaUsuarios();
             } catch (error) {
-              await showCustomAlert('Erro de Sincronizaçáo', error.message);
+              await showCustomAlert('Erro de Sincronizaçéo', error.message);
             }
           }
         });
@@ -1069,20 +1069,20 @@
               const userIdsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id, 10));
 
               if (userIdsToDelete.length === 0) {
-                await showCustomAlert('Aviso', 'Nenhum usuá¡rio selecionado para exclusáo.');
+                await showCustomAlert('Aviso', 'Nenhum usué¡rio selecionado para excluséo.');
                 return;
               }
 
-              const confirmed = await showCustomConfirm('Confirmaçáo', `Tem certeza que deseja excluir ${userIdsToDelete.length} usuá¡rio(s)?`);
+              const confirmed = await showCustomConfirm('Confirmação', `Tem certeza que deseja excluir ${userIdsToDelete.length} usué¡rio(s)?`);
               if (confirmed) {
                 try {
                   for (const userId of userIdsToDelete) {
                     await window.api.invoke('delete-user', userId);
                   }
-                  await showCustomAlert('Sucesso!', `${userIdsToDelete.length} usuá¡rio(s) excluá­do(s) com sucesso.`);
+                  await showCustomAlert('Sucesso!', `${userIdsToDelete.length} usué¡rio(s) exclué­do(s) com sucesso.`);
                   exitDeleteMode();
                 } catch (error) {
-                  await showCustomAlert('Erro', `Erro ao excluir usuá¡rios: ${error.message}`);
+                  await showCustomAlert('Erro', `Erro ao excluir usué¡rios: ${error.message}`);
                 }
               }
             });
@@ -1096,11 +1096,11 @@
         removeDuplicatesMenuItem.addEventListener('click', async (e) => {
           e.preventDefault();
           userMenuDropdown.classList.add('hidden');
-          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açáo irá¡ verificar todos os usuá¡rios e remover aqueles com matrá­culas duplicadas, mantendo apenas a primeira ocorráªncia encontrada. Deseja continuar?');
+          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açéo iré¡ verificar todos os usué¡rios e remover aqueles com matré­culas duplicadas, mantendo apenas a primeira ocorréªncia encontrada. Deseja continuar?');
           if (confirmed) {
             try {
               const result = await window.api.invoke('remove-duplicates');
-              await showCustomAlert('Sucesso', `${result.count} usuá¡rio(s) duplicado(s) removido(s).`);
+              await showCustomAlert('Sucesso', `${result.count} usué¡rio(s) duplicado(s) removido(s).`);
               renderizarTabelaUsuarios();
             } catch (error) {
               await showCustomAlert('Erro', `Erro ao remover duplicados: ${error.message}`);
@@ -1139,7 +1139,7 @@
       }
 
       const filterTurma = document.getElementById('filter-turma');
-      const filterMesSelect = document.getElementById('filter-mes-select'); // Novo Select de Máªs
+      const filterMesSelect = document.getElementById('filter-mes-select'); // Novo Select de Mês
       const filterAnoInput = document.getElementById('filter-ano-input'); // Novo Input de Ano
       const filterTurno = document.getElementById('filter-turno');
       const filterNome = document.getElementById('filter-nome');
@@ -1172,19 +1172,19 @@
             const currentMonth = now.getMonth() + 1; // 1-12
             const currentYear = now.getFullYear();
 
-            // Lá³gica Inteligente: Se selecionar um máªs que AINDA náo chegou no ano corrente, volta 1 ano.
-            // Mas se o ano já¡ estiver diferente do atual (ex: usuá¡rio mudou manualmente), respeita a escolha manual?
-            // A regra diz: "por padráo á© o ano corrente, mas..."
+            // Lógica Inteligente: Se selecionar um Mês que AINDA não chegou no ano corrente, volta 1 ano.
+            // Mas se o ano jé¡ estiver diferente do atual (ex: usué¡rio mudou manualmente), respeita a escolha manual?
+            // A regra diz: "por padrão é© o ano corrente, mas..."
             // Vamos aplicar a regra se o ano input estiver igual ao ano atual.
             if (parseInt(filterAnoInput.value) === currentYear) {
               if (selectedMonth > currentMonth) {
                 filterAnoInput.value = currentYear - 1;
               } else {
-                // Caso contrá¡rio (máªs á© passado ou atual), mantemos o ano corrente.
-                // Mas se o usuá¡rio estava vendo 2025 e clicou em Janeiro (2026), deve voltar pra 2026?
-                // "Caso seja selecionado um máªs que ainda náo chegou... passa a marcar o ano anterior"
-                // Implica que á© uma transiçáo automá¡tica unidirecional ou bidirecional?
-                // Geralmente resetar pra ano atual á© bom se o máªs for vá¡lido.
+                // Caso contré¡rio (Mês é© passado ou atual), mantemos o ano corrente.
+                // Mas se o usué¡rio estava vendo 2025 e clicou em Janeiro (2026), deve voltar pra 2026?
+                // "Caso seja selecionado um Mês que ainda não chegou... passa a marcar o ano anterior"
+                // Implica que é© uma transiçéo automé¡tica unidirecional ou bidirecional?
+                // Geralmente resetar pra ano atual é© bom se o Mês for vé¡lido.
                 filterAnoInput.value = currentYear;
               }
             }
@@ -1277,7 +1277,7 @@
         
         // Handle "Unscheduled Presence" (Extra students) to avoid negative absent counts
         // If someone came who wasn't scheduled, they are in 'Presentes' list but not 'Ausentes' calculation base.
-        // We stick to the request: "nos cards ausentes... contar apenas os do dia em questáo"
+        // We stick to the request: "nos cards ausentes... contar apenas os do dia em questéo"
         // Ausentes Logic: (Scheduled) - (Scheduled AND Present)
         const scheduledAndPresentCount = usuariosHoje.filter(u => presentesIds.includes(u.id)).length;
         const ausentesCount = Math.max(0, totalHoje - scheduledAndPresentCount);
@@ -1285,14 +1285,14 @@
         document.getElementById('presenca-hoje').textContent = presencaHojeCount;
         document.getElementById('ausentes-hoje').textContent = ausentesCount;
 
-        // --- ATUALIZAÇáO DO GRÁFICO DIÁRIO ---
+        // --- ATUALIZAÇéO DO GRéFICO DIéRIO ---
         if (typeof dailyChartInstance !== 'undefined' && dailyChartInstance) {
-          // Atualiza dados do gráfico (Presentes vs Ausentes)
+          // Atualiza dados do gréfico (Presentes vs Ausentes)
           dailyChartInstance.data.datasets[0].data = [presencaHojeCount, ausentesCount];
           dailyChartInstance.update();
 
           // Atualiza texto de porcentagem central
-          // Base de cálculo: Presentes + Ausentes (Representa o universo de pessoas esperadas ou presentes)
+          // Base de célculo: Presentes + Ausentes (Representa o universo de pessoas esperadas ou presentes)
           const totalForChart = presencaHojeCount + ausentesCount;
           const percentage = totalForChart > 0 ? Math.round((presencaHojeCount / totalForChart) * 100) : 0;
           
@@ -1445,7 +1445,7 @@
             await window.api.invoke('sync-time');
             await showCustomAlert('Sucesso', 'Data e hora sincronizadas com o dispositivo.');
           } catch (error) {
-            await showCustomAlert('Erro', `Náo foi possá­vel sincronizar a hora: ${error.message}`);
+            await showCustomAlert('Erro', `não foi possé­vel sincronizar a hora: ${error.message}`);
           }
         });
       }
@@ -1455,16 +1455,16 @@
 
       if (emptySensorBtn) {
         emptySensorBtn.addEventListener('click', async () => {
-          const password = await showCustomConfirm('Confirmaçáo de Segurança', 'Esta açáo á© EXTREMAMENTE DESTRUTIVA e irá¡ apagar TODAS as digitais do sensor. Para continuar, digite a senha:', 'password');
+          const password = await showCustomConfirm('Confirmação de Segurança', 'Esta açéo é© EXTREMAMENTE DESTRUTIVA e iré¡ apagar TODAS as digitais do sensor. Para continuar, digite a senha:', 'password');
           if (password) {
             if (password === '2909') {
-              const finalConfirm = await showCustomConfirm('Confirmaçáo Final', 'TEM CERTEZA? Todas as digitais no sensor seráo perdidas permanentemente. Esta á© sua áºltima chance de cancelar.');
+              const finalConfirm = await showCustomConfirm('Confirmação Final', 'TEM CERTEZA? Todas as digitais no sensor seréo perdidas permanentemente. Esta é© sua éºltima chance de cancelar.');
               if (finalConfirm) {
                 try {
                   const result = await window.api.invoke('empty-sensor-database');
                   await showCustomAlert('Sucesso', result.message);
                 } catch (error) {
-                  await showCustomAlert('Erro', `Náo foi possá­vel apagar a memá³ria do sensor: ${error.message}`);
+                  await showCustomAlert('Erro', `não foi possé­vel apagar a memé³ria do sensor: ${error.message}`);
                 }
               }
             } else {
@@ -1476,11 +1476,11 @@
 
       if (clearActivitiesBtn) {
         clearActivitiesBtn.addEventListener('click', async () => {
-          const password = await showCustomConfirm('Confirmaçáo', 'Para apagar todos os registros de atividades, digite a senha:', 'password');
+          const password = await showCustomConfirm('Confirmação', 'Para apagar todos os registros de atividades, digite a senha:', 'password');
 
           if (password) {
             if (password === '2909') {
-              const confirmed = await showCustomConfirm('Confirmaçáo', 'Tem certeza que deseja apagar TODOS os registros de atividades? Esta açáo á© irreversá­vel.');
+              const confirmed = await showCustomConfirm('Confirmação', 'Tem certeza que deseja apagar TODOS os registros de atividades? Esta açéo é© irreversé­vel.');
               if (confirmed) {
                 try {
                   const result = await window.api.invoke('clear-all-activities');
@@ -1545,7 +1545,7 @@
         }
 
         const diasNomes = {
-          0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sá¡b'
+          0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sé¡b'
         };
 
         filteredUsers.forEach(aluno => {
@@ -1602,7 +1602,7 @@
           dailyActivitiesContainer.innerHTML += activityHtml;
         });
 
-        // --- Lá³gica de Ausentes ---
+        // --- Lógica de Ausentes ---
         const dailyAbsencesContainer = document.getElementById('daily-absences-container');
         if (dailyAbsencesContainer) {
           dailyAbsencesContainer.innerHTML = '';
@@ -1658,7 +1658,7 @@
         const activityToEdit = allActivitiesCache.find(a => a.timestamp === timestamp && a.userId === userId);
 
         if (!activityToEdit) {
-          showCustomAlert('Erro', 'Náo foi possá­vel encontrar a atividade para editar.');
+          showCustomAlert('Erro', 'não foi possé­vel encontrar a atividade para editar.');
           return;
         }
 
@@ -1724,7 +1724,7 @@
             if (connectBtn) connectBtn.textContent = 'Reconectar Conta Google';
           } else {
             if (oauthStatus) {
-              oauthStatus.textContent = 'Náo Conectado';
+              oauthStatus.textContent = 'não Conectado';
               oauthStatus.classList.remove('text-emerald-400', 'font-bold');
               oauthStatus.classList.add('text-zinc-500');
             }
@@ -1736,12 +1736,12 @@
 
       // --- Google OAuth Logic ---
       const connectGoogleAuthBtn = document.getElementById('connect-google-btn');
-      console.log('[DEBUG] Botáo Google encontrado?', !!connectGoogleAuthBtn);
+      console.log('[DEBUG] Botéo Google encontrado?', !!connectGoogleAuthBtn);
 
       if (connectGoogleAuthBtn) {
         connectGoogleAuthBtn.addEventListener('click', async () => {
-          console.log('[DEBUG] Botáo Google Clicado!');
-          // Náo láª mais inputs da tela, confia no servidor ter os dados (client_secret.json)
+          console.log('[DEBUG] Botéo Google Clicado!');
+          // não léª mais inputs da tela, confia no servidor ter os dados (client_secret.json)
 
           connectGoogleAuthBtn.disabled = true;
           connectGoogleAuthBtn.textContent = 'Gerando Link...';
@@ -1756,14 +1756,14 @@
               body: JSON.stringify({}) // Envia vazio para forçar uso do banco
             });
 
-            if (!response.ok) throw new Error('Falha ao gerar URL de autenticaçáo');
+            if (!response.ok) throw new Error('Falha ao gerar URL de autenticaçéo');
 
             const data = await response.json();
             if (data.url) {
               // Redireciona na mesma aba para evitar bloqueio de pop-up
               window.location.href = data.url;
             } else {
-              throw new Error('URL invá¡lida recebida do servidor');
+              throw new Error('URL invé¡lida recebida do servidor');
             }
 
           } catch (error) {
@@ -1814,7 +1814,7 @@
             manualFrequencyUserList.sort((a, b) => a.nome.localeCompare(b.nome));
           } catch (error) {
             manualFrequencyUserList = [];
-            showCustomAlert('Erro', 'Náo foi possível carregar a lista de alunos.');
+            showCustomAlert('Erro', 'não foi possível carregar a lista de alunos.');
           }
         };
 
@@ -1889,7 +1889,7 @@
             console.log("Form values:", { userId, timestampLocal, type }); // DEBUG
 
             if (!userId) {
-              showCustomAlert('Erro', 'Por favor, selecione um aluno válido da lista.');
+              showCustomAlert('Erro', 'Por favor, selecione um aluno vélido da lista.');
               return;
             }
 
@@ -1947,10 +1947,10 @@
       renderizarAtividadesPorData(new Date(selectedYear, selectedMonth, selectedDay));
 
       window.api.receive('web-server-started', (data) => {
-        console.log(`Servidor web acessá­vel em: http://${data.ipAddress}:${data.port}`);
-        showCustomAlert('Servidor Web', `Interface web acessá­vel em: http://${data.ipAddress}:${data.port}`);
+        console.log(`Servidor web acessé­vel em: http://${data.ipAddress}:${data.port}`);
+        showCustomAlert('Servidor Web', `Interface web acessé­vel em: http://${data.ipAddress}:${data.port}`);
       });
-      // --- Event Listeners para os novos botõs da pá¡gina de Configurações ---
+      // --- Event Listeners para os novos botõs da pé¡gina de Configurações ---
       const settingsSyncUsersBtn = document.getElementById('settings-sync-users-btn');
       const settingsRemoveDuplicatesBtnLocal = document.getElementById('settings-remove-duplicates-btn');
 
@@ -1958,20 +1958,20 @@
         settingsSyncUsersBtn.addEventListener('click', async () => {
           const confirmed = await showCustomConfirm(
             'Sincronizar com Sensor',
-            'Esta açáo buscará¡ por digitais cadastradas diretamente no sensor e as importará¡ para o aplicativo. Deseja continuar?'
+            'Esta açéo buscaré¡ por digitais cadastradas diretamente no sensor e as importaré¡ para o aplicativo. Deseja continuar?'
           );
 
           if (confirmed) {
-            showCustomAlert('Sincronizando...', 'Buscando por novos usuá¡rios no sensor. Isso pode levar alguns segundos.');
+            showCustomAlert('Sincronizando...', 'Buscando por novos usué¡rios no sensor. Isso pode levar alguns segundos.');
             try {
               const result = await window.api.invoke('sync-from-sensor');
               await showCustomAlert(
-                'Sincronizaçáo Concluá­da',
-                `${result.newUsers} novo(s) usuá¡rio(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
+                'Sincronizaçéo Conclué­da',
+                `${result.newUsers} novo(s) usué¡rio(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
               );
               renderizarTabelaUsuarios();
             } catch (error) {
-              await showCustomAlert('Erro de Sincronizaçáo', error.message);
+              await showCustomAlert('Erro de Sincronizaçéo', error.message);
             }
           }
         });
@@ -1979,11 +1979,11 @@
 
       if (settingsRemoveDuplicatesBtnLocal) {
         settingsRemoveDuplicatesBtnLocal.addEventListener('click', async () => {
-          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açáo irá¡ verificar todos os usuá¡rios e remover aqueles com matrá­culas duplicadas, mantendo apenas a primeira ocorráªncia encontrada. Deseja continuar?');
+          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açéo iré¡ verificar todos os usué¡rios e remover aqueles com matré­culas duplicadas, mantendo apenas a primeira ocorréªncia encontrada. Deseja continuar?');
           if (confirmed) {
             try {
               const result = await window.api.invoke('remove-duplicates');
-              await showCustomAlert('Sucesso', `${result.count} usuá¡rio(s) duplicado(s) removido(s).`);
+              await showCustomAlert('Sucesso', `${result.count} usué¡rio(s) duplicado(s) removido(s).`);
               renderizarTabelaUsuarios();
             } catch (error) {
               await showCustomAlert('Erro', `Erro ao remover duplicados: ${error.message}`);
@@ -2056,7 +2056,7 @@
       <div class="bg-indigo-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm text-sm shadow-sm">
         ${text}
       </div>
-      <span class="text-[10px] text-zinc-600 mr-1">Vocáª</span>
+      <span class="text-[10px] text-zinc-600 mr-1">Vocéª</span>
     `;
         aiMessages.appendChild(userDiv);
 
@@ -2133,7 +2133,7 @@
 
         try {
           if (typeof Chart === 'undefined') {
-            console.warn('Chart.js náo carregado (Modo Offline?). Gráficos desativados.');
+            console.warn('Chart.js não carregado (Modo Offline?). Gréficos desativados.');
             return;
           }
 
@@ -2392,7 +2392,7 @@
       }
 
 
-      // --- Lógica de Faltas Automáticas ---
+      // --- Lógica de Faltas Autométicas ---
       const toggleFaltasBtn = document.getElementById('toggle-faltas-btn');
       const atividadesTab = document.getElementById('atividades-tab');
       const faltasTab = document.getElementById('faltas-tab');
@@ -2430,12 +2430,12 @@
           return;
         }
 
-        // Funçáo para verificar se o turno já passou
+        // Função para verificar se o turno jé passou
         const isTurnoPassado = (turno) => {
           const now = new Date();
           const horaAtual = now.getHours();
           
-          // Definir horários limite por turno
+          // Definir horérios limite por turno
           const limites = {
             'MATUTINO': 12,  // Até meio-dia
             'VESPERTINO': 18 // Até 18h
@@ -2453,14 +2453,14 @@
            return acc;
         }, {});
 
-        // Definir ordem de exibiçáo dos turnos
+        // Definir ordem de exibiçéo dos turnos
         const turnosOrdem = ['MATUTINO', 'VESPERTINO', 'INTEGRAL', 'INDEFINIDO'];
         
         // Obter chaves presentes e ordenar
         const turnosPresentes = Object.keys(faltasPorTurno).sort((a, b) => {
              const indexA = turnosOrdem.indexOf(a.toUpperCase());
              const indexB = turnosOrdem.indexOf(b.toUpperCase());
-             // Se náo encontrado na ordem, jogar para o final
+             // Se não encontrado na ordem, jogar para o final
              return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
         });
 
@@ -2470,7 +2470,7 @@
           trHeader.className = 'bg-zinc-800/80 border-y border-white/10';
           trHeader.innerHTML = `
             <td colspan="4" class="px-4 py-2 text-indigo-300 text-xs font-bold uppercase tracking-wider">
-              ${turno === 'INDEFINIDO' ? 'Turno Náo Definido' : turno} <span class="text-zinc-500 font-normal ml-1">(${faltasPorTurno[turno].length})</span>
+              ${turno === 'INDEFINIDO' ? 'Turno não Definido' : turno} <span class="text-zinc-500 font-normal ml-1">(${faltasPorTurno[turno].length})</span>
             </td>
           `;
           faltasTbody.appendChild(trHeader);
@@ -2558,4 +2558,7 @@
     })();
   }
 }
+
+
+
 
