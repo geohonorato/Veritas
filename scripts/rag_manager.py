@@ -65,47 +65,24 @@ def get_table(db, create_if_missing=False):
 
 def extract_text(file_path):
     """
-    Hybrid extraction strategy (PyPDF -> Docling)
-    Copied/Adapted from rag_ingest.py
+    Docling-only extraction strategy (User Request)
     """
     ext = os.path.splitext(file_path)[1].lower()
     full_text = ""
     used_method = "unknown"
 
-    # Strategy 1: PyPDF
+    # Strategy: Docling for PDF (Primary)
     if ext == '.pdf':
-        try:
-            from langchain_community.document_loaders import PyPDFLoader
-            loader = PyPDFLoader(file_path)
-            docs = loader.load()
-            extracted = "\n\n".join([d.page_content for d in docs])
-            if extracted.strip():
-                full_text = extracted
-                used_method = "pypdf"
-            else:
-                used_method = "docling_fallback"
-        except Exception:
-            used_method = "docling_fallback_error"
-
-    # Strategy 1.5: Text Files
-    if ext == '.txt':
-        try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                full_text = f.read()
-            used_method = "txt_simple"
-        except Exception:
-             used_method = "txt_error"
-
-    # Strategy 2: Docling
-    if not full_text:
         try:
             from docling.document_converter import DocumentConverter, PdfFormatOption
             from docling.datamodel.base_models import InputFormat
-            from docling.datamodel.pipeline_options import PdfPipelineOptions
+            from docling.datamodel.pipeline_options import PdfPipelineOptions, TableFormerMode
 
+            # Configure Docling (OCR enabled)
             pipeline_options = PdfPipelineOptions()
             pipeline_options.do_ocr = True 
             pipeline_options.do_table_structure = True
+            pipeline_options.table_structure_options.mode = TableFormerMode.ACCURATE
 
             converter = DocumentConverter(
                 format_options={
@@ -114,21 +91,30 @@ def extract_text(file_path):
             )
             result = converter.convert(file_path)
             full_text = result.document.export_to_markdown()
-            
-            if used_method == "unknown":
-                used_method = "docling_primary"
+            used_method = "docling"
         except Exception as e:
-            if used_method != "unknown": 
-                pass # Failed fallback
-            else:
-                raise e
+             sys.stderr.write(f"  [Docling Error] {e}\n")
+             used_method = "docling_error"
+
+    # Strategy: Text Files
+    elif ext == '.txt':
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                full_text = f.read()
+            used_method = "txt_simple"
+        except Exception:
+             used_method = "txt_error"
+    
+    # Strategy: Excel
+    elif ext == '.xlsx':
+         # (Simple export handled by other tools or skipped here, assume text extraction needed?)
+         # For now, skipping complex excel parsing inside RAG unless needed.
+         pass
 
     if not full_text:
         return None, "no_text"
     
     # Cleaning
-    # Remove IDs
-    full_text = re.sub(r'\b\d{8}\b', '', full_text)
     # Fix spaces
     full_text = re.sub(r'  +', ' ', full_text)
     
@@ -267,8 +253,12 @@ def cmd_ingest(source_dir):
         return
 
     # Process New/Changed
-    for f in files_to_process:
-        sys.stderr.write(f"Processing {f}...\n")
+    from tqdm import tqdm
+    pbar = tqdm(files_to_process, unit="file", file=sys.stderr)
+    
+    for f in pbar:
+        pbar.set_description(f"Ingesting {f}")
+        # sys.stderr.write(f"Processing {f}...\n")
         full_path = os.path.join(source_dir, f)
         
         # Remove old version if it existed (update case)

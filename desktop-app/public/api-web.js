@@ -55,7 +55,7 @@ if (!window.api) {
                             a.href = url;
                             // Tentar obter nome do arquivo do header
                             const contentDisposition = resp.headers.get('Content-Disposition');
-                            let fileName = `relatorio-completo-${new Date().toISOString().slice(0,10)}.xlsx`;
+                            let fileName = `relatorio-completo-${new Date().toISOString().slice(0, 10)}.xlsx`;
                             if (contentDisposition) {
                                 const match = contentDisposition.match(/filename="(.+)"/);
                                 if (match && match[1]) fileName = match[1];
@@ -86,7 +86,14 @@ if (!window.api) {
                             method: 'POST',
                             headers,
                             body: JSON.stringify({ query: data })
-                        }).then(r => r.json()).then(res => res.text || res.error);
+                        }).then(r => r.json()).then(res => {
+                            if (Array.isArray(res)) {
+                                if (res.length === 0) return "Não encontrei informações relevantes nos documentos.";
+                                // Join top 3 results
+                                return res.slice(0, 3).map(r => `> ${r.text}\n_(Fonte: ${r.source})_`).join('\n\n');
+                            }
+                            return res.text || res.error || "Erro desconhecido.";
+                        });
 
                     case 'add-manual-activity':
                         return await fetch('/api/activities', {

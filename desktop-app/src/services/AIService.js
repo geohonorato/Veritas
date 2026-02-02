@@ -1,348 +1,130 @@
 
-const { ChatGroq } = require("@langchain/groq");
-const { HumanMessage, SystemMessage, ToolMessage } = require("@langchain/core/messages");
-const { tool } = require("@langchain/core/tools");
-const { z } = require("zod");
-const db = require('../database');
-const KnowledgeService = require('./KnowledgeService');
-const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 
+/**
+ * AIService - Wrapper for Agno-based Python AI Agent
+ * Replaces LangChain implementation with subprocess communication
+ */
 class AIService {
     constructor() {
-        this.model = null;
-        this.tools = [];
-        this.toolsMap = {};
-        this.messages = []; // Simple in-memory history
+        this.pythonProcess = null;
+        this.requestQueue = [];
+        this.buffer = '';
+        this.initialized = false;
     }
 
     async initialize() {
-        console.log('[Veritas AI] Inicializando Cérebro LangChain 🧠...');
-        const apiKey = process.env.GROQ_API_KEY;
-        if (!apiKey) {
-            console.error('[Veritas AI] ERRO: GROQ_API_KEY não encontrada no .env');
-            return;
+        if (this.pythonProcess) return;
+
+        console.log('[Veritas AI] Inicializando Agno Agent 🧠...');
+
+        const scriptPath = path.join(__dirname, '../../../scripts/ai_agent.py');
+        const projectRoot = path.join(__dirname, '../../../');
+        const localPythonCmd = path.join(projectRoot, 'python_portable', 'python.exe');
+
+        let pythonCommand = 'python';
+        if (fs.existsSync(localPythonCmd)) {
+            console.log('[Veritas AI] Usando Python Portátil detectado.');
+            pythonCommand = localPythonCmd;
         }
 
-        // Initialize Model (User Selected)
-        this.model = new ChatGroq({
-            apiKey: apiKey,
-            model: "openai/gpt-oss-20b", // MODELO DEFINIDO PELO USUÁRIO. NÃO ALTERAR.
-            temperature: 0.1
+        // Spawn persistent agent process
+        this.pythonProcess = spawn(pythonCommand, [scriptPath, 'serve'], {
+            env: {
+                ...process.env,
+                PYTHONIOENCODING: 'utf-8',
+                PYTHONLEGACYWINDOWSSTDIO: 'utf-8'
+            }
         });
-        
-        // Define data tools first
-        this.defineTools();
 
-        // Bind tools to model
-        this.modelWithTools = this.model.bindTools(this.tools);
+        // Data handler
+        this.pythonProcess.stdout.on('data', (data) => this.handleData(data));
 
-        console.log('[Veritas AI] Pronto para servir (Model: openai/gpt-oss-20b) 🚀.');
+        // Log handler
+        this.pythonProcess.stderr.on('data', (data) => {
+            console.log(`[Agno Agent]: ${data.toString().trim()}`);
+        });
+
+        this.pythonProcess.on('exit', (code) => {
+            if (code === null) {
+                console.log('[Veritas AI] Agno Agent parado.');
+            } else {
+                console.warn(`[Veritas AI] Agno Agent encerrou inesperadamente (código ${code}).`);
+            }
+            this.pythonProcess = null;
+            this.initialized = false;
+            // Reject pending requests
+            while (this.requestQueue.length > 0) {
+                const req = this.requestQueue.shift();
+                req.resolve({ error: 'Agent process terminated' });
+            }
+        });
+
+        this.initialized = true;
+        console.log('[Veritas AI] Pronto para servir (Agno + Groq) 🚀.');
     }
 
-    defineTools() {
-        // Initialize Data (Excel) for Assisted search
-        this.loadAssistedList();
+    handleData(data) {
+        this.buffer += data.toString();
 
-        // Pre-warm Knowledge (RAG) Service
-        KnowledgeService.initialize();
+        let boundary = this.buffer.indexOf('\n');
+        while (boundary !== -1) {
+            const line = this.buffer.substring(0, boundary).trim();
+            this.buffer = this.buffer.substring(boundary + 1);
+            boundary = this.buffer.indexOf('\n');
 
-        const searchStudentsTool = tool(async ({ query }) => {
-            console.log(`[Tool] Buscando aluno: ${query}`);
-            const users = db.getUsers();
-            const normalizedQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (!line) continue;
 
-            const convertDays = (daysArray) => {
-                if (!Array.isArray(daysArray)) return "N/A";
-                // Dias no banco costumam ser strings ou números. Mapear:
-                // 0=Domingo, 1=Segunda, ..., 6=Sábado (padrão `getDay()`)
-                // OU 1=Segunda...? Vamos assumir padrão JS getDay() (0=Dom) ou ISO (1=Seg).
-                // No código do initializeTodaysFaltas, usamos getDay() que é 0=Dom.
-                // Log anterior: sample diasSemana = ['1']. Hoje é Quarta (3).
-                // Se '1' fosse Segunda, e 3 é Quarta, faz sentido.
-                
-                const map = {
-                    '0': 'Domingo',
-                    '1': 'Segunda-feira',
-                    '2': 'Terça-feira',
-                    '3': 'Quarta-feira',
-                    '4': 'Quinta-feira',
-                    '5': 'Sexta-feira',
-                    '6': 'Sábado',
-                    '7': 'Domingo' // Safety
-                };
-                
-                return daysArray.map(d => map[String(d)] || d).join(', ');
-            };
-
-            const results = users.filter(u =>
-                u.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery) ||
-                (u.email && u.email.includes(query))
-            ).map(u => ({
-                nome: u.nome,
-                matricula: u.matricula,
-                email: u.email,
-                turma: u.turma,
-                turno: u.turno,
-                cabine: u.cabine,
-                dias: convertDays(u.diasSemana),
-                faltas: u.faltas
-            })).slice(0, 5);
-
-            if (results.length === 0) return "Nenhum aluno encontrado com esse nome/termo.";
-            return JSON.stringify(results);
-        }, {
-            name: "search_students",
-            description: "Busca informações de alunos (emails, turmas, matrículas, horários). Recebe nome ou termo.",
-            schema: z.object({
-                query: z.string()
-            })
-        });
-
-        // --- Tool 2: Attendance Check ---
-        const checkAttendanceTool = tool(async ({ date_filter }) => {
-            console.log(`[Tool] Verificando presença. Filtro: ${date_filter}`);
-            const activities = db.getActivities();
-            const today = new Date().toLocaleDateString('pt-BR');
-            // Mocking logic similar to old service
-            const presents = activities
-                .filter(a => new Date(a.timestamp).toLocaleDateString('pt-BR') === today && a.type === 'Entrada')
-                .map(a => a.userName); // Assuming userName is stored or joined. Actually db.getActivities has userName?
-            // db.js usually joins or stores names. Let's assume it has userId, need to map.
-
-            // Fix: Map IDs to Names
-            const users = db.getUsers();
-            const presentNames = [...new Set(activities
-                .filter(a => new Date(a.timestamp).toLocaleDateString('pt-BR') === today && a.type === 'Entrada')
-                .map(a => {
-                    const u = users.find(u => u.id === a.userId);
-                    return u ? u.nome : 'Desconhecido';
-                })
-            )];
-
-            if (date_filter === 'absent') {
-                console.log(`[Tool] Buscando Faltas para ${today}`);
-                const faltas = db.getFaltas({ date: today });
-                
-                if (!faltas || faltas.length === 0) {
-                    return `Não há registros de faltas para hoje (${today}).`;
-                }
-
-                // Agrupar visualmente para a IA
-                const formatted = faltas.map(f => `${f.userName} (Turno: ${f.userTurno})`).join(', ');
-                return `Total de ${faltas.length} faltas hoje (${today}): ${formatted}`;
-            }
-
-            return `Alunos presentes hoje (${today}): ${presentNames.length > 0 ? presentNames.join(', ') : 'Ninguém entrou ainda.'}`;
-        }, {
-            name: "check_attendance",
-            description: "Verifica presença dos alunos HOJE.",
-            schema: z.object({
-                date_filter: z.enum(['today', 'absent'])
-            })
-        });
-
-        // --- Tool 3: Assisted/Patients Search (Excel) ---
-        const searchAssistedTool = tool(async ({ query }) => {
-            if (!query) return "Erro: Query vazia.";
-            console.log(`[Tool] Buscando assistido/vínculo: ${query}`);
-            const normalizedQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-            // Search in assistedData logic
-            if (!this.assistedData) {
-                this.loadAssistedList(); // Tenta recarregar se estiver vazio
-                if (!this.assistedData || this.assistedData.length === 0) return "Lista de assistidos indisponível no momento.";
-            }
-
-            const matches = this.assistedData.filter(d =>
-                (d.assistedName && d.assistedName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery)) ||
-                (d.studentName && d.studentName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalizedQuery))
-            ).slice(0, 10);
-
-            if (matches.length === 0) return "Nenhum vínculo encontrado.";
-            return JSON.stringify(matches);
-        }, {
-            name: "search_assisted_relationship",
-            description: "Busca na planilha de Assistidos/Pacientes. Use para perguntas como 'quem atende fulano' ou 'qual paciente de sicrano'. Retorna par { Aluno, Assistido }.",
-            schema: z.object({
-                query: z.string()
-            })
-        });
-
-        // --- Tool 4: Knowledge Base (RAG) ---
-        const ragSearchTool = tool(async ({ query }) => {
-            console.log(`[Tool] RAG Search: ${query}`);
             try {
-                const results = await KnowledgeService.search(query, 5);
-                
-                if (!results || results.length === 0) {
-                     return "Nenhum documento encontrado na base de conhecimento sobre este tópico. Tente reformular a busca com palavras-chave diferentes.";
+                const response = JSON.parse(line);
+                const req = this.requestQueue.shift();
+
+                if (req) {
+                    if (response.status === 'success') {
+                        req.resolve(response.data);
+                    } else if (response.status === 'pong') {
+                        req.resolve(response);
+                    } else {
+                        console.error('[Veritas AI] Agent Error:', response);
+                        req.resolve(response.message || 'Erro no agente de IA.');
+                    }
                 }
-
-                // Format for LLM
-                return results.map(r => `[Fonte: ${path.basename(r.source)}]\n${r.text}`).join('\n---\n');
-            } catch (error) {
-                console.error("[Tool Error] RAG failed:", error);
-                return "Erro interno ao buscar documentos. Informe ao usuário que a base de conhecimento está temporariamente indisponível.";
+            } catch (e) {
+                console.error('[Veritas AI] JSON Parse error:', e, "Raw:", line);
             }
-
-        }, {
-            name: "search_knowledge_base",
-            description: "ESSENCIAL PARA PERGUNTAS SOBRE REGRAS, DOCUMENTOS OU PROCEDIMENTOS. O sistema buscará trechos relevantes nos PDFs/Documentos do NPJ. Dica: Envie uma pergunta completa ou palavras-chave específicas (ex: 'documentos ação alimentos', 'prazos curatela'). O sistema usa busca semântica, então perguntas naturais funcionam bem.",
-            schema: z.object({
-                query: z.string().describe("A pergunta específica ou tópicos para buscar nos documentos.")
-            })
-        });
-
-        // --- Tool 5: Time Utility ---
-        const timeTool = tool(async () => {
-            return new Date().toLocaleString('pt-BR');
-        }, {
-            name: "get_current_time",
-            description: "Retorna a data e hora atual do sistema.",
-            schema: z.object({})
-        });
-
-        this.tools = [searchStudentsTool, checkAttendanceTool, searchAssistedTool, ragSearchTool, timeTool];
-
-        // Map for easy execution
-        this.toolsMap = {
-            'search_students': searchStudentsTool,
-            'check_attendance': checkAttendanceTool,
-            'search_assisted_relationship': searchAssistedTool,
-            'search_knowledge_base': ragSearchTool,
-            'get_current_time': timeTool
-        };
-    }
-
-    loadAssistedList() {
-        try {
-            // Caminho relativo à estrutura organizada: ../../../data/LISTA DE ASSISTIDOS.xlsx
-            const filePath = path.join(__dirname, '../../../data/LISTA DE ASSISTIDOS.xlsx');
-            
-            if (!fs.existsSync(filePath)) {
-                console.warn(`[Veritas AI] Aviso: Lista de assistidos não encontrada em ${filePath}`);
-                this.assistedData = [];
-                return;
-            }
-            const workbook = XLSX.readFile(filePath);
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-            // Simple Parsing Strategy (Same as before but simplified)
-            this.assistedData = [];
-            // Assuming simplified parsing for brevity - reuse robust logic if needed
-            // For now, let's grab cols 2 (Patient) and 3 (Student) approx
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
-                if (row && row.length > 3) {
-                    const p = row[2] ? String(row[2]).trim() : "";
-                    const s = row[3] ? String(row[3]).trim() : "";
-                    if (p && s) this.assistedData.push({ assistedName: p, studentName: s });
-                }
-            }
-        } catch (e) {
-            console.error("Erro loading Excel:", e);
-            this.assistedData = [];
         }
     }
 
     async processQuery(userQuery) {
-        if (!this.model) await this.initialize();
-        if (!this.modelWithTools) return "Erro Crítico: O módulo de IA não foi inicializado corretamente (verifique a API KEY).";
+        if (!this.pythonProcess) await this.initialize();
+        if (!this.pythonProcess) return "Erro Crítico: O agente de IA não foi inicializado corretamente.";
 
-        // Add user message via simple history management (resetting for now per robust request usually implies some memory, 
-        // but let's keep it per-request context to avoid confusion unless ID provided)
-        // We will just use a fresh messages array + system prompt for every request for simplicity/stability first.
+        return new Promise((resolve, reject) => {
+            const req = { resolve, reject };
+            this.requestQueue.push(req);
 
-        const systemPrompt = `Você é o Veritas AI, a inteligência do Núcleo de Prática Jurídica (NPJ).
-        Responda sempre em Português do Brasil.
-        
-        DIRETRIZES:
-        1. Para 'oi', 'olá', 'tudo bem' ou conversa fiada: responda diretamente SEM usar ferramentas.
-        2. Para dados de alunos/chamada/assistidos: USE as ferramentas apropriadas.
-        3. Para dúvidas sobre regras/documentos/prazos: USE a ferramenta de busca (RAG).
-        
-        ESTILO DE RESPOSTA (IMPORTANTE):
-        - Use **Markdown** COMPACTO. Evite pular linhas desnecessárias.
-        - **NÃO use tabelas**.
-        - Para listas de documentos, use OBRIGATORIAMENTE este formato em UMA ÚNICA LINHA por item:
-          * **Nome do Documento**: Descrição completa aqui.
-        - NÃO quebre a descrição para a linha de baixo. Mantenha item e descrição na mesma linha.
-        - Use títulos (###) apenas para grandes seções.
-        - Mantenha tom profissional e direto.
-        
-        Não invente informações. Se a ferramenta retornar vazio, diga que não encontrou.`;
-
-        const messages = [
-            new SystemMessage(systemPrompt),
-            new HumanMessage(userQuery)
-        ];
-
-        try {
-            // First LLM Call: Decide Tool
-            const aiMsg = await this.modelWithTools.invoke(messages);
-            // console.log("[DEBUG AI MSG]", JSON.stringify(aiMsg, null, 2));
-            messages.push(aiMsg);
-
-            // Execute Tools if requested
-            if (aiMsg.tool_calls && aiMsg.tool_calls.length > 0) {
-                for (const toolCall of aiMsg.tool_calls) {
-                    const selectedTool = this.toolsMap[toolCall.name];
-                    if (!selectedTool) {
-                        console.error("Tool not found:", toolCall.name);
-                        continue;
-                    }
-
-                    let toolOutput = "Erro na execução da ferramenta.";
-                    try {
-                        const rawOutput = await selectedTool.invoke(toolCall.args);
-                        toolOutput = typeof rawOutput === 'string' ? rawOutput : JSON.stringify(rawOutput);
-
-                        // Safety Truncate
-                        if (toolOutput.length > 5000) toolOutput = toolOutput.substring(0, 5000) + "... [Truncated]";
-                        
-                        // Debug log to confirm tool finished
-                        console.log(`[Veritas AI] Tool ${toolCall.name} finished. Output length: ${toolOutput.length}`);
-
-                    } catch (err) {
-                        console.error(`Error tool ${toolCall.name}:`, err);
-                        toolOutput = `Erro: ${err.message}`;
-                    }
-
-                    messages.push(new ToolMessage({
-                        tool_call_id: toolCall.id,
-                        content: toolOutput
-                    }));
+            // Timeout
+            setTimeout(() => {
+                const idx = this.requestQueue.indexOf(req);
+                if (idx > -1) {
+                    this.requestQueue.splice(idx, 1);
+                    console.error("[Veritas AI] Query Timeout.");
+                    resolve("Erro: Tempo limite excedido ao processar a consulta.");
                 }
+            }, 60000); // 60s timeout
 
-                // Final Answer generation
-                try {
-                    const finalResponse = await this.modelWithTools.invoke(messages);
-                    return finalResponse.content;
-                } catch (finalErr) {
-                    console.error("[Veritas Agent] Failed to generate final answer:", finalErr);
-                    // FALLBACK: Return the tool outputs directly
-                    const toolOutputs = messages
-                        .filter(m => m instanceof ToolMessage)
-                        .map(m => m.content)
-                        .join('\n\n');
-
-                    return `(Nota: Ocorreu um erro na geração da resposta final pela IA, mas aqui estão os dados encontrados):\n\n${toolOutputs}`;
-                }
+            try {
+                const payload = JSON.stringify({ action: "query", query: userQuery }) + "\n";
+                this.pythonProcess.stdin.write(payload);
+            } catch (err) {
+                console.error("[Veritas AI] Write error:", err);
+                const idx = this.requestQueue.indexOf(req);
+                if (idx > -1) this.requestQueue.splice(idx, 1);
+                resolve("Erro ao enviar consulta para o agente.");
             }
-
-            return aiMsg.content; // Direct response if no tool needed
-        } catch (error) {
-            console.error("[Veritas Agent] Critical Error:", error);
-            // Return user-friendly error but log details
-            if (error.status === 429) return "Erro 429: Muitos pedidos. Aguarde um momento.";
-            if (error.status === 401) return "Erro 401: Chave de API inválida.";
-            if (error.status === 400 && error.error?.code === 'context_length_exceeded') return "Erro: O documento é muito grande para analisar de uma vez.";
-            
-            throw error; // Let server.js handle and send 500
-        }
+        });
     }
 }
 

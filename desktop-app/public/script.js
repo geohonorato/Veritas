@@ -29,7 +29,7 @@
         // Verificação adicional de segurança (redundante, mas garante)
         const user = sessionStorage.getItem('veritas_user');
         if (!user) {
-          console.warn('[Security] usuério não autenticado detectado. Redirecionando...');
+          console.warn('[Security] usuário não autenticado detectado. Redirecionando...');
           window.location.replace('/login.html');
           return;
         }
@@ -292,7 +292,7 @@
         const users = await window.api.invoke('get-users');
         const user = users.find(u => u.id === userId);
         if (!user) {
-          await showCustomAlert('Erro', 'Usué¡rio não encontrado!');
+          await showCustomAlert('Erro', 'Usuário não encontrado!');
           return;
         }
 
@@ -330,7 +330,7 @@
           formAluno.reset();
           alunoIdInput.value = '';
           modalTitle.textContent = 'Adicionar Aluno';
-          statusDiv.textContent = 'Preencha os dados e cadastre a digital se necessério.';
+          statusDiv.textContent = 'Preencha os dados e cadastre a digital se necessário.';
           statusDiv.className = 'text-zinc-400 text-xs text-center mb-3 min-h-[16px] transition-all';
           btnSalvar.disabled = false;
           deleteUserModalBtn.classList.add('hidden');
@@ -397,10 +397,10 @@
         };
 
         if (id) {
-          // --- MODO EDIé‡éƒO ---
+          // --- MODO EDIÇÃO ---
           try {
             await window.api.invoke('update-user', { id, data: userData });
-            await showCustomAlert('Sucesso!', 'Usué¡rio atualizado com sucesso!');
+            await showCustomAlert('Sucesso!', 'Usuário atualizado com sucesso!');
             fecharModalCadastro();
             renderizarTabelaUsuarios();
           } catch (error) {
@@ -408,13 +408,13 @@
             btnSalvar.disabled = false;
           }
         } else {
-          // --- MODO ADIé‡éƒO ---
+          // --- MODO ADIÇÃO ---
           statusDiv.textContent = 'Iniciando processo de cadastro...';
           try {
             const result = await window.api.invoke('add-user-and-enroll', { userData });
             fecharModalCadastro();
             renderizarTabelaUsuarios();
-            await showCustomAlert('Sucesso!', `Usué¡rio ${result.user.nome} cadastrado com ID ${result.user.id}.`);
+            await showCustomAlert('Sucesso!', `Usuário ${result.user.nome} cadastrado com ID ${result.user.id}.`);
           } catch (error) {
             await showCustomAlert('Erro de Cadastro', error.message);
             btnSalvar.disabled = false;
@@ -425,7 +425,7 @@
       if (deleteUserModalBtn) {
         deleteUserModalBtn.addEventListener('click', async () => {
           const userId = parseInt(alunoIdInput.value, 10);
-          const confirmed = await showCustomConfirm('Confirmação', `Tem certeza que deseja excluir o usué¡rio com ID ${userId} do banco de dados e do sensor?`);
+          const confirmed = await showCustomConfirm('Confirmação', `Tem certeza que deseja excluir o usuário com ID ${userId} do banco de dados e do sensor?`);
           if (confirmed) {
             try {
               const result = await window.api.invoke('delete-user', userId);
@@ -433,13 +433,13 @@
               fecharModalCadastro();
               renderizarTabelaUsuarios();
             } catch (error) {
-              await showCustomAlert('Erro', `Erro ao excluir usué¡rio: ${error.message}`);
+              await showCustomAlert('Erro', `Erro ao excluir usuário: ${error.message}`);
             }
           }
         });
       }
 
-      // --- Comunicaçéo com Main Process (Refatorado para window.api) ---
+      // --- Comunicação com Main Process (Refatorado para window.api) ---
       // Removido require('electron')
 
       const toggleBuzzer = document.getElementById('toggle-buzzer');
@@ -988,12 +988,12 @@
           );
 
           if (confirmed) {
-            showCustomAlert('Sincronizando...', 'Buscando por novos usué¡rios no sensor. Isso pode levar alguns segundos.');
+            showCustomAlert('Sincronizando...', 'Buscando por novos usuários no sensor. Isso pode levar alguns segundos.');
             try {
               const result = await window.api.invoke('sync-from-sensor');
               await showCustomAlert(
                 'Sincronizaçéo Conclué­da',
-                `${result.newUsers} novo(s) usué¡rio(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
+                `${result.newUsers} novo(s) usuário(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
               );
               renderizarTabelaUsuarios();
             } catch (error) {
@@ -1069,20 +1069,20 @@
               const userIdsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id, 10));
 
               if (userIdsToDelete.length === 0) {
-                await showCustomAlert('Aviso', 'Nenhum usué¡rio selecionado para excluséo.');
+                await showCustomAlert('Aviso', 'Nenhum usuário selecionado para excluséo.');
                 return;
               }
 
-              const confirmed = await showCustomConfirm('Confirmação', `Tem certeza que deseja excluir ${userIdsToDelete.length} usué¡rio(s)?`);
+              const confirmed = await showCustomConfirm('Confirmação', `Tem certeza que deseja excluir ${userIdsToDelete.length} usuário(s)?`);
               if (confirmed) {
                 try {
                   for (const userId of userIdsToDelete) {
                     await window.api.invoke('delete-user', userId);
                   }
-                  await showCustomAlert('Sucesso!', `${userIdsToDelete.length} usué¡rio(s) exclué­do(s) com sucesso.`);
+                  await showCustomAlert('Sucesso!', `${userIdsToDelete.length} usuário(s) exclué­do(s) com sucesso.`);
                   exitDeleteMode();
                 } catch (error) {
-                  await showCustomAlert('Erro', `Erro ao excluir usué¡rios: ${error.message}`);
+                  await showCustomAlert('Erro', `Erro ao excluir usuários: ${error.message}`);
                 }
               }
             });
@@ -1096,11 +1096,11 @@
         removeDuplicatesMenuItem.addEventListener('click', async (e) => {
           e.preventDefault();
           userMenuDropdown.classList.add('hidden');
-          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açéo iré¡ verificar todos os usué¡rios e remover aqueles com matré­culas duplicadas, mantendo apenas a primeira ocorréªncia encontrada. Deseja continuar?');
+          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açéo iré¡ verificar todos os usuários e remover aqueles com matré­culas duplicadas, mantendo apenas a primeira ocorréªncia encontrada. Deseja continuar?');
           if (confirmed) {
             try {
               const result = await window.api.invoke('remove-duplicates');
-              await showCustomAlert('Sucesso', `${result.count} usué¡rio(s) duplicado(s) removido(s).`);
+              await showCustomAlert('Sucesso', `${result.count} usuário(s) duplicado(s) removido(s).`);
               renderizarTabelaUsuarios();
             } catch (error) {
               await showCustomAlert('Erro', `Erro ao remover duplicados: ${error.message}`);
@@ -1173,7 +1173,7 @@
             const currentYear = now.getFullYear();
 
             // Lógica Inteligente: Se selecionar um Mês que AINDA não chegou no ano corrente, volta 1 ano.
-            // Mas se o ano jé¡ estiver diferente do atual (ex: usué¡rio mudou manualmente), respeita a escolha manual?
+            // Mas se o ano jé¡ estiver diferente do atual (ex: usuário mudou manualmente), respeita a escolha manual?
             // A regra diz: "por padrão é© o ano corrente, mas..."
             // Vamos aplicar a regra se o ano input estiver igual ao ano atual.
             if (parseInt(filterAnoInput.value) === currentYear) {
@@ -1181,7 +1181,7 @@
                 filterAnoInput.value = currentYear - 1;
               } else {
                 // Caso contré¡rio (Mês é© passado ou atual), mantemos o ano corrente.
-                // Mas se o usué¡rio estava vendo 2025 e clicou em Janeiro (2026), deve voltar pra 2026?
+                // Mas se o usuário estava vendo 2025 e clicou em Janeiro (2026), deve voltar pra 2026?
                 // "Caso seja selecionado um Mês que ainda não chegou... passa a marcar o ano anterior"
                 // Implica que é© uma transiçéo automé¡tica unidirecional ou bidirecional?
                 // Geralmente resetar pra ano atual é© bom se o Mês for vé¡lido.
@@ -1962,12 +1962,12 @@
           );
 
           if (confirmed) {
-            showCustomAlert('Sincronizando...', 'Buscando por novos usué¡rios no sensor. Isso pode levar alguns segundos.');
+            showCustomAlert('Sincronizando...', 'Buscando por novos usuários no sensor. Isso pode levar alguns segundos.');
             try {
               const result = await window.api.invoke('sync-from-sensor');
               await showCustomAlert(
                 'Sincronizaçéo Conclué­da',
-                `${result.newUsers} novo(s) usué¡rio(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
+                `${result.newUsers} novo(s) usuário(s) foram importados. O sensor possui um total de ${result.totalSensor} digitais.`
               );
               renderizarTabelaUsuarios();
             } catch (error) {
@@ -1979,11 +1979,11 @@
 
       if (settingsRemoveDuplicatesBtnLocal) {
         settingsRemoveDuplicatesBtnLocal.addEventListener('click', async () => {
-          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açéo iré¡ verificar todos os usué¡rios e remover aqueles com matré­culas duplicadas, mantendo apenas a primeira ocorréªncia encontrada. Deseja continuar?');
+          const confirmed = await showCustomConfirm('Remover Duplicados', 'Esta açéo iré¡ verificar todos os usuários e remover aqueles com matré­culas duplicadas, mantendo apenas a primeira ocorréªncia encontrada. Deseja continuar?');
           if (confirmed) {
             try {
               const result = await window.api.invoke('remove-duplicates');
-              await showCustomAlert('Sucesso', `${result.count} usué¡rio(s) duplicado(s) removido(s).`);
+              await showCustomAlert('Sucesso', `${result.count} usuário(s) duplicado(s) removido(s).`);
               renderizarTabelaUsuarios();
             } catch (error) {
               await showCustomAlert('Erro', `Erro ao remover duplicados: ${error.message}`);

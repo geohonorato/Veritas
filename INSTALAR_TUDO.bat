@@ -51,10 +51,10 @@ if exist "python_portable\python.exe" (
         exit /b
     )
 
-    python -m pip install docling langchain-text-splitters langchain-community pypdf
+    python -m pip install agno docling langchain-text-splitters pypdf sentence-transformers openpyxl
     if %errorlevel% neq 0 (
         echo [AVISO] Falha ao instalar no Python padrao. Tentando comando alternativo...
-        pip3 install docling langchain-text-splitters langchain-community pypdf
+        pip3 install agno docling langchain-text-splitters pypdf sentence-transformers openpyxl
     )
 )
 
